@@ -17,3 +17,7 @@ include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 
 #  Build WarpCore
 add_subdirectory( src )
+
+if(ENABLE_TESTS)
+  add_subdirectory( tests )
+endif()

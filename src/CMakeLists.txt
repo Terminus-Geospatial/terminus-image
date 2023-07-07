@@ -3,4 +3,4 @@
 #    Date:    7/5/2023
 #
 
-add_subdirectory( libwarpcore )
+add_subdirectory( terminus )
