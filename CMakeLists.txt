@@ -19,5 +19,6 @@ include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 add_subdirectory( src )
 
 if(ENABLE_TESTS)
-  add_subdirectory( tests )
+    message( "TESTING ENABLED" )
+    add_subdirectory( tests )
 endif()
