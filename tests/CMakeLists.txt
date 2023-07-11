@@ -2,4 +2,4 @@
 #    Author:  Marvin Smith
 #    Date:    7/5/2023
 
-add_subdirectory( unit/terminus )
+add_subdirectory( unit )

@@ -5,7 +5,7 @@
 */
 #pragma once
 
-namespace term::warp::image {
+namespace tmns::warp::image {
 
 /**
  * @class ImageBase
@@ -20,6 +20,12 @@ template <typename BaseTypeT>
 class ImageBase
 {
     public:
+
+        /// @brief An STL-compatible iterator type.
+        typedef PixelIterator<      ImplT> iterator;
+
+        /// @brief  An STL-compatible const-iterator type
+        typedef PixelIterator<const ImplT> const_iterator;
 
         /// Methods to access the derived type when sitting in the base
         inline ImplT&        impl()       { return static_cast<ImplT const&>( *this ); }
@@ -41,4 +47,4 @@ class ImageBase
 
 }; // End of ImageBase Class
 
-} // End of WARP Namespace
+} // End of tmns::warp::image Namespace

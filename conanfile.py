@@ -19,7 +19,12 @@ class CMakeConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     def build_requirements(self):
-        self.test_requires("gtest/1.13.0")
+        self.build_requires("gtest/1.13.0")
+        self.build_requires("terminus_cmake/1.0.0")
+
+    def requirements(self):
+        self.requires("terminus_log/0.0.1")
+        self.requires("terminus_outcome/0.0.1")
 
     def _configure_cmake(self):
         cmake = CMake(self)
