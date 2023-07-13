@@ -7,6 +7,7 @@
 
 // Terminus Libraries
 #include <terminus/log/utility.hpp>
+#include <terminus/warpcore/image/Image_Memory.hpp>
 #include <terminus/warpcore/io/Image_IO.hpp>
 
 /********************************************/
@@ -18,7 +19,7 @@ TEST( io_ImageIO, read_image_memory )
 
     // Load an image
     std::filesystem::path image_to_load { "./data/sample_images/jpeg/lena.jpg" };
-    wc::image::Image<wv::image::PixelType_u8> image;
+    wc::image::Image<wc::image::PixelRGB_u8> image;
     auto result = wc::io::Read_Image( image_to_load,
                                       image );
 

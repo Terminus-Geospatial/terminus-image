@@ -8,7 +8,7 @@
 namespace tmns::warp::image {
 
 /**
- * @class ImageBase
+ * @class Image_Base
  *
  * Base image type.  This is important cause we want either lazy or eager
  * models.  This will be the key base class keeping them tied together.  Please be
@@ -17,7 +17,7 @@ namespace tmns::warp::image {
  * This class uses Curiously-Recurring Template Pattern.
 */
 template <typename BaseTypeT>
-class ImageBase
+class Image_Base
 {
     public:
 
@@ -28,8 +28,8 @@ class ImageBase
         typedef PixelIterator<const ImplT> const_iterator;
 
         /// Methods to access the derived type when sitting in the base
-        inline ImplT&        impl()       { return static_cast<ImplT const&>( *this ); }
-        inline Imple const&  impl() const { return static_cast<ImplT const&>( *this ); }\\
+        inline ImplT&        impl()       { return static_cast<ImplT&>( *this ); }
+        inline Imple const&  impl() const { return static_cast<ImplT const&>( *this ); }
 
         /// Returns an iterator pointing to the first pixel in the image.
         iterator begin()             { return       iterator(impl(),0,0,0); }
