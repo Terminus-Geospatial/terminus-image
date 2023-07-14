@@ -5,6 +5,8 @@
 */
 #pragma once
 
+namespace tmns::image {
+
 template <typename DerivedT>
 class Pixel_Base
 {
@@ -16,3 +18,5 @@ class Pixel_Base
 
 
 }; // End of PixelBase Class
+
+} // End of tmns::image namespace

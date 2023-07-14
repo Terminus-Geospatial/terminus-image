@@ -7,28 +7,31 @@
 
 // Terminus Libraries
 #include <terminus/log/utility.hpp>
-#include <terminus/warpcore/image/Image_Memory.hpp>
-#include <terminus/warpcore/io/Image_IO.hpp>
+#include <terminus/image/io/read_image.hpp>
+#include <terminus/image/pixel/Channel_Types.hpp>
+#include <terminus/image/pixel/Pixel_RGB.hpp>
+#include <terminus/image/utility/View_Utilities.hpp>
+#include <terminus/image/Image_Memory.hpp>
 
 /********************************************/
 /*          Read and write imagery          */
 /********************************************/
-TEST( io_ImageIO, read_image_memory )
+TEST( io_read_image, read_image_memory )
 {
-    namespace wc = tmns::warp;
+    namespace wc = tmns::image;
 
     // Load an image
     std::filesystem::path image_to_load { "./data/sample_images/jpeg/lena.jpg" };
-    wc::image::Image<wc::image::PixelRGB_u8> image;
-    auto result = wc::io::Read_Image( image_to_load,
-                                      image );
+    auto result = wc::io::read_image<Image<PixelRGB_u8>>( image_to_load );
+
+    auto image = result.assume_value();
 
     ASSERT_FALSE( result.has_error() );
 
     // View the image
     if( true )
     {
-        wc::utils::View_Image( "Dummy Window", image );
+        auto res = wc::utility::view_image( "Dummy Window", image );
     }
 
     FAIL();

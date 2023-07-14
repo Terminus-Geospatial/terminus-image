@@ -7,9 +7,13 @@
 
 // Terminus Libraries
 #include <terminus/outcome/ErrorCategory.hpp>
+#include <terminus/outcome/Result.hpp>
 #include <terminus/outcome/macros.hpp>
 
-namespace tmns::warp::error {
+// Terminus Image Libraries
+#include "ErrorCode.hpp"
+
+namespace tmns::image::error {
 
 /**
  * Custom WarpCore error category for mapping all error codes to custom error types.
@@ -25,14 +29,18 @@ class ErrorCategory : public tmns::outcome::ErrorCategory<ErrorCategory>
 
         std::string message_(int c) const override
         {
-            switch( static_cast<IoErrorCode>(c) )
+            switch( static_cast<ErrorCode>(c) )
             {
-                case IoErrorCode::SUCCESS:
+                case ErrorCode::SUCCESS:
                     return "SUCCESS";
-                case IoErrorCode::UNKNOWN:
+                case ErrorCode::UNKNOWN:
                     return "UNKNOWN";
-                case IoErrorCode::FILE_NOT_FOUND:
+                case ErrorCode::FILE_NOT_FOUND:
                     return "FILE_NOT_FOUND";
+                case ErrorCode::DRIVER_NOT_FOUND:
+                    return "DRIVER_NOT_FOUND";
+                case ErrorCode::UNDEFINED:
+                    return "UNDEFINED";
                 default:
                     return "UNKNOWN";
             }
@@ -42,8 +50,8 @@ class ErrorCategory : public tmns::outcome::ErrorCategory<ErrorCategory>
 // Associate the custom error category with your custom error code
 TERMINUS_OUTCOME_ASSOCIATE_ERROR_CATEGORY( ErrorCategory, ErrorCode )
 
+} // End of tmns::image::error namespace
+
 // Define a convenient alias for the `Result` type that uses your error codes
 template <class ValueT>
-using Result = tmns::outcome::Result<ValueT,ErrorCode>;
-
-} // End of tmns::warp::error namespace
+using ImageResult = tmns::outcome::Result<ValueT,tmns::image::error::ErrorCode>;

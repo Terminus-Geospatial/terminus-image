@@ -5,7 +5,18 @@
 */
 #pragma once
 
-namespace tmns::warp::io {
+/// External Terminus Libraries
+#include <terminus/math/Rectangle.hpp>
+
+/// Terminus Libraries
+#include "Image_Buffer.hpp"
+
+namespace tmns::image {
+
+class Image_Read_Resource
+{
+
+}; // End of Image_Read_Resource Class
 
 class Image_Write_Resource
 {
@@ -14,16 +25,15 @@ class Image_Write_Resource
         /// @brief  Destructor
         virtual ~Image_Write_Resource() = default;
 
-        virtual error::Result<> write( Image_Buffer const& buf,
-                                       math::BBox2i const& bbox ) = 0;
+        virtual ImageResult<void> write( const Image_Buffer& buf,
+                                         const math::Rect2i& bbox ) = 0;
 
 
 }; // End of Image_Write_Resource Class
-
 
 /**
  * Resource which can load and save an image
 */
 class Image_Resource_Base : public Image_Read_Resource, Image_Write_Resource {};
 
-} // end of tmns::warp::io namespace
+} // end of tmns::image namespace

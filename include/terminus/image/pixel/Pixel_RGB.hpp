@@ -6,9 +6,10 @@
 #pragma once
 
 // Terminus Libraries
+#include "Channel_Types.hpp"
 #include "Pixel_Base.hpp"
 
-namespace tmns::warp::image {
+namespace tmns::image {
 
 /**
  * RGB PixelType
@@ -46,8 +47,12 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
     private:
 
         /// Underlying Pixel Data
-        ChannelT m_data[3] { 0, 0, 0 };
+        typename ChannelT::data_type m_data[3] { 0, 0, 0 };
 
 }; // End of Pixel_RGB Class
 
-} // End of tmns::warp::image namespace
+/// Aliases for easier typing
+using PixelRGB_u8  = Pixel_RGB<ChannelType_u8>;
+using PixelRGB_u12 = Pixel_RGB<ChannelType_u12>;
+
+} // End of tmns::image namespace

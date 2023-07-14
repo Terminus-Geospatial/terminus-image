@@ -16,18 +16,21 @@ set( CMAKE_CXX_STANDARD 20 )
 include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 
 #  Add Interfaces
-add_subdirectory( include/terminus/warpcore )
-add_subdirectory( src )
+add_subdirectory( include/terminus )
+add_subdirectory( src/image )
 
 #  Create Library
-add_library( ${PROJECT_NAME} INTERFACE
-    ${WARP_INCLUDE_HEADERS}
+add_library( ${PROJECT_NAME} SHARED
+    ${TERMINUS_IMAGE_INCLUDE_HEADERS}
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_CORE>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_PIXEL>
 )
 
 #  Link in dependencies
-target_link_libraries( ${PROJECT_NAME} INTERFACE
+target_link_libraries( ${PROJECT_NAME} PUBLIC
      Boost::headers
      terminus_log::terminus_log
+     terminus_math::terminus_math
      terminus_outcome::terminus_outcome
 )
 

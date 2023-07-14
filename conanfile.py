@@ -3,7 +3,7 @@ from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 
 class CMakeConan(ConanFile):
 
-    name = "terminus_warpcore"
+    name = "terminus_image"
     version = "0.0.1"
 
     license = "Terminus Proprietary"
@@ -24,6 +24,7 @@ class CMakeConan(ConanFile):
 
     def requirements(self):
         self.requires("terminus_log/0.0.1")
+        self.requires("terminus_math/0.0.1")
         self.requires("terminus_outcome/0.0.1")
 
     def _configure_cmake(self):

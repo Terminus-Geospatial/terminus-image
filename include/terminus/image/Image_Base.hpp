@@ -5,7 +5,10 @@
 */
 #pragma once
 
-namespace tmns::warp::image {
+// Terminus Libraries
+#include "Pixel_Iterator.hpp"
+
+namespace tmns::image {
 
 /**
  * @class Image_Base
@@ -16,20 +19,20 @@ namespace tmns::warp::image {
  *
  * This class uses Curiously-Recurring Template Pattern.
 */
-template <typename BaseTypeT>
+template <typename ImplT>
 class Image_Base
 {
     public:
 
         /// @brief An STL-compatible iterator type.
-        typedef PixelIterator<      ImplT> iterator;
+        typedef Pixel_Iterator<      ImplT> iterator;
 
         /// @brief  An STL-compatible const-iterator type
-        typedef PixelIterator<const ImplT> const_iterator;
+        typedef Pixel_Iterator<const ImplT> const_iterator;
 
         /// Methods to access the derived type when sitting in the base
         inline ImplT&        impl()       { return static_cast<ImplT&>( *this ); }
-        inline Imple const&  impl() const { return static_cast<ImplT const&>( *this ); }
+        inline ImplT const&  impl() const { return static_cast<ImplT const&>( *this ); }
 
         /// Returns an iterator pointing to the first pixel in the image.
         iterator begin()             { return       iterator(impl(),0,0,0); }
@@ -39,12 +42,21 @@ class Image_Base
         iterator end()             { return       iterator(impl(),0,0,impl().planes()); }
         const_iterator end() const { return const_iterator(impl(),0,0,impl().planes()); }
 
+        /**
+         * Get the number of columns in the image.
+        */
         virtual size_t cols() const = 0;
 
+        /**
+         * Get the number of rows in the image
+        */
         virtual size_t rows() const = 0;
 
+        /**
+         * Get the number of channels in the image
+        */
         virtual size_t channels() const = 0;
 
 }; // End of ImageBase Class
 
-} // End of tmns::warp::image Namespace
+} // End of tmns::image Namespace
