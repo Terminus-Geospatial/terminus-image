@@ -7,6 +7,7 @@
 
 // Terminus Libraries
 #include "Image_Base.hpp"
+#include "Image_Buffer.hpp"
 
 // C++ Libraries
 #include <memory>
@@ -24,6 +25,9 @@ class Image_Memory : public Image_Base<PixelT>
         /// Return type when you query actual data
         typedef PixelT& result_type;
 
+        /// Base type of the image
+        typedef Image_Base<Image_Memory<PixelT>> base_type;
+
         /**
          * Get the number of rows in the image
         */
@@ -38,6 +42,29 @@ class Image_Memory : public Image_Base<PixelT>
          * Get the number of channels in the image
         */
         size_t channels() const override { return m_channels; }
+
+        /**
+         * Returns an ImageBuffer describing the image data.
+         */
+        Image_Buffer buffer() const
+        {
+            Image_Buffer buffer( data(),
+                                 base_type::format() );
+
+            buffer.format  = base_type::format();
+            buffer.cstride = sizeof(PixelT);
+            buffer.rstride = sizeof(PixelT) * cols();
+            buffer.pstride = sizeof(PixelT) * cols() * rows();
+            return buffer;
+        }
+
+        /**
+         * Get a pointer to the top-left corner of the first channel.
+        */
+        pixel_type* data() const
+        {
+            return m_data.get();
+        }
 
     private:
 

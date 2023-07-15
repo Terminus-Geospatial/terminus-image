@@ -6,9 +6,15 @@
 #pragma once
 
 /// Terminus Libraries
-#include "../Image_Resource_Disk.hpp"
+#include "../../error/ErrorCategory.hpp"
+#include "../Read_Image_Resource_Disk.hpp"
+#include "../Write_Image_Resource_Disk.hpp"
+#include "gdal/Read_Image_Resource_Disk_GDAL_Factory.hpp"
+#include "Read_Driver_Factory_Base.hpp"
+#include "Write_Driver_Factory_Base.hpp"
 
 // C++ Libraries
+#include <deque>
 #include <memory>
 
 namespace tmns::image::io {
@@ -16,41 +22,70 @@ namespace tmns::image::io {
 /**
  * Relatively simple class for storing file input and output drivers.
 */
-class Disk_Driver_Manager
+class Disk_Driver_Manager : boost::noncopyable
 {
     public:
 
         /// Pointer Type
         typedef std::shared_ptr<Disk_Driver_Manager> ptr_t;
 
+        /// Type for Read Drivers
+        typedef Read_Image_Resource_Disk::ptr_t  ReadDriverT;
+
+        /// Type for Write Drivers
+        typedef Write_Image_Resource_Disk::ptr_t WriteDriverT;
+
+        /// Type for Read Driver Factories
+        typedef Read_Driver_Factory_Base::ptr_t ReadFactoryT;
+
+        /// Type for Write Driver Factories
+        typedef Write_Driver_Factory_Base::ptr_t WriteFactoryT;
+
         /**
          * Create a Driver-Manager using the default configuration
          *
          * @note The order by which a driver is chosen is the order it is registered.
         */
-        static constexpr Disk_Driver_Manager::ptr_t create_defaults()
+        static Disk_Driver_Manager::ptr_t create_read_defaults()
         {
             // Create new instance
-            auto instance = std::make_shared<Disk_Driver_Manager>();
+            auto instance = Disk_Driver_Manager::ptr_t( new Disk_Driver_Manager() );
 
             // Register each driver
+            instance->register_read_driver_factory( std::make_shared<gdal::Read_Image_Resource_Disk_GDAL_Factory>() );
 
             return instance;
         }
 
         /**
+         * Add a read driver to the list
+        */
+        void register_read_driver_factory( ReadFactoryT instance );
+
+        /**
+         * Add a write driver to the list
+        */
+        void register_write_driver_factory( WriteFactoryT instance );
+
+        /**
          * Select a driver based on the file.
         */
-        outcome::Result<Image_Resource_Disk::ptr_t> pick_driver( const std::filesystem::path& pathname ) const;
+        ImageResult<ReadDriverT> pick_read_driver( const std::filesystem::path& pathname ) const;
+
+        /**
+         * Select a driver based on the file.
+        */
+        ImageResult<WriteDriverT> pick_write_driver( const std::filesystem::path& pathname ) const;
 
     private:
 
         /// Default Constructor
-        Driver_Manager() = default;
+        Disk_Driver_Manager() = default;
 
         /// List of Drivers
-        std::deque<Image_Resource_Disk::ptr_t> m_drivers;
+        std::deque<ReadFactoryT> m_read_driver_factories;
+        std::deque<WriteFactoryT> m_write_driver_factories;
 
-}; // End of Driver_Manager Class
+}; // End of Disk_Driver_Manager Class
 
 } // end of tmns::image::io namespace

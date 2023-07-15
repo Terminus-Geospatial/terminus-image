@@ -15,6 +15,9 @@ set( CMAKE_CXX_STANDARD 20 )
 #  Look for dependencies
 include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 
+#  Give Vscode a fighting chance
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 #  Add Interfaces
 add_subdirectory( include/terminus )
 add_subdirectory( src/image )
@@ -23,6 +26,8 @@ add_subdirectory( src/image )
 add_library( ${PROJECT_NAME} SHARED
     ${TERMINUS_IMAGE_INCLUDE_HEADERS}
     $<TARGET_OBJECTS:TERMINUS_IMAGE_CORE>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS>
     $<TARGET_OBJECTS:TERMINUS_IMAGE_PIXEL>
 )
 

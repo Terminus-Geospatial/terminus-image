@@ -11,10 +11,16 @@ namespace tmns::image::io::gdal {
 /**
  * GDAL Driver for loading data in memory
 */
-class Image_Resource_Memory_GDAL : public Image_Resource_Memory,
-                                   boost::noncopyable
+class Read_Image_Resource_Memory_GDAL : public Read_Image_Resource_Memory_Base,
+                                               boost::noncopyable
 {
+    public:
 
-}; // End of Image_Resource_Memory_GDAL class
+        /**
+         * Read image from memory
+        */
+        ImageResult<Image_Buffer> read( const math::Rect2i bbox ) const;
+
+}; // End of Read_Image_Resource_Memory_GDAL class
 
 } // End of tmns::image::io::gdal

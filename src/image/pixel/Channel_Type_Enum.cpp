@@ -27,7 +27,7 @@ ImageResult<size_t> channel_size_bytes( Channel_Type_Enum val )
         // Error Conditions
         case Channel_Type_Enum::UNKNOWN:
         default:
-            return outcome::fail( error::ErrorCode::UNDEFINED );
+            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE );
     }
 }
 

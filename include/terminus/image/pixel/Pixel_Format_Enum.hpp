@@ -5,6 +5,9 @@
 */
 #pragma once
 
+// Terminus Libraries
+#include "../error/ErrorCategory.hpp"
+
 namespace tmns::image {
 
 /**

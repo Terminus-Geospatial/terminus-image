@@ -41,6 +41,12 @@ class ErrorCategory : public tmns::outcome::ErrorCategory<ErrorCategory>
                     return "DRIVER_NOT_FOUND";
                 case ErrorCode::UNDEFINED:
                     return "UNDEFINED";
+                case ErrorCode::INVALID_PIXEL_TYPE:
+                    return "INVALID_PIXEL_TYPE";
+                case ErrorCode::INVALID_CHANNEL_TYPE:
+                    return "INVALID_CHANNEL_TYPE";
+                case ErrorCode::NOT_IMPLEMENTED:
+                    return "NOT_IMPLEMENTED";
                 default:
                     return "UNKNOWN";
             }

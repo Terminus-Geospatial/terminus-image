@@ -57,6 +57,19 @@ class Image_Base
         */
         virtual size_t channels() const = 0;
 
+        /// Returns an ImageFormat object describing the image format.
+        Image_Format format() const
+        {
+            ImageFormat format( impl().cols(),
+                                impl().rows(),
+                                impl().planes(),
+                                pixel_format(),
+                                channel_type(),
+                                true );
+
+            return format;
+        }
+
 }; // End of ImageBase Class
 
 } // End of tmns::image Namespace
