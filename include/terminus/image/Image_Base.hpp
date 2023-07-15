@@ -6,6 +6,9 @@
 #pragma once
 
 // Terminus Libraries
+#include "pixel/Channel_Type_ID.hpp"
+#include "pixel/Pixel_Format_ID.hpp"
+#include "Image_Format.hpp"
 #include "Pixel_Iterator.hpp"
 
 namespace tmns::image {
@@ -29,6 +32,7 @@ class Image_Base
 
         /// @brief  An STL-compatible const-iterator type
         typedef Pixel_Iterator<const ImplT> const_iterator;
+
 
         /// Methods to access the derived type when sitting in the base
         inline ImplT&        impl()       { return static_cast<ImplT&>( *this ); }
@@ -55,17 +59,43 @@ class Image_Base
         /**
          * Get the number of channels in the image
         */
-        virtual size_t channels() const = 0;
+        virtual size_t channels() const
+        {
+            return ImplT::pixel_type::NUM_CHANNELS;
+        };
+
+        /**
+         * Get the number of planes in the image
+        */
+        virtual size_t planes() const = 0;
+
+        /**
+         * Get the Pixel-Format Enum from the Pixel-Type
+        */
+        Pixel_Format_Enum pixel_format() const
+        {
+            return Pixel_Format_ID<typename ImplT::pixel_type>::value;
+        }
+
+        /**
+         * Get the channel-type from the image's pixel type
+        */
+        Channel_Type_Enum channel_type() const
+        {
+            typedef typename ImplT::pixel_type ptype;
+            return Channel_Type_ID<typename ptype::channel_type>::value;
+        }
+
 
         /// Returns an ImageFormat object describing the image format.
         Image_Format format() const
         {
-            ImageFormat format( impl().cols(),
-                                impl().rows(),
-                                impl().planes(),
-                                pixel_format(),
-                                channel_type(),
-                                true );
+            Image_Format format( impl().cols(),
+                                 impl().rows(),
+                                 impl().planes(),
+                                 pixel_format(),
+                                 channel_type(),
+                                 true );
 
             return format;
         }

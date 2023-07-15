@@ -22,7 +22,22 @@ Image_Buffer::Image_Buffer( Image_Format format,
               num_channels( format.pixel_type() ).assume_value() ),
    m_rstride( m_cstride * format.cols() ),
    m_pstride( m_rstride * format.rows() )
-   {}
+{}
+
+/********************************/
+/*          Constructor         */
+/********************************/
+Image_Buffer::Image_Buffer( void*                data,
+                            const Image_Format&  format,
+                            size_t               cstride,
+                            size_t               rstride,
+                            size_t               pstride )
+ : m_data( data ),
+   m_format( std::move( format ) ),
+   m_cstride( cstride ),
+   m_rstride( rstride ),
+   m_pstride( pstride )
+{}
 
 /************************************/
 /*          Get Buffer Cols         */

@@ -8,6 +8,7 @@ include_directories( TERMINUS_IMAGE_PIXEL PRIVATE
                      ${terminus_log_INCLUDE_DIRS}
                      ${terminus_math_INCLUDE_DIRS}
                      ${terminus_outcome_INCLUDE_DIRS}
+                     ${GDAL_INCLUDE_DIRS}
 )
 
 #  Process all subdirectory objects

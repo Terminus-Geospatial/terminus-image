@@ -12,7 +12,7 @@
 #include "../../error/ErrorCategory.hpp"
 #include "../Read_Image_Resource_Memory.hpp"
 #include "../Write_Image_Resource_Memory.hpp"
-#include "opencv/Read_Image_Resource_Memory_OpenCV.hpp"
+#include "opencv/Read_Image_Resource_Memory_OpenCV_Factory.hpp"
 
 // C++ Libraries
 #include <deque>
@@ -31,6 +31,18 @@ class Memory_Driver_Manager
         /// Pointer Type
         typedef std::shared_ptr<Memory_Driver_Manager> ptr_t;
 
+        /// Type for Read Drivers
+        typedef Read_Image_Resource_Memory::ptr_t  ReadDriverT;
+
+        /// Type for Write Drivers
+        typedef Write_Image_Resource_Memory::ptr_t WriteDriverT;
+
+        /// Type for Read Driver Factories
+        typedef Read_Driver_Factory_Base::ptr_t ReadFactoryT;
+
+        /// Type for Write Driver Factories
+        typedef Write_Driver_Factory_Base::ptr_t WriteFactoryT;
+
         /**
          * Create a Driver-Manager using the default configuration
          *
@@ -39,33 +51,33 @@ class Memory_Driver_Manager
         static Memory_Driver_Manager::ptr_t create_read_defaults()
         {
             // Create new instance
-            auto instance = std::make_shared<Memory_Driver_Manager>();
+            auto instance = Memory_Driver_Manager::ptr_t( new Memory_Driver_Manager() );
 
             // Register each driver
-            instance->register_read_driver( std::make_shared<ocv::Read_Image_Resource_Memory_OpenCV>() );
+            instance->register_read_driver_factory( std::make_shared<ocv::Read_Image_Resource_Memory_OpenCV_Factory>() );
 
             return instance;
         }
 
         /**
-         * Add a driver to the list
+         * Add a read driver to the list
         */
-        void register_read_driver( Read_Image_Resource_Memory::ptr_t instance );
+        void register_read_driver_factory( ReadFactoryT instance );
 
         /**
-         * Add a driver to the list
+         * Add a write driver to the list
         */
-        void register_write_driver( Write_Image_Resource_Memory::ptr_t instance );
-
-        /**
-         * Select a driver based on the file.
-        */
-        ImageResult<Read_Image_Resource_Memory::ptr_t> pick_read_driver( const std::filesystem::path& pathname ) const;
+        void register_write_driver_factory( WriteFactoryT instance );
 
         /**
          * Select a driver based on the file.
         */
-        ImageResult<Write_Image_Resource_Memory::ptr_t> pick_write_driver( const std::filesystem::path& pathname ) const;
+        ImageResult<ReadDriverT> pick_read_driver( const std::filesystem::path& pathname ) const;
+
+        /**
+         * Select a driver based on the file.
+        */
+        ImageResult<WriteDriverT> pick_write_driver( const std::filesystem::path& pathname ) const;
 
     private:
 
@@ -73,8 +85,8 @@ class Memory_Driver_Manager
         Memory_Driver_Manager() = default;
 
         /// List of Drivers
-        std::deque<Read_Image_Resource_Memory::ptr_t> m_read_drivers;
-        std::deque<Write_Image_Resource_Memory::ptr_t> m_write_drivers;
+        std::deque<ReadFactoryT> m_read_driver_factories;
+        std::deque<WriteFactoryT> m_write_driver_factories;
 
 }; // End of Memory_Driver_Manager Class
 

@@ -28,4 +28,12 @@ ImageResult<Read_Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driv
     return outcome::fail( error::ErrorCode::DRIVER_NOT_FOUND );
 }
 
+/************************************************/
+/*      Add new factory to driver manager       */
+/************************************************/
+void Disk_Driver_Manager::register_read_driver_factory( Read_Driver_Factory_Base::ptr_t new_driver )
+{
+    m_read_driver_factories.push_back( new_driver );
+}
+
 } // End of tmns::image::io namespace

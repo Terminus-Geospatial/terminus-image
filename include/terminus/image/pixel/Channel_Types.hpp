@@ -14,36 +14,38 @@ namespace tmns::image {
 template<typename ValueT, int BitDepth>
 class Channel_Type
 {
-    /**
-     * Underlying data-type.  For example, 12-bit imagery will get stored in uint16
-     * datatypes.
-    */
-    typedef ValueT data_type;
+    public:
 
-    /**
-     * Datatype to use when storing and adding data.  Note this should be bigger than
-     * the underlying type. For example, when storing uint8_t types, accumulate using uin16_t
-     * or uint32_t.
-    */
-    typedef data_type accumulator_type;
+        /**
+         * Underlying data-type.  For example, 12-bit imagery will get stored in uint16
+         * datatypes.
+        */
+        typedef ValueT data_type;
 
-    /**
-     * Maximum value for this channel type
-    */
-    static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
+        /**
+         * Datatype to use when storing and adding data.  Note this should be bigger than
+         * the underlying type. For example, when storing uint8_t types, accumulate using uin16_t
+         * or uint32_t.
+        */
+        typedef data_type accumulator_type;
 
-    /**
-     * Minimum value for this channel type
-    */
-    static constexpr data_type MIN_VALUE = std::numeric_limits<data_type>::min();
+        /**
+         * Maximum value for this channel type
+        */
+        static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
 
-    /// Number of Bytes
-    static constexpr int NUMBER_BYTES = sizeof( data_type );
+        /**
+         * Minimum value for this channel type
+        */
+        static constexpr data_type MIN_VALUE = std::numeric_limits<data_type>::min();
 
-    /// Bit-Precision of the Pixel Data
-    static constexpr int PRECISION = 0;
+        /// Number of Bytes
+        static constexpr int NUMBER_BYTES = sizeof( data_type );
 
-    static consteval std::string name() { return "Channel_Type<>"; };
+        /// Bit-Precision of the Pixel Data
+        static constexpr int PRECISION = 0;
+
+        static consteval std::string name() { return "Channel_Type<>"; };
 
 }; // End of Channel_Type
 
@@ -53,19 +55,21 @@ class Channel_Type
 template<>
 class Channel_Type<uint8_t,8>
 {
-    typedef uint8_t data_type;
+    public:
 
-    typedef uint16_t accumulator_type;
+        typedef uint8_t data_type;
 
-    static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
+        typedef uint16_t accumulator_type;
 
-    static constexpr data_type MIN_VALUE = std::numeric_limits<data_type>::min();
+        static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
 
-    static constexpr int NUMBER_BYTES = sizeof( data_type );
+        static constexpr data_type MIN_VALUE = std::numeric_limits<data_type>::min();
 
-    static constexpr int PRECISION = 0;
+        static constexpr int NUMBER_BYTES = sizeof( data_type );
 
-    static consteval std::string name() { return "Channel_Type<uint8_t,8>"; };
+        static constexpr int PRECISION = 0;
+
+        static consteval std::string name() { return "Channel_Type<uint8_t,8>"; };
 
 }; // End of Channel_Type
 
@@ -75,19 +79,21 @@ class Channel_Type<uint8_t,8>
 template<>
 class Channel_Type<uint16_t,12>
 {
-    typedef uint16_t data_type;
+    public:
 
-    typedef uint32_t accumulator_type;
+        typedef uint16_t data_type;
 
-    static constexpr data_type MAX_VALUE = 4095;
+        typedef uint32_t accumulator_type;
 
-    static constexpr data_type MIN_VALUE = 0;
+        static constexpr data_type MAX_VALUE = 4095;
 
-    static constexpr int NUMBER_BYTES = 12;
+        static constexpr data_type MIN_VALUE = 0;
 
-    static constexpr int PRECISION = 0;
+        static constexpr int NUMBER_BYTES = 12;
 
-    static consteval std::string name() { return "Channel_Type<uint16_t,12>"; };
+        static constexpr int PRECISION = 0;
+
+        static consteval std::string name() { return "Channel_Type<uint16_t,12>"; };
 
 }; // End of Channel_Type
 
@@ -97,19 +103,21 @@ class Channel_Type<uint16_t,12>
 template<>
 class Channel_Type<uint16_t,14>
 {
-    typedef uint16_t data_type;
+    public:
 
-    typedef uint32_t accumulator_type;
+        typedef uint16_t data_type;
 
-    static constexpr data_type MAX_VALUE = 16383;
+        typedef uint32_t accumulator_type;
 
-    static constexpr data_type MIN_VALUE = 0;
+        static constexpr data_type MAX_VALUE = 16383;
 
-    static constexpr int NUMBER_BYTES = 14;
+        static constexpr data_type MIN_VALUE = 0;
 
-    static constexpr int PRECISION = 0;
+        static constexpr int NUMBER_BYTES = 14;
 
-    static consteval std::string name() { return "Channel_Type<uint16_t,14>"; };
+        static constexpr int PRECISION = 0;
+
+        static consteval std::string name() { return "Channel_Type<uint16_t,14>"; };
 
 }; // End of Channel_Type
 
@@ -119,19 +127,21 @@ class Channel_Type<uint16_t,14>
 template<>
 class Channel_Type<uint16_t,16>
 {
-    typedef uint16_t data_type;
+    public:
 
-    typedef uint32_t accumulator_type;
+        typedef uint16_t data_type;
 
-    static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
+        typedef uint32_t accumulator_type;
 
-    static constexpr data_type MIN_VALUE = std::numeric_limits<data_type>::min();
+        static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
 
-    static constexpr int NUMBER_BYTES = 16;
+        static constexpr data_type MIN_VALUE = std::numeric_limits<data_type>::min();
 
-    static constexpr int PRECISION = 0;
+        static constexpr int NUMBER_BYTES = 16;
 
-    static consteval std::string name() { return "Channel_Type<uint16_t,16>"; };
+        static constexpr int PRECISION = 0;
+
+        static consteval std::string name() { return "Channel_Type<uint16_t,16>"; };
 
 }; // End of Channel_Type
 

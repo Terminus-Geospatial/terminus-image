@@ -16,6 +16,7 @@ class Pixel_Base
         DerivedT      & impl()       { return static_cast<DerivedT      &>(*this); }
         DerivedT const& impl() const { return static_cast<DerivedT const&>(*this); }
 
+        static consteval size_t channels() { return 0; }
 
 }; // End of PixelBase Class
 

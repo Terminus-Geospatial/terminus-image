@@ -20,22 +20,16 @@ class Read_Image_Resource_Memory_OpenCV : public Read_Image_Resource_Memory
 {
     public:
 
-        /**
-         * Check if the pathname provided points to a dataset the driver supports.
-        */
-        bool image_is_supported( const std::filesystem::path& pathname ) const override;
-
-        /**
-         * Create a new resource for the supported driver
-        */
-        ImageResult<Read_Image_Resource_Memory::ptr_t> create() const override;
+        /// Parent Pointer Type
+        typedef Read_Image_Resource_Memory::ptr_t ParentPtrT;
 
         /**
          * Create a new resource and open the image
+         *
+         * ImageResult will return failure if it's unable to open the image.
         */
-        ImageResult<Read_Image_Resource_Memory::ptr_t> create_and_open( const std::filesystem::path& pathname ) const override;
+        static ImageResult<ParentPtrT> create( const std::filesystem::path& pathname );
 
-        Image_Format format() const override;
 }; // end of Read_Image_Resource_Memory_OpenCV Class
 
 } // end of tmns::image::io::ocv namespace

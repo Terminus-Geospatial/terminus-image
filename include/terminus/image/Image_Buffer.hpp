@@ -31,8 +31,11 @@ class Image_Buffer
         /**
          * Parameterized Constructor
         */
-        Image_Buffer( void*      data,
-                      Image_Format);
+        Image_Buffer( void*                data,
+                      const Image_Format&  format,
+                      size_t               cstride,
+                      size_t               rstride,
+                      size_t               pstride );
 
         /**
          * @note Destructor needs to let the pointer go.  It's not designed

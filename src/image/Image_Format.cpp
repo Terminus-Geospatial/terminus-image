@@ -33,12 +33,28 @@ size_t Image_Format::cols() const
     return m_cols;
 }
 
+/************************************/
+/*          Set Image Cols          */
+/************************************/
+void Image_Format::set_cols( size_t cols )
+{
+    m_cols = cols;
+}
+
 /********************************/
 /*          Image Rows          */
 /********************************/
 size_t Image_Format::rows() const
 {
     return m_rows;
+}
+
+/************************************/
+/*          Set Image Rows          */
+/************************************/
+void Image_Format::set_rows( size_t rows )
+{
+    m_rows = rows;
 }
 
 /************************************/
@@ -49,12 +65,28 @@ size_t Image_Format::planes() const
     return m_planes;
 }
 
+/****************************************/
+/*          Set Image Planes            */
+/****************************************/
+void Image_Format::set_planes( size_t planes )
+{
+    m_planes = planes;
+}
+
 /********************************/
 /*          Pixel Type          */
 /********************************/
 Pixel_Format_Enum Image_Format::pixel_type() const
 {
     return m_pixel_type;
+}
+
+/************************************/
+/*          Set Pixel Type          */
+/************************************/
+void Image_Format::set_pixel_type( Pixel_Format_Enum tp )
+{
+    m_pixel_type = tp;
 }
 
 /************************************/

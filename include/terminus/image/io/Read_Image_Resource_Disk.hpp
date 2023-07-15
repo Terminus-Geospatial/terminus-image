@@ -36,10 +36,12 @@ class Read_Image_Resource_Disk : public Read_Image_Resource_Base,
         */
         virtual Image_Format format() const override;
 
-        /// Return the filename of the disk image file.
+        /**
+         * Return the filename of the disk image file.
+         */
         std::filesystem::path pathname() const;
 
-    private:
+    protected:
 
         /**
          * Constructor
@@ -57,7 +59,7 @@ class Read_Image_Resource_Disk : public Read_Image_Resource_Base,
         bool        m_rescale;
 
         /// Flag for default behavior [Initialized to true]
-        static bool default_rescale;
+        static bool s_default_rescale;
 
 }; // End of Read_Image_Resource_Disk class
 

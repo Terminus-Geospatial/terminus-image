@@ -23,11 +23,25 @@ ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Read_Image_Res
 {
     // Create output image
     Image_Memory<PixelT> output_image;
-    output_image->set_size( bbox.width(),
-                            bbox.height() );
+    auto size_res = output_image.set_size( bbox.width(),
+                                           bbox.height() );
+    if( size_res.has_error() )
+    {
+        return outcome::fail( size_res.error() );
+    }
 
     // Pass the image data
-    return resource->read( output_image.buffer(), bbox );
+    auto load_res = resource->read( output_image.buffer(),
+                                    bbox );
+
+    if( load_res.has_error() )
+    {
+        return outcome::fail( load_res.error() );
+    }
+    else
+    {
+        return outcome::ok<Image_Memory<PixelT>>( std::move( output_image ) );
+    }
 }
 
 /************************************************/

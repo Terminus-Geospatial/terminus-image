@@ -7,6 +7,9 @@
 
 namespace tmns::image::io {
 
+// Initialize Static Variables
+bool Read_Image_Resource_Disk::s_default_rescale = true;
+
 /****************************************/
 /*          Get the format info         */
 /****************************************/
@@ -22,5 +25,15 @@ std::filesystem::path Read_Image_Resource_Disk::pathname() const
 {
     return m_pathname;
 }
+
+/************************************/
+/*          Constructor             */
+/************************************/
+Read_Image_Resource_Disk::Read_Image_Resource_Disk( const std::filesystem::path& pathname )
+  : m_pathname( pathname ),
+    m_rescale( s_default_rescale )
+{
+}
+
 
 } // end of tmns::image::io namespace

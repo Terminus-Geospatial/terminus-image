@@ -20,7 +20,11 @@ enum class ErrorCode { SUCCESS              = 0,
                        UNDEFINED            = 4,
                        INVALID_CHANNEL_TYPE = 5,
                        INVALID_PIXEL_TYPE   = 6,
-                       NOT_IMPLEMENTED      = 7  };
+                       NOT_IMPLEMENTED      = 7,
+                       OUT_OF_BOUNDS        = 8,
+                       OUT_OF_MEMORY        = 9,
+                       FILE_IO_ERROR        = 10,
+                       UNINITIALIZED        = 11  };
 
 } // End of tmns::image::error namespace
 

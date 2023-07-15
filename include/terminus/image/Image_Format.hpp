@@ -16,6 +16,11 @@ class Image_Format
     public:
 
         /**
+         * Default Constructor
+        */
+        Image_Format() = default;
+
+        /**
          * Parameterized Constructor
          * @param cols Image columns
          * @param rows Image rows
@@ -36,9 +41,19 @@ class Image_Format
         size_t cols() const;
 
         /**
+         * Set the number of image columns
+        */
+        void set_cols( size_t cols );
+
+        /**
          * Get the number of image rows
         */
         size_t rows() const;
+
+        /**
+         * Set the nubmer of image rows
+        */
+        void set_rows( size_t rows );
 
         /**
          * Get the number of image planes
@@ -46,9 +61,19 @@ class Image_Format
         size_t planes() const;
 
         /**
+         * Set the number of image planes
+        */
+        void set_planes( size_t planes );
+
+        /**
          * Get the image pixel type
         */
         Pixel_Format_Enum pixel_type() const;
+
+        /**
+         * Set the image pixel type
+        */
+        void set_pixel_type( Pixel_Format_Enum tp );
 
         /**
          * Get the image channel type

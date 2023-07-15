@@ -23,6 +23,7 @@ class CMakeConan(ConanFile):
         self.build_requires("terminus_cmake/1.0.0")
 
     def requirements(self):
+        #self.requires("gdal/3.4.3")
         self.requires("terminus_log/0.0.1")
         self.requires("terminus_math/0.0.1")
         self.requires("terminus_outcome/0.0.1")

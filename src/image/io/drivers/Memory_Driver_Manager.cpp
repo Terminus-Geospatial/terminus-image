@@ -10,17 +10,22 @@ namespace tmns::image {
 /************************************************************************************/
 /*          Pick the appropriate driver in the list for processing the dataset      */
 /************************************************************************************/
-ImageResult<Image_Resource_Memory::ptr_t> pick_driver( const std::filesystem::path& pathname ) const
+ImageResult<Read_Image_Resource_Memory::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
 {
-    typedef Image_Resource_Memory::ptr_t ResT;
-    for( const auto& driver : m_drivers )
+    for( const auto& factory : m_read_driver_factories )
     {
-        if( driver->image_is_supported( pathname ) )
+        if( factory->is_image_supported( pathname ) )
         {
-            return outcome::ok<ResT>( driver->create( pathname ) );
+            auto new_driver = factory->create( pathname );
+            if( new_driver.has_error() )
+            {
+                return outcome::fail( new_driver.assume_error() );
+            }
+            auto driver_ptr = std::dynamic_pointer_cast<Read_Image_Resource_Memory>( new_driver.assume_value() );
+            return outcome::ok<Read_Image_Resource_Memory::ptr_t>( std::move( driver_ptr ) );
         }
     }
     return outcome::fail( error::ErrorCode::DRIVER_NOT_FOUND );
 }
 
-}
+} // End of tmns::image namespace

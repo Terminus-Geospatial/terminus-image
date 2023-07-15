@@ -47,6 +47,14 @@ class ErrorCategory : public tmns::outcome::ErrorCategory<ErrorCategory>
                     return "INVALID_CHANNEL_TYPE";
                 case ErrorCode::NOT_IMPLEMENTED:
                     return "NOT_IMPLEMENTED";
+                case ErrorCode::OUT_OF_BOUNDS:
+                    return "OUT_OF_BOUNDS";
+                case ErrorCode::OUT_OF_MEMORY:
+                    return "OUT_OF_MEMORY";
+                case ErrorCode::FILE_IO_ERROR:
+                    return "FILE_IO_ERROR";
+                case ErrorCode::UNINITIALIZED:
+                    return "UNINITIALIZED";
                 default:
                     return "UNKNOWN";
             }

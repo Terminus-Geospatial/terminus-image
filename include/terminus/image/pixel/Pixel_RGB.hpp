@@ -19,6 +19,8 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
 {
     public:
 
+        typedef ChannelT channel_type;
+
         /**
          * Default Constructor
         */
@@ -44,6 +46,9 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
             m_data[2] = b;
         }
 
+        /// Number of channels
+        static constexpr int NUM_CHANNELS = 3;
+
     private:
 
         /// Underlying Pixel Data
@@ -54,5 +59,7 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
 /// Aliases for easier typing
 using PixelRGB_u8  = Pixel_RGB<ChannelType_u8>;
 using PixelRGB_u12 = Pixel_RGB<ChannelType_u12>;
+using PixelRGB_u14 = Pixel_RGB<ChannelType_u14>;
+using PixelRGB_u16 = Pixel_RGB<ChannelType_u16>;
 
 } // End of tmns::image namespace

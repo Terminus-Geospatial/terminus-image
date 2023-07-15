@@ -14,6 +14,9 @@ enum Channel_Type_Enum
 {
     UNKNOWN = 0 /**< Error condition.*/,
     UINT8   = 1,
+    UINT12  = 2,
+    UINT14  = 3,
+    UINT16  = 4,
 }; // end of Channel_Type_Enum enumeration
 
 /**

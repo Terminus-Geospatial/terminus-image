@@ -42,11 +42,16 @@ ImageResult<Image_Memory<PixelT>> read_image( const std::filesystem::path&      
 
     if( driver_res.has_error() )
     {
-        return outcome::fail( driver_res.assume_error().code() );
+        return outcome::fail( driver_res.assume_error() );
     }
     auto image_resource = driver_res.assume_value();
 
-    return read_image_from_resource<PixelT>( image_resource );
+    auto read_result = read_image_from_resource<PixelT>( image_resource );
+    if( read_result.has_error() )
+    {
+        return read_result.error();
+    }
+    return outcome::ok<Image_Memory<PixelT>>( std::move( read_result.value() ) );
 }
 
 } // End of tmns::image::io namespace

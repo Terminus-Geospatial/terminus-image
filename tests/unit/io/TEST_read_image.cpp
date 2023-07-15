@@ -22,7 +22,7 @@ TEST( io_read_image, read_image_memory )
 
     // Load an image
     std::filesystem::path image_to_load { "./data/sample_images/jpeg/lena.jpg" };
-    auto result = wc::io::read_image<wc::Image<wc::PixelRGB_u8>>( image_to_load );
+    auto result = wc::io::read_image<wc::PixelRGB_u8>( image_to_load );
 
     auto image = result.assume_value();
 
