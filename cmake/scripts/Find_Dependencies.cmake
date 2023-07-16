@@ -13,7 +13,15 @@ find_package( GTest REQUIRED )
 #--------------------#
 #-      Boost       -#
 #--------------------#
-find_package( Boost REQUIRED )
+set( Boost_USE_MULTITHREADED ON )
+add_definitions( -DBOOST_ALL_DYN_LINK )
+find_package( Boost REQUIRED
+                COMPONENT
+                    json
+                    log
+                    log_setup
+                    system )
+message( STATUS "${COLOR_BOLD}Boost_LIBRARIES: ${COLOR_RESET}${Boost_LIBRARIES}")
 
 #--------------------#
 #-      GDAL        -#

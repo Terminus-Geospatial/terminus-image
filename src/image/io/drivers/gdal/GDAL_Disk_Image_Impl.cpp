@@ -14,6 +14,9 @@
 /// C++ Libraries
 #include <mutex>
 
+// GDAL Libraries
+#include <gdal.h>
+
 
 namespace tmns::image::io::gdal {
 
@@ -104,7 +107,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         sout << " - Actual Values:" << std::endl;
         for( size_t i=0; i<channel_codes.size(); i++ )
         {
-            sout << "   - " << i << " -> " << GDALGetColorInterpretationName( channel_codes[i] ) << std::endl;
+            sout << "   - " << i << " -> " << GDALGetColorInterpretationName( (GDALColorInterp)channel_codes[i] ) << std::endl;
         }
         sout << "Will attempt to determine by simple channel counts.";
 
@@ -113,33 +116,33 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         // Check next set of rules
         if( channel_codes.size() == 1 )
         {
-            m_format.set_pixel_format( Pixel_Format_Enum::GRAY );
+            m_format.set_pixel_type( Pixel_Format_Enum::GRAY );
             m_format.set_planes( 1 );
         }
         else if( channel_codes.size() == 2 )
         {
-            m_format.set_pixel_format( Pixel_Format_Enum::GRAYA );
+            m_format.set_pixel_type( Pixel_Format_Enum::GRAYA );
             m_format.set_planes( 1 );
         }
         else if( channel_codes.size() == 3 )
         {
-            m_format.set_pixel_format( Pixel_Format_Enum::RGB );
+            m_format.set_pixel_type( Pixel_Format_Enum::RGB );
             m_format.set_planes( 1 );
         }
         else if( channel_codes.size() == 4 )
         {
-            m_format.set_pixel_format( Pixel_Format_Enum::RGBA );
+            m_format.set_pixel_type( Pixel_Format_Enum::RGBA );
             m_format.set_planes( 1 );
         }
         else
         {
-            m_format.set_pixel_format( Pixel_Format_Enum::SCALAR );
+            m_format.set_pixel_type( Pixel_Format_Enum::SCALAR );
             m_format.set_planes( channel_codes.size() );
         }
     }
     else
     {
-        m_format.set_pixel_format( pix_res.value() );
+        m_format.set_pixel_type( pix_res.value() );
         m_format.set_planes( 1 );
     }
 
@@ -147,6 +150,16 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
 
     // Get the block size
     m_blocksize = default_block_size();
+
+    return outcome::ok();
+}
+
+/********************************************/
+/*          Get the Format Structure        */
+/********************************************/
+Image_Format GDAL_Disk_Image_Impl::format() const
+{
+    return m_format;
 }
 
 /************************************************************/
@@ -167,6 +180,48 @@ ImageResult<GDAL_Disk_Image_Impl::DatasetPtrT> GDAL_Disk_Image_Impl::get_dataset
         return outcome::fail( error::ErrorCode::UNINITIALIZED,
                               "GDAL:  No dataset opened." );
     }
+}
+
+/************************************************/
+/*          Get the default block size          */
+/************************************************/
+math::Vector2i GDAL_Disk_Image_Impl::default_block_size() const
+{
+    auto dataset = get_dataset_ptr().value();
+
+    GDALRasterBand *band = dataset->GetRasterBand(1);
+    int xsize, ysize;
+    band->GetBlockSize( &xsize, &ysize );
+
+    // GDAL assumes a single-row stripsize even for file formats like PNG for
+    // which it does not support true strip access. If it looks like it did
+    // that (single-line block) only trust it if it's on the whitelist.
+    if( ysize == 1 && !blocksize_whitelist( dataset->GetDriver() ) )
+    {
+        xsize = format().cols();
+        ysize = format().rows();
+    }
+
+    return std::move( math::Vector2i( { xsize, ysize } ) );
+}
+
+/************************************************************************************/
+/*          Get the list of supported/trusted drivers that rely on blocksizes       */
+/************************************************************************************/
+bool GDAL_Disk_Image_Impl::blocksize_whitelist( const GDALDriver* driver )
+{
+    // These drivers are mostly known to report good data
+    static const size_t DRIVER_COUNT = 4;
+    static const char drivers[DRIVER_COUNT][7] = {"GTiff", "ISIS3", "JP2ECW", "JP2KAK"};
+
+    for (size_t i = 0; i < DRIVER_COUNT; ++i)
+    {
+        if (driver == GetGDALDriverManager()->GetDriverByName(drivers[i]))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 }

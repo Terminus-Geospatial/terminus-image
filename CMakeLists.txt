@@ -28,11 +28,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Bring in CMake helpers for TERMINUS projects
 include( terminus_cmake )
 
-#  Enable code coverage
-if( TERMINUS_OUTCOME_ENABLE_COVERAGE )
-     terminus_coverage_enable()
-endif()
-
 #  Look for dependencies
 include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 
@@ -51,16 +46,23 @@ add_library( ${PROJECT_NAME} SHARED
 )
 
 #  Link in dependencies
-target_link_libraries( ${PROJECT_NAME} PUBLIC
-     Boost::headers
+target_link_libraries( ${PROJECT_NAME}
+     Boost::json
+     Boost::log
+     Boost::log_setup
+     Boost::system
      GDAL::GDAL
      terminus_log::terminus_log
      terminus_math::terminus_math
      terminus_outcome::terminus_outcome
 )
 
+#  Enable code coverage
+if( TERMINUS_IMAGE_ENABLE_COVERAGE )
+     terminus_coverage_enable()
+endif()
 
-if(ENABLE_TESTS)
-    message( "TESTING ENABLED" )
-    add_subdirectory( tests )
+if( TERMINUS_IMAGE_ENABLE_TESTS )
+    enable_testing()
+    add_subdirectory( tests/unit )
 endif()

@@ -12,9 +12,17 @@ class CMakeConan(ConanFile):
     description = "High-Performance Image-Processing API"
     topics = ("terminus", "cmake", "build")
 
-    options = { "ENABLE_TESTS": [True, False] }
+    options = { "shared": [True, False],
+                "with_tests": [True, False],
+                "with_docs": [True, False],
+                "with_coverage": [True, False]
+    }
 
-    default_options = { "ENABLE_TESTS": True }
+    default_options = { "shared": True,
+                        "with_tests": True,
+                        "with_docs": True,
+                        "with_coverage": False,
+                        "boost/*:shared": True }
 
     settings = "os", "compiler", "build_type", "arch"
 
@@ -23,6 +31,7 @@ class CMakeConan(ConanFile):
         self.build_requires("terminus_cmake/1.0.0")
 
     def requirements(self):
+        self.requires("boost/1.82.0")
         #self.requires("gdal/3.4.3")
         self.requires("terminus_log/0.0.1")
         self.requires("terminus_math/0.0.1")
@@ -35,13 +44,14 @@ class CMakeConan(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
-        tc.variables["VERSION_FROM_CONANFILE"] = self.version
-        tc.variables["NAME_FROM_CONANFILE"] = self.name
-        tc.variables["DESC_FROM_CONANFILE"] = self.description
-        tc.variables["URL_FROM_CONANFILE"] = self.url
+        tc.variables["CONAN_PKG_VERSION"]     = self.version
+        tc.variables["CONAN_PKG_NAME"]        = self.name
+        tc.variables["CONAN_PKG_DESCRIPTION"] = self.description
+        tc.variables["CONAN_PKG_URL"]         = self.url
 
-        for option in self.default_options:
-            tc.variables[option] = self.default_options[option]
+        tc.variables["TERMINUS_IMAGE_ENABLE_TESTS"]    = self.options.with_tests
+        tc.variables["TERMINUS_IMAGE_ENABLE_DOCS"]     = self.options.with_docs
+        tc.variables["TERMINUS_IMAGE_ENABLE_COVERAGE"] = self.options.with_coverage
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()

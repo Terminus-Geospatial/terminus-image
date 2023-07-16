@@ -5,6 +5,7 @@
 include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/image/io/drivers/gdal )
 
 add_library( TERMINUS_IMAGE_IO_DRIVERS_GDAL OBJECT
+             GDAL_Codes.cpp
              GDAL_Disk_Image_Impl.cpp
              GDAL_Disk_Image_Impl.hpp
              GDAL_Utilities.cpp

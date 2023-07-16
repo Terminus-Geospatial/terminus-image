@@ -5,6 +5,9 @@
 */
 #include "Read_Image_Resource_Disk_GDAL.hpp"
 
+// Terminus Libraries
+#include "GDAL_Disk_Image_Impl.hpp"
+
 namespace tmns::image::io::gdal {
 
 /********************************/
@@ -19,12 +22,21 @@ Read_Image_Resource_Disk_GDAL::Read_Image_Resource_Disk_GDAL( const std::filesys
                                                      color_reference_lut );
 }
 
+/********************************/
+/*          Destructor          */
+/********************************/
+Read_Image_Resource_Disk_GDAL::~Read_Image_Resource_Disk_GDAL()
+{
+    m_impl.reset();
+}
+
 /****************************************************/
 /*          Create Resource and Open Image          */
 /****************************************************/
-ImageResult<ParentPtrT> Read_Image_Resource_Disk_GDAL::create( const std::filesystem::path& pathname )
+ImageResult<Read_Image_Resource_Disk_GDAL::ParentPtrT>
+        Read_Image_Resource_Disk_GDAL::create( const std::filesystem::path& pathname )
 {
-    auto driver = std::make_shared<ParentPtrT>( pathname );
+    auto driver = std::make_shared<Read_Image_Resource_Disk_GDAL>( pathname );
 
     return outcome::ok<ParentPtrT>( driver );
 }
@@ -34,7 +46,7 @@ ImageResult<ParentPtrT> Read_Image_Resource_Disk_GDAL::create( const std::filesy
 /************************************/
 ImageResult<void> Read_Image_Resource_Disk_GDAL::open( const std::filesystem::path& pathname )
 {
-    return m_impl->open();
+    return m_impl->open( pathname );
 }
 
 } // end of tmns::image::io::gdal namespace

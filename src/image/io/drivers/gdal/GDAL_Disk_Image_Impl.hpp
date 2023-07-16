@@ -14,6 +14,9 @@
 #include <tuple>
 #include <vector>
 
+// External Terminus Libraries
+#include <terminus/math/Vector.hpp>
+
 // Terminus Libraries
 #include "../../../error/ErrorCategory.hpp"
 #include "../../../pixel/Pixel_Format_Enum.hpp"
@@ -50,6 +53,16 @@ class GDAL_Disk_Image_Impl
         */
         Image_Format format() const;
 
+        /**
+         * Get the default block size
+        */
+        math::Vector2i default_block_size() const;
+
+        /**
+         * Check if driver type is trusted to report valid single-line block sizes
+        */
+        static bool blocksize_whitelist( const GDALDriver* driver );
+
     private:
 
         /// Pathname to image
@@ -64,6 +77,9 @@ class GDAL_Disk_Image_Impl
 
         /// Color Code -> PixelType lookup table
         ColorCodeLookupT m_color_reference_lut;
+
+        /// Block Size Information
+        math::Vector2i m_blocksize;
 
 
 }; // End of GDAL_Disk_Image_Impl class

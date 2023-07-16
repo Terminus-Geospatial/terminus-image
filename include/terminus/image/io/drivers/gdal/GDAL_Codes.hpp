@@ -5,13 +5,17 @@
 */
 #pragma once
 
+// C++ Libraries
+#include <string>
+#include <vector>
+
 /**
  * This entire header is somewhat superflerous as we're simply remapping GDAL enums.  The
  * only reason this exists is because we really, really, really don't want the consumer
  * to be required to #include<gdal.h> when using our products, so we're wrapping GDAL behind
  * the PIMPL idiom.
  *
- * We have an internal unit-test that verifies these values don't change. 
+ * We have an internal unit-test that verifies these values don't change.
 */
 namespace tmns::image::io::gdal {
 
@@ -37,5 +41,10 @@ enum class GDAL_Color_Codes
     /*! Cr Chroma */                             GCI_YCbCr_CrBand   = 16,
     /*! Max current value (equals to GCI_YCbCr_CrBand currently) */ GCI_Max = 16
 }; // end of GDAL_Color_Codes Enum
+
+/**
+ * Create a log-friendly string showing the color codes
+*/
+std::string ToLogString( std::vector<int> codes );
 
 } // end of tmns::image::io::gdal namespace

@@ -24,7 +24,8 @@ enum class ErrorCode { SUCCESS              = 0,
                        OUT_OF_BOUNDS        = 8,
                        OUT_OF_MEMORY        = 9,
                        FILE_IO_ERROR        = 10,
-                       UNINITIALIZED        = 11  };
+                       UNINITIALIZED        = 11,
+                       NOT_FOUND            = 12  };
 
 } // End of tmns::image::error namespace
 

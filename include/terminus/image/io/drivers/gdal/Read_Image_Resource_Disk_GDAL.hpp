@@ -106,6 +106,7 @@ class Read_Image_Resource_Disk_GDAL : public Read_Image_Resource_Disk
         std::shared_ptr<GDAL_Disk_Image_Impl> m_impl;
 
         /// Color Code Lookup Table
+        ColorCodeLookupT m_color_reference_lut;
 
 }; // End of Read_Image_Resource_Disk_GDAL class
 

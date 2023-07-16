@@ -55,6 +55,8 @@ class ErrorCategory : public tmns::outcome::ErrorCategory<ErrorCategory>
                     return "FILE_IO_ERROR";
                 case ErrorCode::UNINITIALIZED:
                     return "UNINITIALIZED";
+                case ErrorCode::NOT_FOUND:
+                    return "NOT_FOUND";
                 default:
                     return "UNKNOWN";
             }

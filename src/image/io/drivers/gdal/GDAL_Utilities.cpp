@@ -5,12 +5,19 @@
 */
 #include "GDAL_Utilities.hpp"
 
-// Terminus Libraries
+// External Terminus Libraries
 #include <terminus/log/Logger.hpp>
 
-namespace tmns::image::io::drivers::gdal {
+// Terminus Libraries
+#include "GDAL_Codes.hpp"
 
-static tmns::log::Logger g_gdal_logger;
+// Boost Libraries
+#include <boost/algorithm/string/replace.hpp>
+
+
+namespace tmns::image::io::gdal {
+
+static tmns::log::Logger g_gdal_logger("tmns::imageio::drivers::gdal");
 /****************************************/
 /*          Get the GDAL Logger         */
 /****************************************/
@@ -27,6 +34,7 @@ static void CPL_STDCALL GDAL_Error_Handler( CPLErr      eErrClass,
                                             const char* pszErrorMsg )
 {
     boost::log::trivial::severity_level lvl;
+    auto& logger = get_master_gdal_logger();
 
     switch(eErrClass)
     {
@@ -44,7 +52,7 @@ static void CPL_STDCALL GDAL_Error_Handler( CPLErr      eErrClass,
     {
         message = pszErrorMsg;
     }
-    boost::replace_all(msg, "\n", " ");
+    boost::replace_all(message, "\n", " ");
 
     if ( eErrClass == CE_Fatal )
     {
@@ -64,6 +72,8 @@ ImageResult<void> Initialize_GDAL()
     // open, you probably have a bug.
     CPLSetConfigOption("GDAL_MAX_DATASET_POOL_SIZE", "400");
     GDALAllRegister();
+
+    return outcome::ok();
 }
 
 /********************************************/
@@ -72,7 +82,6 @@ ImageResult<void> Initialize_GDAL()
 static std::mutex g_gdal_mtx;
 std::mutex& get_master_gdal_mutex()
 {
-
     return g_gdal_mtx;
 }
 
@@ -87,4 +96,23 @@ void GDAL_Deleter_Null_Okay( GDALDatasetH dataset )
     }
 }
 
-} // end of tmns::image::io::drivers::gdal namespace
+/**************************************************************/
+/*       Compare the set of color codes against the LUT       */
+/**************************************************************/
+ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>>& reference_lut,
+                                                          const std::vector<int>&                                            channel_codes )
+{
+    for( const auto& ref_tup : reference_lut )
+    {
+        if( std::get<0>( ref_tup ) == channel_codes )
+        {
+            return outcome::ok<Pixel_Format_Enum>( std::get<1>( ref_tup ) );
+        }
+    }
+    return outcome::fail( error::ErrorCode::NOT_FOUND,
+                          "No matching color code found for color set: ",
+                          ToLogString( channel_codes ) );
+}
+
+
+} // end of tmns::image::io::gdal namespace
