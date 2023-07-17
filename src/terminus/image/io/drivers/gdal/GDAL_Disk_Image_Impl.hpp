@@ -15,11 +15,14 @@
 #include <vector>
 
 // External Terminus Libraries
+#include <terminus/math/Rectangle.hpp>
 #include <terminus/math/Vector.hpp>
 
 // Terminus Libraries
 #include "../../../error/ErrorCategory.hpp"
 #include "../../../pixel/Pixel_Format_Enum.hpp"
+#include "../../../pixel/Pixel_RGBA.hpp"
+#include "../../../Image_Buffer.hpp"
 #include "../../../Image_Format.hpp"
 
 namespace tmns::image::io::gdal {
@@ -42,6 +45,14 @@ class GDAL_Disk_Image_Impl
          * Open the dataset
         */
         ImageResult<void> open( const std::filesystem::path& pathname );
+
+        /**
+         * Read the raster from disk
+        */
+        ImageResult<void> read( const Image_Buffer&         dest,
+                                const math::Rectangle<int>& bbox,
+                                bool                        rescale ) const;
+
 
         /**
          * Get the GDALDataset point for whatever dataset is active.
@@ -81,6 +92,8 @@ class GDAL_Disk_Image_Impl
         /// Block Size Information
         math::Vector2i m_blocksize;
 
+        /// Image Palette
+        std::vector<PixelRGBA_u8> m_color_table;
 
 }; // End of GDAL_Disk_Image_Impl class
 

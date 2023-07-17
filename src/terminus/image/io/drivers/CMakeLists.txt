@@ -3,6 +3,7 @@
 #    Date:    7/13/2023
 add_subdirectory( gdal )
 
+include_directories( ${CMAKE_SOURCE_DIR}/include )
 include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/image/io/drivers )
 
 add_library( TERMINUS_IMAGE_IO_DRIVERS OBJECT

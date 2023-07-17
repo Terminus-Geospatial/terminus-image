@@ -81,6 +81,11 @@ class Image_Format
         Channel_Type_Enum channel_type() const;
 
         /**
+         * Set the image channel type
+        */
+        void set_channel_type( Channel_Type_Enum tp );
+
+        /**
          * Check if we should apply alpha channel adjustments
         */
         bool premultiply() const;
@@ -90,6 +95,36 @@ class Image_Format
         */
         bool complete() const;
 
+        /**
+         * Get the column stride.  Note this does no error or bounds checking.
+         * Do not use this until the format class is fully initialized.
+        */
+        size_t cstride  () const;
+
+        /**
+         * Get the row stride.  Note this does no error or bounds checking.
+         * Do not use this until the format class is fully initialized.
+        */
+        size_t rstride  () const;
+
+        /**
+         * Get the plane stride.  Note this does no error or bounds checking.
+         * Do not use this until the format class is fully initialized.
+        */
+        size_t pstride  () const;
+
+        /**
+         * Get the raster size in bytes.  Note this does no error or bounds
+         * checking.  Do not use this until the format class is fully
+         * initialized
+        */
+        size_t raster_size_bytes() const;
+
+
+        /**
+         * Print to log-friendly string
+        */
+        std::string To_Log_String( size_t offset = 0 ) const;
 
     private:
 

@@ -5,6 +5,14 @@
 */
 #include "Image_Format.hpp"
 
+// Terminus Libraries
+#include "pixel/Channel_Type_Enum.hpp"
+#include "pixel/Pixel_Format_Enum.hpp"
+
+// C++ Libraries
+#include <iostream>
+#include <sstream>
+
 namespace tmns::image {
 
 /********************************/
@@ -97,6 +105,14 @@ Channel_Type_Enum Image_Format::channel_type() const
     return m_channel_type;
 }
 
+/********************************************/
+/*          Set the Channel Type            */
+/********************************************/
+void Image_Format::set_channel_type( Channel_Type_Enum tp )
+{
+    m_channel_type = tp;
+}
+
 /****************************************/
 /*          Check if premultiply        */
 /****************************************/
@@ -115,6 +131,56 @@ bool Image_Format::complete() const
              m_planes > 0 &&
              !channel_size_bytes( m_channel_type ).has_error() &&
              !num_channels( m_pixel_type ).has_error() );
+}
+
+/*******************************************/
+/*          Get the column stride          */
+/*******************************************/
+size_t Image_Format::cstride() const
+{
+    return channel_size_bytes( channel_type() ).value() *
+           num_channels( pixel_type() ).value();
+}
+
+/*******************************************/
+/*           Get the row stride            */
+/*******************************************/
+size_t Image_Format::rstride() const
+{
+    return cstride() * cols();
+}
+
+/********************************************/
+/*          Get the plane stride            */
+/********************************************/
+size_t Image_Format::pstride() const
+{
+    return rstride() * rows();
+}
+
+/********************************************/
+/*          Get Raster Size in Bytes        */
+/********************************************/
+size_t Image_Format::raster_size_bytes() const
+{
+    return pstride() * planes();
+}
+
+/************************************************/
+/*          Print to Log-Friendly String        */
+/************************************************/
+std::string Image_Format::To_Log_String( size_t offset ) const
+{
+    std::string gap( offset, ' ' );
+    std::stringstream sout;
+    sout << gap << "- Image_Format " << std::endl;
+    sout << gap << "    - cols: " << cols() << std::endl;
+    sout << gap << "    - rows: " << rows() << std::endl;
+    sout << gap << "    - planes: " << planes() << std::endl;
+    sout << gap << "    - ptype: " << enum_to_string( pixel_type() ) << std::endl;
+    sout << gap << "    - ctype: " << enum_to_string( channel_type() ) << std::endl;
+    sout << gap << "    - premult: " << std::boolalpha << premultiply() << std::endl;
+    return sout.str();
 }
 
 

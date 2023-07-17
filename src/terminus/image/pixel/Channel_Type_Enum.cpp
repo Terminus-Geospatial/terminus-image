@@ -1,0 +1,88 @@
+/**
+ * @file    Channel_Type_Enum.cpp
+ * @author  Marvin Smith
+ * @file    7/13/2023
+*/
+#include "Channel_Type_Enum.hpp"
+
+// Terminus Libraries
+#include "../error/ErrorCategory.hpp"
+
+// External Terminus Libraries
+#include <terminus/outcome/Result.hpp>
+
+namespace tmns::image {
+
+/****************************************************/
+/*          Convert Enumeration to String           */
+/****************************************************/
+std::string enum_to_string( Channel_Type_Enum val )
+{
+    switch( val )
+    {
+        case Channel_Type_Enum::UINT8:
+            return "UINT8";
+        case Channel_Type_Enum::UINT12:
+            return "UINT12";
+        case Channel_Type_Enum::UINT14:
+            return "UINT14";
+        case Channel_Type_Enum::UINT16:
+            return "UINT16";
+        case Channel_Type_Enum::UINT32:
+            return "UINT32";
+        case Channel_Type_Enum::INT16:
+            return "INT16";
+        case Channel_Type_Enum::INT32:
+            return "INT32";
+        case Channel_Type_Enum::FLOAT32:
+            return "FLOAT32";
+        case Channel_Type_Enum::FLOAT32Free:
+            return "FLOAT32Free";
+        case Channel_Type_Enum::FLOAT64:
+            return "FLOAT64";
+        case Channel_Type_Enum::FLOAT64Free:
+            return "FLOAT64Free";
+        case Channel_Type_Enum::UNKNOWN:
+        default:
+            return "UNKNOWN";
+    }
+}
+
+/********************************************************/
+/*          Get the size of the channel in bytes        */
+/********************************************************/
+ImageResult<size_t> channel_size_bytes( Channel_Type_Enum val )
+{
+    switch( val )
+    {
+        // Single-Byte Entries
+        case Channel_Type_Enum::UINT8:
+            return outcome::ok<size_t>( 1 );
+
+        // Two-byte entries
+        case Channel_Type_Enum::UINT12:
+        case Channel_Type_Enum::UINT14:
+        case Channel_Type_Enum::UINT16:
+        case Channel_Type_Enum::INT16:
+            return outcome::ok<size_t>( 2 );
+
+        // Four-byte entries
+        case Channel_Type_Enum::UINT32:
+        case Channel_Type_Enum::INT32:
+        case Channel_Type_Enum::FLOAT32:
+        case Channel_Type_Enum::FLOAT32Free:
+            return outcome::ok<size_t>( 4 );
+
+        // Eight-byte entries
+        case Channel_Type_Enum::FLOAT64:
+        case Channel_Type_Enum::FLOAT64Free:
+            return outcome::ok<size_t>( 8 );
+
+        // Error Conditions
+        case Channel_Type_Enum::UNKNOWN:
+        default:
+            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE );
+    }
+}
+
+} // end of tmns::image namespace

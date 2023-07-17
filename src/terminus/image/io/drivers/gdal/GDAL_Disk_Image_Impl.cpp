@@ -6,9 +6,11 @@
 #include "GDAL_Disk_Image_Impl.hpp"
 
 /// Terminus Libraries
+#include "../../../pixel/convert.hpp"
 #include "GDAL_Utilities.hpp"
 
 /// External Terminus Libraries
+#include <terminus/log/utility.hpp>
 #include <terminus/outcome/Result.hpp>
 
 /// C++ Libraries
@@ -39,6 +41,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
     // Lock the global GDAL Context
     std::unique_lock<std::mutex> lck( get_master_gdal_mutex() );
     auto logger = get_master_gdal_logger();
+    logger.trace( "Opening dataset for file: ", pathname.native() );
 
     /// Create the GDAL Dataset
     m_read_dataset.reset( (GDALDataset*)GDALOpen( pathname.native().c_str(), GA_ReadOnly ), GDAL_Deleter_Null_Okay );
@@ -139,6 +142,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
             m_format.set_pixel_type( Pixel_Format_Enum::SCALAR );
             m_format.set_planes( channel_codes.size() );
         }
+
     }
     else
     {
@@ -146,12 +150,128 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         m_format.set_planes( 1 );
     }
 
-    /// Skip color palettes for now
+    /// Get the channel-type
+    auto ctype = gdal_pixel_format_to_channel_type( dataset->GetRasterBand(1)->GetRasterDataType() );
+    if( ctype.has_error() )
+    {
+        get_master_gdal_logger().error( "Unable to parse channel-type. ", ctype.error().message() );
+        return outcome::fail( ctype.error() );
+    }
+    m_format.set_channel_type( ctype.value() );
+
+    // Color Palette (if supported)
+    if( dataset->GetRasterCount() == 1 &&
+        dataset->GetRasterBand(1)->GetColorInterpretation() == GCI_PaletteIndex )
+    {
+        // Setup the pixel and plane info
+        m_format.set_pixel_type( Pixel_Format_Enum::RGBA );
+        m_format.set_planes( 1 );
+
+        // Fetch the color table and add to table
+        GDALColorTable* color_table = dataset->GetRasterBand(1)->GetColorTable();
+
+        m_color_table.resize( color_table->GetColorEntryCount() );
+        GDALColorEntry color;
+        for( size_t i=0; i<m_color_table.size(); i++ )
+        {
+            color_table->GetColorEntryAsRGB( i, &color );
+            m_color_table[i] = PixelRGBA_u8( color.c1, color.c2, color.c3, color.c4 );
+        }
+    }
 
     // Get the block size
     m_blocksize = default_block_size();
 
     return outcome::ok();
+}
+
+/********************************************/
+/*          Read memory from disk           */
+/********************************************/
+ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
+                                              const math::Rectangle<int>& bbox,
+                                              bool                        rescale ) const
+{
+    // Perform bounds checks
+    if( !bbox.is_inside( math::ToPoint2<double>( format().cols(),
+                                                 format().rows() ) ) )
+    {
+        return outcome::fail( error::ErrorCode::OUT_OF_BOUNDS,
+                              "Bounding box outside the bounds of the image." );
+    }
+
+    // Create source fetching region
+    Image_Format src_fmt = format();
+    src_fmt.set_cols( bbox.width() );
+    src_fmt.set_rows( bbox.height() );
+
+    tmns::log::error( src_fmt.To_Log_String() );
+
+    std::shared_ptr<uint8_t> src_data(new uint8_t[ src_fmt.raster_size_bytes() ]);
+    Image_Buffer src(src_fmt, src_data.get());
+
+    {
+        std::unique_lock<std::mutex> lck( get_master_gdal_mutex() );
+
+        auto dataset = get_dataset_ptr().value();
+
+        auto& logger = get_master_gdal_logger();
+
+        auto ch_size = channel_size_bytes( src.format().channel_type() ).value();
+        if( m_color_table.empty() )
+        {
+            auto nchannels = num_channels( format().pixel_type() ).value();
+            for( size_t p = 0; p < format().planes();   ++p ) {
+            for( size_t c = 0; c < nchannels; ++c )
+            {
+                // Only one of channels() or planes() will be nonzero.
+                auto* band = dataset->GetRasterBand( c + p + 1 );
+
+                auto gdal_pix_fmt = channel_type_to_gdal_pixel_format( format().channel_type() ).value();
+                CPLErr result = band->RasterIO( GF_Read,
+                                                bbox.min().x(),
+                                                bbox.min().y(),
+                                                bbox.width(),
+                                                bbox.height(),
+                                                ( uint8_t* ) src( 0, 0, p ) + ch_size * c,
+                                                src.format().cols(),
+                                                src.format().rows(),
+                                                gdal_pix_fmt,
+                                                src.cstride(),
+                                                src.rstride() );
+                if( result != CE_None )
+                {
+                    logger.warn( "RasterIO problem: ",
+                                 CPLGetLastErrorMsg() );
+                }
+            }}
+        }
+
+        // Convert the color table
+        else
+        {
+            GDALRasterBand* band = dataset->GetRasterBand(1);
+            uint8_t* index_data = new uint8_t[ bbox.width() * bbox.height() ];
+            CPLErr result = band->RasterIO( GF_Read, bbox.min().x(), bbox.min().y(), bbox.width(), bbox.height(),
+                                           index_data, bbox.width(), bbox.height(), GDT_Byte, 1, bbox.width() );
+            if (result != CE_None)
+            {
+                logger.warn( "RasterIO problem: ",
+                                 CPLGetLastErrorMsg() );
+            }
+
+
+            PixelRGBA_u8* rgba_data = (PixelRGBA_u8*) src.data();
+            for( int i=0; i<bbox.width()*bbox.height(); ++i )
+            {
+                rgba_data[i] = m_color_table[index_data[i]];
+            }
+
+            delete [] index_data;
+        }
+    }
+
+    return convert( dest, src, rescale );
 }
 
 /********************************************/

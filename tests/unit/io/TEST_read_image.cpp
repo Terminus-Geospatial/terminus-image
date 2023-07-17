@@ -21,9 +21,14 @@ TEST( io_read_image, read_image_memory )
     namespace wc = tmns::image;
 
     // Load an image
-    std::filesystem::path image_to_load { "./data/sample_images/jpeg/lena.jpg" };
+    std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };
     auto result = wc::io::read_image<wc::PixelRGB_u8>( image_to_load );
 
+    if( result.has_error() )
+    {
+        tmns::log::error( "error reading image: ", result.error().message() );
+    }
+    ASSERT_FALSE( result.has_error() );
     auto image = result.assume_value();
 
     ASSERT_FALSE( result.has_error() );

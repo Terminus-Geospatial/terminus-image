@@ -2,6 +2,7 @@
 #    Author:  Marvin Smith
 #    Date:    7/14/2023
 
+include_directories( ${CMAKE_SOURCE_DIR}/include )
 include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/image/io/drivers/gdal )
 
 add_library( TERMINUS_IMAGE_IO_DRIVERS_GDAL OBJECT

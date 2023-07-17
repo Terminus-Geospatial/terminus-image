@@ -63,11 +63,7 @@ class Read_Image_Resource_Disk_GDAL : public Read_Image_Resource_Disk
          * Read the image data from disk
         */
         ImageResult<void> read( const Image_Buffer& dest,
-                                const math::Rect2i& bbox ) const override
-        {
-            return outcome::fail( error::ErrorCode::NOT_IMPLEMENTED,
-                                  "Not Implemented Yet" );
-        }
+                                const math::Rect2i& bbox ) const override;
 
         /**
          * Default mapping of Color-Codes in GDAL to Pixel-Types
@@ -83,7 +79,7 @@ class Read_Image_Resource_Disk_GDAL : public Read_Image_Resource_Disk
             // Grayscale with alpha
             lut.push_back( std::make_tuple( std::vector<int>{ static_cast<int>(GDAL_Color_Codes::GCI_GrayIndex),
                                                               static_cast<int>(GDAL_Color_Codes::GCI_AlphaBand) },
-                                            Pixel_Format_Enum::GRAY ) );
+                                            Pixel_Format_Enum::GRAYA ) );
 
             // RGB
             lut.push_back( std::make_tuple( std::vector<int>{ static_cast<int>(GDAL_Color_Codes::GCI_RedBand),

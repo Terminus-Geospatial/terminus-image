@@ -10,6 +10,29 @@
 
 namespace tmns::image {
 
+/********************************************/
+/*      Convert Enumeration to String       */
+/********************************************/
+std::string enum_to_string( Pixel_Format_Enum val )
+{
+    switch( val )
+    {
+        case Pixel_Format_Enum::SCALAR:
+            return "SCALAR";
+        case Pixel_Format_Enum::GRAY:
+            return "GRAY";
+        case Pixel_Format_Enum::GRAYA:
+            return "GRAYA";
+        case Pixel_Format_Enum::RGB:
+            return "RGB";
+        case Pixel_Format_Enum::RGBA:
+            return "RGBA";
+        case Pixel_Format_Enum::UNKNOWN:
+        default:
+            return "UNKNOWN";
+    }
+}
+
 /****************************************************************/
 /*          Get the number of channels for the PixelType        */
 /****************************************************************/

@@ -10,7 +10,8 @@
 #include <terminus/outcome/Result.hpp>
 
 // Terminus Libraries
-#include "../../../pixel/Pixel_Format_Enum.hpp"
+#include <terminus/image/pixel/Channel_Type_Enum.hpp>
+#include <terminus/image/pixel/Pixel_Format_Enum.hpp>
 
 // GDAL Libraries
 #include <gdal.h>
@@ -50,5 +51,14 @@ ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std:
                                                           const std::vector<int>&                                            channel_codes );
 
 
+/**
+ * Method to convert GDAL data-type object into a Terminus Channel-Type enum
+*/
+ImageResult<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType gdal_type );
+
+/**
+ * Method to convert Terminus Channel-Types into GDAL Data-Types
+*/
+ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum channel_type );
 
 } // end of tmns::image::io::gdal namespace

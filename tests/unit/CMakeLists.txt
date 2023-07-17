@@ -7,12 +7,14 @@ find_package( GTest REQUIRED )
 include( GoogleTest )
 
 include_directories( ${CMAKE_SOURCE_DIR}/include )
+include_directories( ${CMAKE_SOURCE_DIR}/src )
 
 set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     io/TEST_read_image.cpp
     io/drivers/gdal/TEST_GDAL_Codes.cpp
     io/drivers/gdal/TEST_GDAL_Utilities.cpp
+    io/drivers/gdal/TEST_Read_Image_Resource_Disk_GDAL_Factory.cpp
 )
 
 target_link_libraries( ${TEST} PRIVATE
@@ -24,5 +26,5 @@ target_link_libraries( ${TEST} PRIVATE
 gtest_discover_tests( ${TEST} )
 
 #  Copy Unit-Test Data
-#file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data
-#      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data )
+file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/images
+      DESTINATION ${CMAKE_BINARY_DIR}/data )

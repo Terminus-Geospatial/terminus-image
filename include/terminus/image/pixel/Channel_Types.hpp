@@ -145,11 +145,62 @@ class Channel_Type<uint16_t,16>
 
 }; // End of Channel_Type
 
+/**
+ * Channel-Type for Float64
+*/
+template<>
+class Channel_Type<double,1>
+{
+    public:
+
+        typedef double data_type;
+
+        typedef double accumulator_type;
+
+        static constexpr data_type MAX_VALUE = 1;
+
+        static constexpr data_type MIN_VALUE = 0;
+
+        static constexpr int NUMBER_BYTES = 8;
+
+        static constexpr int PRECISION = 64;
+
+        static consteval std::string name() { return "Channel_Type<double,1>"; };
+
+}; // End of Channel_Type
+
+/**
+ * Channel-Type for Float64
+*/
+template<>
+class Channel_Type<double,2>
+{
+    public:
+
+        typedef double data_type;
+
+        typedef double accumulator_type;
+
+        static constexpr data_type MAX_VALUE = 1;
+
+        static constexpr data_type MIN_VALUE = -1;
+
+        static constexpr int NUMBER_BYTES = 8;
+
+        static constexpr int PRECISION = 64;
+
+        static consteval std::string name() { return "Channel_Type<double,2>"; };
+
+}; // End of Channel_Type
+
 
 // Master List of useful aliases
-using ChannelType_u8  = Channel_Type<uint8_t,8>;
-using ChannelType_u12 = Channel_Type<uint16_t,12>;
-using ChannelType_u14 = Channel_Type<uint16_t,14>;
-using ChannelType_u16 = Channel_Type<uint16_t,16>;
+using ChannelType_u8   = Channel_Type<uint8_t,8>;
+using ChannelType_u12  = Channel_Type<uint16_t,12>;
+using ChannelType_u14  = Channel_Type<uint16_t,14>;
+using ChannelType_u16  = Channel_Type<uint16_t,16>;
+
+using ChannelType_f64  = Channel_Type<double,1>;
+using ChannelType_f64f = Channel_Type<double,2>;
 
 } // End of tmns::image namespace

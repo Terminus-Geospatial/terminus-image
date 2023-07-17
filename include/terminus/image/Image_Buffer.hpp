@@ -44,6 +44,11 @@ class Image_Buffer
         virtual ~Image_Buffer() = default;
 
         /**
+         * Get raw data pointer
+        */
+        void* data() const;
+        
+        /**
          * Image Columns
         */
         size_t cols() const;
@@ -62,6 +67,31 @@ class Image_Buffer
          * Get the channel type
         */
         Channel_Type_Enum channel_type() const;
+
+        /**
+         * Get the image format
+        */
+        Image_Format format() const;
+
+        /**
+         * Get the column stride
+        */
+        ssize_t cstride() const;
+
+        /**
+         * Get the row stride
+        */
+        ssize_t rstride() const;
+
+        /**
+         * Get the planar stride
+        */
+        ssize_t pstride() const;
+
+        /**
+         * Get the point at a specific pixel
+        */
+        void*  operator()( int col, int row, int plane ) const;
 
     private:
 

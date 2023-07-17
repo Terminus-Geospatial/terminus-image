@@ -33,7 +33,7 @@ include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 
 #  Add Interfaces
 add_subdirectory( include/terminus )
-add_subdirectory( src/image )
+add_subdirectory( src/terminus/image )
 
 #  Create Library
 add_library( ${PROJECT_NAME} SHARED

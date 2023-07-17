@@ -24,6 +24,11 @@ enum class Pixel_Format_Enum
 }; // End of Pixel_Format_Enum enumeration
 
 /**
+ * Convert enumeration to string
+*/
+std::string enum_to_string( Pixel_Format_Enum val );
+
+/**
  * Get the number of channels for the given pixel format enumeration.
 */
 ImageResult<int> num_channels( Pixel_Format_Enum value );

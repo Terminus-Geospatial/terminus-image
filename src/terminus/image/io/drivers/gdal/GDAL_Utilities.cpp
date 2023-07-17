@@ -80,8 +80,16 @@ ImageResult<void> Initialize_GDAL()
 /*          Get the master GDAL mutex       */
 /********************************************/
 static std::mutex g_gdal_mtx;
+std::once_flag init_flag;
 std::mutex& get_master_gdal_mutex()
 {
+    std::call_once( init_flag, [](){
+        if( Initialize_GDAL().has_error() )
+        {
+            get_master_gdal_logger().error( "Failed to initialize GDAL" );
+        }
+    });
+
     return g_gdal_mtx;
 }
 
@@ -102,6 +110,7 @@ void GDAL_Deleter_Null_Okay( GDALDatasetH dataset )
 ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>>& reference_lut,
                                                           const std::vector<int>&                                            channel_codes )
 {
+    size_t counter = 0;
     for( const auto& ref_tup : reference_lut )
     {
         if( std::get<0>( ref_tup ) == channel_codes )
@@ -112,6 +121,71 @@ ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std:
     return outcome::fail( error::ErrorCode::NOT_FOUND,
                           "No matching color code found for color set: ",
                           ToLogString( channel_codes ) );
+}
+
+/****************************************************/
+/*      Convert Pixel format to Channel-Type        */
+/****************************************************/
+ImageResult<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType gdal_type )
+{
+    switch (gdal_type)
+    {
+        case GDT_Byte:    return Channel_Type_Enum::UINT8;
+        case GDT_Int16:   return Channel_Type_Enum::INT16;
+        case GDT_UInt16:  return Channel_Type_Enum::UINT16;
+        case GDT_Int32:   return Channel_Type_Enum::INT32;
+        case GDT_UInt32:  return Channel_Type_Enum::UINT32;
+        case GDT_Float32: return Channel_Type_Enum::FLOAT32;
+        case GDT_Float64: return Channel_Type_Enum::FLOAT64;
+        default:
+            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE,
+                                  "Unsupported channel-type ( ",
+                                  gdal_type, " )" );
+    }
+}
+
+/****************************************************/
+/*      Convert Channel-Type to Pixel format        */
+/****************************************************/
+ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum channel_type )
+{
+    // @todo:  Add remaining data types to this method
+    switch( channel_type )
+    {
+        // byte
+        case Channel_Type_Enum::UINT8:
+            return outcome::ok<GDALDataType>( GDT_Byte );
+
+        // uint16
+        case Channel_Type_Enum::UINT12:
+        case Channel_Type_Enum::UINT14:
+        case Channel_Type_Enum::UINT16:
+            return outcome::ok<GDALDataType>( GDT_UInt16 );
+
+        // int16
+        case Channel_Type_Enum::INT16:
+            return outcome::ok<GDALDataType>( GDT_Int16 );
+
+        case Channel_Type_Enum::UINT32:
+            return outcome::ok<GDALDataType>( GDT_UInt32 );
+
+        case Channel_Type_Enum::INT32:
+            return outcome::ok<GDALDataType>( GDT_Int32 );
+
+        case Channel_Type_Enum::FLOAT32:
+        case Channel_Type_Enum::FLOAT32Free:
+            return outcome::ok<GDALDataType>( GDT_Float32 );
+
+        case Channel_Type_Enum::FLOAT64:
+        case Channel_Type_Enum::FLOAT64Free:
+            return outcome::ok<GDALDataType>( GDT_Float64 );
+
+        default:
+            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE,
+                                  "Cannot convert tmns::pixel::Channel_Type_Enum::",
+                                  enum_to_string( channel_type ),
+                                  "to GDALDataType" );
+    }
 }
 
 

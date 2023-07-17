@@ -57,6 +57,8 @@ class ErrorCategory : public tmns::outcome::ErrorCategory<ErrorCategory>
                     return "UNINITIALIZED";
                 case ErrorCode::NOT_FOUND:
                     return "NOT_FOUND";
+                case ErrorCode::INVALID_CONFIGURATION:
+                    return "INVALID_CONFIGURATION";
                 default:
                     return "UNKNOWN";
             }

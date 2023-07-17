@@ -49,4 +49,14 @@ ImageResult<void> Read_Image_Resource_Disk_GDAL::open( const std::filesystem::pa
     return m_impl->open( pathname );
 }
 
+/****************************************************/
+/*          Read the image buffer from disk         */
+/****************************************************/
+ImageResult<void> Read_Image_Resource_Disk_GDAL::read( const Image_Buffer& dest,
+                                                       const math::Rect2i& bbox ) const
+{
+    return m_impl->read( dest, bbox, m_rescale );
+
+}
+
 } // end of tmns::image::io::gdal namespace
