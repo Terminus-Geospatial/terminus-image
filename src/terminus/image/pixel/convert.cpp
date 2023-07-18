@@ -16,6 +16,9 @@
 #include "Channel_Conversion_Utilities.hpp"
 #include "Channel_Type_ID.hpp"
 
+// External Terminus Libraries
+#include <terminus/log/utility.hpp>
+
 namespace tmns::image {
 
 // -----------------------------------------------------------------
@@ -534,11 +537,12 @@ ImageResult<void> convert( const Image_Buffer&  dst,
 
     // Get handler functions for all of the input data types.
     // - This could be replaced with function calls containing a switch statement.
-    channel_convert_func conv_func = rescale ? channel_convert_rescale_map->operator[](
-            std::make_pair( src.format().channel_type(),
-                            dst.format().channel_type() ) )
-                : channel_convert_map->operator[]( std::make_pair( src.format().channel_type(),
-                                                                   dst.format().channel_type() ) );
+    channel_convert_func conv_func = rescale ?
+                      channel_convert_rescale_map->operator[](
+                                                       std::make_pair( src.format().channel_type(),
+                                                                       dst.format().channel_type() ) )
+                    : channel_convert_map->operator[]( std::make_pair( src.format().channel_type(),
+                                                                       dst.format().channel_type() ) );
 
     channel_set_max_func  max_func                    = channel_set_max_map->operator[]( dst.format().channel_type() );
     channel_average_func  avg_func                    = channel_average_map->operator[]( dst.format().channel_type() );

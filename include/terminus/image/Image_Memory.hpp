@@ -130,6 +130,14 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
 
                 m_data = data;
             }
+
+            m_cols    = cols;
+            m_rows    = rows;
+            m_planes  = planes;
+            m_origin  = m_data.get();
+            m_rstride = cols;
+            m_pstride = rows*cols;
+
             return outcome::ok();
         }
 
@@ -142,6 +150,11 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
         size_t m_rows { 0 };
         size_t m_cols { 0 };
         size_t m_planes { 0 };
+
+        /// Pixel Origin
+        PixelT* m_origin;
+
+        size_t m_rstride, m_pstride;
 
 }; // End of Image_Memory Class
 

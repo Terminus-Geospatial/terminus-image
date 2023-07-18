@@ -32,14 +32,14 @@ class Read_Image_Resource_Disk : public Read_Image_Resource_Base,
         ~Read_Image_Resource_Disk() override = default;
 
         /**
-         * Get the image format of data on disk.
-        */
-        virtual Image_Format format() const override;
-
-        /**
          * Return the filename of the disk image file.
          */
         std::filesystem::path pathname() const;
+
+        /**
+         * Print to log-friendly string
+        */
+        virtual std::string To_Log_String( size_t offset ) const = 0;
 
     protected:
 

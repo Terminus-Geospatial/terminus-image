@@ -52,6 +52,7 @@ target_link_libraries( ${PROJECT_NAME}
      Boost::log_setup
      Boost::system
      GDAL::GDAL
+     ${OpenCV_LIBS}
      terminus_log::terminus_log
      terminus_math::terminus_math
      terminus_outcome::terminus_outcome

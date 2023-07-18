@@ -70,12 +70,15 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         char** metadata = dataset->GetMetadata();
         logger.trace( "Count: ", CSLCount(metadata) );
 
-        std::stringstream sout;
-        for( int i=0; i<CSLCount( metadata ); i++ )
+        if( CSLCount(metadata) > 0 )
         {
-            sout << "\t\t" << CSLGetField( metadata, i ) << std::endl;
+            std::stringstream sout;
+            for( int i=0; i<CSLCount( metadata ); i++ )
+            {
+                sout << "\t\t" << CSLGetField( metadata, i ) << std::endl;
+            }
+            logger.trace( sout.str() );
         }
-        logger.trace( sout.str() );
 
         logger.trace( "Driver: ", dataset->GetDriver()->GetDescription(),
                       ", ", dataset->GetDriver()->GetMetadataItem( GDAL_DMD_LONGNAME ) );
@@ -193,11 +196,12 @@ ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
                                               bool                        rescale ) const
 {
     // Perform bounds checks
-    if( !bbox.is_inside( math::ToPoint2<double>( format().cols(),
-                                                 format().rows() ) ) )
+    if( !format().bbox().is_inside( bbox ) )
     {
         return outcome::fail( error::ErrorCode::OUT_OF_BOUNDS,
-                              "Bounding box outside the bounds of the image." );
+                              "Bounding box outside the bounds of the image. ",
+                              format().bbox().to_string(),
+                              ", Requested: " + bbox.to_string() );
     }
 
     // Create source fetching region
@@ -272,6 +276,22 @@ ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
     }
 
     return convert( dest, src, rescale );
+}
+
+/************************************************/
+/*          Print to log-friendly string        */
+/************************************************/
+std::string GDAL_Disk_Image_Impl::To_Log_String( size_t offset ) const
+{
+    std::string gap( offset, ' ' );
+    std::stringstream sout;
+    sout << gap << "   - pathname: " << m_pathname << std::endl;
+    sout << gap << "   - read dataset set : " << std::boolalpha << (m_read_dataset != 0) << std::endl;
+    sout << gap << "   - write dataset set: " << std::boolalpha << (m_write_dataset != 0) << std::endl;
+    sout << m_format.To_Log_String( offset + 2 );
+    sout << gap << "   - Block Size: " << m_blocksize.to_string() << std::endl;
+    sout << gap << "   - Color Table Size: " << m_color_table.size() << std::endl;
+    return sout.str();
 }
 
 /********************************************/

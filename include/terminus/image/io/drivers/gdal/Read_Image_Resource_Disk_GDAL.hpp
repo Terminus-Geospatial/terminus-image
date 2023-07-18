@@ -66,6 +66,16 @@ class Read_Image_Resource_Disk_GDAL : public Read_Image_Resource_Disk
                                 const math::Rect2i& bbox ) const override;
 
         /**
+         * Get the image format of data on disk.
+        */
+        virtual Image_Format format() const override;
+
+        /**
+         * Print to log-friendly string
+        */
+        std::string To_Log_String( size_t offset ) const override;
+
+        /**
          * Default mapping of Color-Codes in GDAL to Pixel-Types
         */
         inline static ColorCodeLookupT Use_Default_Color_LUT()

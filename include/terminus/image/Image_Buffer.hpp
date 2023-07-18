@@ -47,7 +47,7 @@ class Image_Buffer
          * Get raw data pointer
         */
         void* data() const;
-        
+
         /**
          * Image Columns
         */
@@ -92,6 +92,11 @@ class Image_Buffer
          * Get the point at a specific pixel
         */
         void*  operator()( int col, int row, int plane ) const;
+
+        /**
+         * Print to log-friendly string
+        */
+        std::string To_Log_String( size_t offset = 0 ) const;
 
     private:
 

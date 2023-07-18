@@ -59,4 +59,28 @@ ImageResult<void> Read_Image_Resource_Disk_GDAL::read( const Image_Buffer& dest,
 
 }
 
+/****************************************/
+/*          Get Format Object           */
+/****************************************/
+Image_Format Read_Image_Resource_Disk_GDAL::format() const
+{
+    return m_impl->format();
+}
+
+/************************************************/
+/*          Print to log-friendly string        */
+/************************************************/
+std::string Read_Image_Resource_Disk_GDAL::To_Log_String( size_t offset ) const
+{
+    std::string gap( offset, ' ' );
+    std::stringstream sout;
+    sout << gap << " - Read_Image_Resource_Disk_GDAL" << std::endl;
+    sout << gap << "   - Impl Initialized: " << std::boolalpha << (m_impl != 0) << std::endl;
+    if( m_impl )
+    {
+        sout << m_impl->To_Log_String( offset );
+    }
+    return sout.str();
+}
+
 } // end of tmns::image::io::gdal namespace

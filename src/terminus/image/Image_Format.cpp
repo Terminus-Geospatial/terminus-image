@@ -65,6 +65,14 @@ void Image_Format::set_rows( size_t rows )
     m_rows = rows;
 }
 
+/********************************************/
+/*      Return an image bounding box        */
+/********************************************/
+math::Rectangle<int> Image_Format::bbox() const
+{
+    return math::Rectangle<int>( 0, 0, cols(), rows() );
+}
+
 /************************************/
 /*          Image Planes            */
 /************************************/

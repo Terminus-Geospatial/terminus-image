@@ -39,7 +39,6 @@ ImageResult<Image_Memory<PixelT>> read_image( const std::filesystem::path&      
 
     // Create an image resource for the data
     auto driver_res = driver_manager->pick_read_driver( pathname );
-
     if( driver_res.has_error() )
     {
         return outcome::fail( driver_res.assume_error() );

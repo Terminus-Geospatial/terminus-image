@@ -18,12 +18,14 @@ enum Channel_Type_Enum
     UINT14      =  3,
     UINT16      =  4,
     UINT32      =  5,
-    INT16       =  6,
-    INT32       =  7,
-    FLOAT32     =  8,
-    FLOAT64     =  9,
-    FLOAT32Free = 10,
-    FLOAT64Free = 11,
+    UINT64      =  6,
+    INT16       =  7,
+    INT32       =  8,
+    INT64       =  9,
+    FLOAT32     = 10,
+    FLOAT64     = 11,
+    FLOAT32Free = 12,
+    FLOAT64Free = 13,
 }; // end of Channel_Type_Enum enumeration
 
 /**

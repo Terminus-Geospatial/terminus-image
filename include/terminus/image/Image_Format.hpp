@@ -9,6 +9,9 @@
 #include "pixel/Channel_Type_Enum.hpp"
 #include "pixel/Pixel_Format_Enum.hpp"
 
+/// Other Terminus Libraries
+#include <terminus/math/Rectangle.hpp>
+
 namespace tmns::image {
 
 class Image_Format
@@ -54,6 +57,11 @@ class Image_Format
          * Set the nubmer of image rows
         */
         void set_rows( size_t rows );
+
+        /**
+         * Get an image bounding box
+        */
+        math::Rectangle<int> bbox() const;
 
         /**
          * Get the number of image planes

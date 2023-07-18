@@ -10,14 +10,6 @@ namespace tmns::image::io {
 // Initialize Static Variables
 bool Read_Image_Resource_Disk::s_default_rescale = true;
 
-/****************************************/
-/*          Get the format info         */
-/****************************************/
-Image_Format Read_Image_Resource_Disk::format() const
-{
-    return m_format;
-}
-
 /************************************/
 /*          Get the pathname        */
 /************************************/

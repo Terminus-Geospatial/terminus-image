@@ -23,8 +23,10 @@ ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Read_Image_Res
 {
     // Create output image
     Image_Memory<PixelT> output_image;
+    int planes = 1;
     auto size_res = output_image.set_size( bbox.width(),
-                                           bbox.height() );
+                                           bbox.height(),
+                                           planes );
     if( size_res.has_error() )
     {
         return outcome::fail( size_res.error() );

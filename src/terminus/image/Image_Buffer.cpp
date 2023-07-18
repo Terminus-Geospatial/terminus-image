@@ -9,6 +9,10 @@
 #include "pixel/Channel_Type_Enum.hpp"
 #include "pixel/Pixel_Format_Enum.hpp"
 
+// C++ Libraries
+#include <iostream>
+#include <sstream>
+
 namespace tmns::image {
 
 /********************************/
@@ -102,6 +106,21 @@ ssize_t Image_Buffer::pstride() const
 void* Image_Buffer::operator()( int col, int row, int plane ) const
 {
     return ((uint8_t*)m_data) + ( col * cstride() + row * rstride() + plane * pstride() );
+}
+
+/********************************************/
+/*      Print to Log-Friendly String        */
+/********************************************/
+std::string Image_Buffer::To_Log_String( size_t offset ) const
+{
+    std::string gap( offset, ' ' );
+    std::stringstream sout;
+    sout << gap << "Image_Buffer: " << std::endl;
+    sout << format().To_Log_String( offset + 4 );
+    sout << gap << " - CStride: " << cstride() << std::endl;
+    sout << gap << " - RStride: " << rstride() << std::endl;
+    sout << gap << " - PStride: " << pstride() << std::endl;
+    return sout.str();
 }
 
 } // end tmns::image

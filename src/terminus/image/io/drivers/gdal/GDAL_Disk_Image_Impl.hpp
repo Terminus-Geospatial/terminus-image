@@ -53,16 +53,20 @@ class GDAL_Disk_Image_Impl
                                 const math::Rectangle<int>& bbox,
                                 bool                        rescale ) const;
 
-
         /**
-         * Get the GDALDataset point for whatever dataset is active.
+         * Print to log-friendly string
         */
-        ImageResult<DatasetPtrT> get_dataset_ptr() const;
+        std::string To_Log_String( size_t offset ) const;
 
         /**
          * Get the image format
         */
         Image_Format format() const;
+        
+        /**
+         * Get the GDALDataset point for whatever dataset is active.
+        */
+        ImageResult<DatasetPtrT> get_dataset_ptr() const;
 
         /**
          * Get the default block size

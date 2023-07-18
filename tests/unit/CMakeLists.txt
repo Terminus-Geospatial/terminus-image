@@ -11,6 +11,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/src )
 
 set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
+    main.cpp
     io/TEST_read_image.cpp
     io/drivers/gdal/TEST_GDAL_Codes.cpp
     io/drivers/gdal/TEST_GDAL_Utilities.cpp
@@ -18,12 +19,11 @@ add_executable( ${TEST}
 )
 
 target_link_libraries( ${TEST} PRIVATE
-    GTest::gmock_main
-    GTest::gtest_main
+    GTest::gtest
     ${PROJECT_NAME}
 )
 
-gtest_discover_tests( ${TEST} )
+#gtest_discover_tests( ${TEST} )
 
 #  Copy Unit-Test Data
 file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/images
