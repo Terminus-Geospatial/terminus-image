@@ -59,7 +59,7 @@ class Channel_Type<uint8_t,8>
 
         typedef uint8_t data_type;
 
-        typedef uint16_t accumulator_type;
+        typedef int32_t accumulator_type;
 
         static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
 
@@ -83,7 +83,7 @@ class Channel_Type<uint16_t,12>
 
         typedef uint16_t data_type;
 
-        typedef uint32_t accumulator_type;
+        typedef int32_t accumulator_type;
 
         static constexpr data_type MAX_VALUE = 4095;
 
@@ -107,7 +107,7 @@ class Channel_Type<uint16_t,14>
 
         typedef uint16_t data_type;
 
-        typedef uint32_t accumulator_type;
+        typedef int32_t accumulator_type;
 
         static constexpr data_type MAX_VALUE = 16383;
 
@@ -131,7 +131,7 @@ class Channel_Type<uint16_t,16>
 
         typedef uint16_t data_type;
 
-        typedef uint32_t accumulator_type;
+        typedef int32_t accumulator_type;
 
         static constexpr data_type MAX_VALUE = std::numeric_limits<data_type>::max();
 

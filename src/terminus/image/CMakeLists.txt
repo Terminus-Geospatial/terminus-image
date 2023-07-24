@@ -14,12 +14,5 @@ include_directories( TERMINUS_IMAGE_PIXEL PRIVATE
 #  Process all subdirectory objects
 add_subdirectory( io )
 add_subdirectory( pixel )
-
-#  Build this library
-include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/image )
-
-add_library( TERMINUS_IMAGE_CORE OBJECT
-                Image_Buffer.cpp
-                Image_Format.cpp
-                Image_Resource_Base.cpp )
+add_subdirectory( types )
 

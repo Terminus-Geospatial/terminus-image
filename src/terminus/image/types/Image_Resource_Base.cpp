@@ -23,12 +23,28 @@ size_t Read_Image_Resource_Base::rows() const
     return format().rows();
 }
 
+/****************************************************/
+/*          Get the number of image planes          */
+/****************************************************/
+size_t Read_Image_Resource_Base::planes() const
+{
+    return format().planes();
+}
+
 /********************************************************/
 /*          Get the number of image channels            */
 /********************************************************/
 size_t Read_Image_Resource_Base::channels() const
 {
     return num_channels( pixel_type() ).assume_value();
+}
+
+/************************************************/
+/*          Get an image bounding box           */
+/************************************************/
+math::Rect2i Read_Image_Resource_Base::full_bbox() const
+{
+    return math::Rect2i( 0, 0, cols(), rows() );
 }
 
 /************************************************/

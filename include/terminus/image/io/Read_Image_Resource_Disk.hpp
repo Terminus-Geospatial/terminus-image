@@ -6,8 +6,10 @@
 #pragma once
 
 // Terminus Libraries
-#include "../error/ErrorCategory.hpp"
-#include "../Image_Resource_Base.hpp"
+#include <terminus/core/error/ErrorCategory.hpp>
+
+// Terminus Image Libraries
+#include "../types/Image_Resource_Base.hpp"
 
 // Boost Libraries
 #include <boost/utility.hpp>

@@ -6,9 +6,7 @@
 #include "Channel_Type_Enum.hpp"
 
 // Terminus Libraries
-#include "../error/ErrorCategory.hpp"
-
-// External Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
 #include <terminus/outcome/Result.hpp>
 
 namespace tmns::image {
@@ -81,7 +79,7 @@ ImageResult<size_t> channel_size_bytes( Channel_Type_Enum val )
         // Error Conditions
         case Channel_Type_Enum::UNKNOWN:
         default:
-            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE );
+            return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE );
     }
 }
 

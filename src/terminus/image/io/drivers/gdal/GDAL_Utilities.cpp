@@ -57,7 +57,7 @@ static void CPL_STDCALL GDAL_Error_Handler( CPLErr      eErrClass,
     if ( eErrClass == CE_Fatal )
     {
         logger.fatal( "GDAL: ", message, " (code = ", nError, ")" );
-        outcome::panic( error::ErrorCode::FILE_IO_ERROR,
+        outcome::panic( core::error::ErrorCode::FILE_IO_ERROR,
                         "GDAL: ", message, " (code = ", nError, ")" );
     }
 }
@@ -118,7 +118,7 @@ ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std:
             return outcome::ok<Pixel_Format_Enum>( std::get<1>( ref_tup ) );
         }
     }
-    return outcome::fail( error::ErrorCode::NOT_FOUND,
+    return outcome::fail( core::error::ErrorCode::NOT_FOUND,
                           "No matching color code found for color set: ",
                           ToLogString( channel_codes ) );
 }
@@ -138,7 +138,7 @@ ImageResult<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType g
         case GDT_Float32: return Channel_Type_Enum::FLOAT32;
         case GDT_Float64: return Channel_Type_Enum::FLOAT64;
         default:
-            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE,
+            return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE,
                                   "Unsupported channel-type ( ",
                                   gdal_type, " )" );
     }
@@ -181,7 +181,7 @@ ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum c
             return outcome::ok<GDALDataType>( GDT_Float64 );
 
         default:
-            return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE,
+            return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE,
                                   "Cannot convert tmns::pixel::Channel_Type_Enum::",
                                   enum_to_string( channel_type ),
                                   "to GDALDataType" );

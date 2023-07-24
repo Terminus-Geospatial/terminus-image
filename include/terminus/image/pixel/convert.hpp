@@ -6,8 +6,10 @@
 #pragma once
 
 // Terminus Libraries
-#include "../error/ErrorCategory.hpp"
-#include "../Image_Buffer.hpp"
+#include <terminus/core/error/ErrorCategory.hpp>
+
+// Terminus Image Libraries
+#include "../types/Image_Buffer.hpp"
 
 namespace tmns::image {
 

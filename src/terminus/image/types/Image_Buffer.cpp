@@ -6,8 +6,8 @@
 #include "Image_Buffer.hpp"
 
 // Terminus Libraries
-#include "pixel/Channel_Type_Enum.hpp"
-#include "pixel/Pixel_Format_Enum.hpp"
+#include "../pixel/Channel_Type_Enum.hpp"
+#include "../pixel/Pixel_Format_Enum.hpp"
 
 // C++ Libraries
 #include <iostream>

@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
+from conan.tools.files import copy
 
 class CMakeConan(ConanFile):
 
@@ -33,6 +34,7 @@ class CMakeConan(ConanFile):
     def requirements(self):
         self.requires("boost/1.82.0")
         #self.requires("gdal/3.4.3")
+        self.requires("terminus_core/0.0.1")
         self.requires("terminus_log/0.0.1")
         self.requires("terminus_math/0.0.1")
         self.requires("terminus_outcome/0.0.1")
@@ -44,8 +46,8 @@ class CMakeConan(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
-        tc.variables["CONAN_PKG_VERSION"]     = self.version
         tc.variables["CONAN_PKG_NAME"]        = self.name
+        tc.variables["CONAN_PKG_VERSION"]     = self.version
         tc.variables["CONAN_PKG_DESCRIPTION"] = self.description
         tc.variables["CONAN_PKG_URL"]         = self.url
 
@@ -53,6 +55,7 @@ class CMakeConan(ConanFile):
         tc.variables["TERMINUS_IMAGE_ENABLE_DOCS"]     = self.options.with_docs
         tc.variables["TERMINUS_IMAGE_ENABLE_COVERAGE"] = self.options.with_coverage
         tc.generate()
+
         deps = CMakeDeps(self)
         deps.generate()
 
@@ -64,7 +67,13 @@ class CMakeConan(ConanFile):
         cmake = self._configure_cmake()
         cmake.install()
 
-
     def package_info(self):
-        self.cpp_info.builddirs = ["cmake"]
+        self.cpp_info.libs = ["terminus_image"]
 
+    def package_id(self):
+        self.info.clear()
+
+    def export_sources(self):
+
+        for p in [ "CMakeLists.txt", "include/*", "test/*", "README.md" ]:
+            copy( self, p, self.recipe_folder, self.export_sources_folder )

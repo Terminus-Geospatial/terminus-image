@@ -6,8 +6,8 @@
 #pragma once
 
 /// Terminus Libraries
-#include "pixel/Channel_Type_Enum.hpp"
-#include "pixel/Pixel_Format_Enum.hpp"
+#include "../pixel/Channel_Type_Enum.hpp"
+#include "../pixel/Pixel_Format_Enum.hpp"
 
 /// Other Terminus Libraries
 #include <terminus/math/Rectangle.hpp>

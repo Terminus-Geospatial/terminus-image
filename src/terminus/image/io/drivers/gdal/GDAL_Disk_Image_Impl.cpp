@@ -52,7 +52,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         std::stringstream sout;
         sout << "GDAL: Failed to open dataset " << m_pathname.native();
         logger.warn( sout.str() );
-        return outcome::fail( error::ErrorCode::FILE_IO_ERROR,
+        return outcome::fail( core::error::ErrorCode::FILE_IO_ERROR,
                                sout.str() );
     }
 
@@ -198,7 +198,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
     // Perform bounds checks
     if( !format().bbox().is_inside( bbox ) )
     {
-        return outcome::fail( error::ErrorCode::OUT_OF_BOUNDS,
+        return outcome::fail( core::error::ErrorCode::OUT_OF_BOUNDS,
                               "Bounding box outside the bounds of the image. ",
                               format().bbox().to_string(),
                               ", Requested: " + bbox.to_string() );
@@ -317,7 +317,7 @@ ImageResult<GDAL_Disk_Image_Impl::DatasetPtrT> GDAL_Disk_Image_Impl::get_dataset
     }
     else
     {
-        return outcome::fail( error::ErrorCode::UNINITIALIZED,
+        return outcome::fail( core::error::ErrorCode::UNINITIALIZED,
                               "GDAL:  No dataset opened." );
     }
 }

@@ -6,12 +6,12 @@
 #pragma once
 
 /// External Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
 #include <terminus/math/Rectangle.hpp>
 
 /// Terminus Libraries
-#include "error/ErrorCategory.hpp"
-#include "pixel/Channel_Type_Enum.hpp"
-#include "pixel/Pixel_Format_Enum.hpp"
+#include "../pixel/Channel_Type_Enum.hpp"
+#include "../pixel/Pixel_Format_Enum.hpp"
 #include "Image_Buffer.hpp"
 #include "Image_Format.hpp"
 
@@ -39,9 +39,19 @@ class Read_Image_Resource_Base
         virtual size_t rows() const;
 
         /**
+         * Get the number of planes in the image.
+        */
+        virtual size_t planes() const;
+
+        /**
          * Get the number of channels in the image
         */
         virtual size_t channels() const;
+
+        /**
+         * Get a full-size image bounding box.
+        */
+        math::Rect2i full_bbox() const;
 
         /**
          * Get the native pixel type for the image resource

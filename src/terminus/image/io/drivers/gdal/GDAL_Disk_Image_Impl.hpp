@@ -15,15 +15,15 @@
 #include <vector>
 
 // External Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
 #include <terminus/math/Rectangle.hpp>
 #include <terminus/math/Vector.hpp>
 
 // Terminus Libraries
-#include "../../../error/ErrorCategory.hpp"
 #include "../../../pixel/Pixel_Format_Enum.hpp"
 #include "../../../pixel/Pixel_RGBA.hpp"
-#include "../../../Image_Buffer.hpp"
-#include "../../../Image_Format.hpp"
+#include "../../../types/Image_Buffer.hpp"
+#include "../../../types/Image_Format.hpp"
 
 namespace tmns::image::io::gdal {
 
@@ -62,7 +62,7 @@ class GDAL_Disk_Image_Impl
          * Get the image format
         */
         Image_Format format() const;
-        
+
         /**
          * Get the GDALDataset point for whatever dataset is active.
         */

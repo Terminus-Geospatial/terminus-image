@@ -5,11 +5,14 @@
 */
 #pragma once
 
-// Terminus Libraries
-#include "pixel/Channel_Type_ID.hpp"
-#include "pixel/Pixel_Format_ID.hpp"
+// Terminus Image Libraries
+#include "../pixel/Channel_Type_ID.hpp"
+#include "../pixel/Pixel_Format_ID.hpp"
 #include "Image_Format.hpp"
 #include "Pixel_Iterator.hpp"
+
+// Terminus Libraries
+#include <terminus/math/Rectangle.hpp>
 
 namespace tmns::image {
 
@@ -68,6 +71,15 @@ class Image_Base
          * Get the number of planes in the image
         */
         virtual size_t planes() const = 0;
+
+        /**
+         * Create a Bounding Box for the full image dimensions.  Nice
+         * helper script for APIs that need math::Rect2i inputs.
+        */
+        virtual math::Rect2i full_bbox() const
+        {
+            return math::Rect2i( 0, 0, cols(), rows() );
+        }
 
         /**
          * Get the Pixel-Format Enum from the Pixel-Type

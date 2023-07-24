@@ -6,6 +6,7 @@
 #pragma once
 
 // Terminus Libraries
+#include "../types/Compound_Types.hpp"
 #include "Channel_Types.hpp"
 #include "Pixel_Base.hpp"
 
@@ -60,7 +61,36 @@ class Pixel_RGBA : public Pixel_Base<ChannelT>
         /// Underlying Pixel Data
         std::array<data_type,4> m_data{ 0, 0, 0, 0 };
 
-}; // End of Pixel_RGB Class
+}; // End of Pixel_RGBA Class
+
+/**
+ * Per Fundamental_Types.hpp, we need to register our
+ * compound types.  See header for details
+*/
+template <typename ChannelT>
+struct Compound_Channel_Type<Pixel_RGBA<ChannelT> >
+{
+    typedef ChannelT type;
+}; // End of Compound_Channel_Type<> Struct
+
+template <typename ChannelT>
+struct Compound_Channel_Count<Pixel_RGBA<ChannelT>>
+{
+    static const size_t value = Pixel_RGBA<ChannelT>::NUM_CHANNELS;
+}; // End of Compound_Channel_Count<> Struct
+
+template <typename OldChannelT, typename NewChannelT>
+struct Compound_Channel_Cast<Pixel_RGBA<OldChannelT>, NewChannelT>
+{
+    typedef Pixel_RGBA<NewChannelT> type;
+}; // End of Compound_Channel_Cast<> structure
+
+template <typename OldChannelT, typename NewChannelT>
+struct Compound_Channel_Cast<Pixel_RGBA<OldChannelT>, const NewChannelT>
+{
+    typedef const Pixel_RGBA<NewChannelT> type;
+}; // End of Compound_Channel_Cast<> structure
+
 
 /// Aliases for easier typing
 using PixelRGBA_u8  = Pixel_RGBA<ChannelType_u8>;

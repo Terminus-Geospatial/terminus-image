@@ -10,7 +10,7 @@ cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 include( "${CMAKE_BINARY_DIR}/conan_toolchain.cmake" )
 set( CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE )
 
-#  Set the Project-Name
+# Set the Project-Name
 project( ${CONAN_PKG_NAME}
             VERSION ${CONAN_PKG_VERSION}
             HOMEPAGE_URL ${CONAN_PKG_URL}
@@ -33,30 +33,33 @@ include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
 
 #  Add Interfaces
 add_subdirectory( include/terminus )
-add_subdirectory( src/terminus/image )
+add_subdirectory( src/terminus )
 
 #  Create Library
 add_library( ${PROJECT_NAME} SHARED
     ${TERMINUS_IMAGE_INCLUDE_HEADERS}
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_CORE>
     $<TARGET_OBJECTS:TERMINUS_IMAGE_IO>
     $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS>
     $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS_GDAL>
     $<TARGET_OBJECTS:TERMINUS_IMAGE_PIXEL>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_TYPES>
 )
 
 #  Link in dependencies
 target_link_libraries( ${PROJECT_NAME}
-     Boost::json
+     Boost::headers
      Boost::log
      Boost::log_setup
      Boost::system
      GDAL::GDAL
      ${OpenCV_LIBS}
+     terminus_core::terminus_core
      terminus_log::terminus_log
      terminus_math::terminus_math
      terminus_outcome::terminus_outcome
 )
+
+terminus_lib_configure( ${PROJECT_NAME} )
 
 #  Enable code coverage
 if( TERMINUS_IMAGE_ENABLE_COVERAGE )
@@ -65,5 +68,7 @@ endif()
 
 if( TERMINUS_IMAGE_ENABLE_TESTS )
     enable_testing()
-    add_subdirectory( tests/unit )
+    add_subdirectory( tests )
 endif()
+
+install( DIRECTORY include/terminus DESTINATION include)

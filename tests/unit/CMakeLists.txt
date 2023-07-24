@@ -12,10 +12,13 @@ include_directories( ${CMAKE_SOURCE_DIR}/src )
 set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
-    io/TEST_read_image.cpp
-    io/drivers/gdal/TEST_GDAL_Codes.cpp
-    io/drivers/gdal/TEST_GDAL_Utilities.cpp
-    io/drivers/gdal/TEST_Read_Image_Resource_Disk_GDAL_Factory.cpp
+    feature/TEST_find_keypoints.cpp
+    image/io/TEST_read_image.cpp
+    image/io/drivers/gdal/TEST_GDAL_Codes.cpp
+    image/io/drivers/gdal/TEST_GDAL_Utilities.cpp
+    image/io/drivers/gdal/TEST_Read_Image_Resource_Disk_GDAL_Factory.cpp
+    image/types/TEST_Compound_Types.cpp
+    image/types/TEST_Fundamental_Types.cpp
 )
 
 target_link_libraries( ${TEST} PRIVATE

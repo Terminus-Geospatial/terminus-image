@@ -6,10 +6,10 @@
 #pragma once
 
 /// External Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
 #include <terminus/outcome/Result.hpp>
 
 /// Terminus Libraries
-#include "../../error/ErrorCategory.hpp"
 #include "../Read_Image_Resource_Memory.hpp"
 #include "../Write_Image_Resource_Memory.hpp"
 #include "opencv/Read_Image_Resource_Memory_OpenCV_Factory.hpp"

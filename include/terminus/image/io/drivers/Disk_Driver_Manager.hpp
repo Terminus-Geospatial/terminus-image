@@ -6,7 +6,9 @@
 #pragma once
 
 /// Terminus Libraries
-#include "../../error/ErrorCategory.hpp"
+#include <terminus/core/error/ErrorCategory.hpp>
+
+/// Terminus Image Libraries
 #include "../Read_Image_Resource_Disk.hpp"
 #include "../Write_Image_Resource_Disk.hpp"
 #include "gdal/Read_Image_Resource_Disk_GDAL_Factory.hpp"

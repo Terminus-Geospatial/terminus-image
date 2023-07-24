@@ -55,7 +55,7 @@ ImageResult<int> num_channels( Pixel_Format_Enum value )
 
         case Pixel_Format_Enum::UNKNOWN:
         default:
-            return outcome::fail( error::ErrorCode::INVALID_PIXEL_TYPE );
+            return outcome::fail( core::error::ErrorCode::INVALID_PIXEL_TYPE );
     }
 }
 

@@ -25,7 +25,7 @@ ImageResult<Read_Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driv
             return outcome::ok<Read_Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );
         }
     }
-    return outcome::fail( error::ErrorCode::DRIVER_NOT_FOUND );
+    return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND );
 }
 
 /************************************************/

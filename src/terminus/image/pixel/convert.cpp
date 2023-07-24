@@ -436,7 +436,7 @@ ImageResult<void> convert( const Image_Buffer&  dst,
     if( dst.format().cols() != src.format().cols() ||
         dst.format().rows() != src.format().rows() )
     {
-        return outcome::fail( error::ErrorCode::INVALID_CONFIGURATION,
+        return outcome::fail( core::error::ErrorCode::INVALID_CONFIGURATION,
                               "Destination buffer has incorrect size." );
     }
 
@@ -552,7 +552,7 @@ ImageResult<void> convert( const Image_Buffer&  dst,
 
     if( !conv_func || !max_func || !avg_func || !unpremultiply_src_func || !premultiply_dst_func || !premultiply_src_func )
     {
-        return outcome::fail( error::ErrorCode::INVALID_CHANNEL_TYPE,
+        return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE,
                               "Unsupported channel-type combination in conversion ( ", src.format().channel_type(),
                               " -> ", dst.format().channel_type(), " )" );
     }

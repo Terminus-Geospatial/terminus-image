@@ -6,7 +6,7 @@
 #pragma once
 
 // Terminus Libraries
-#include "../Image_Resource_Base.hpp"
+#include "../types/Image_Resource_Base.hpp"
 
 // Boost Libraries
 #include <boost/utility.hpp>

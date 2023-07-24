@@ -9,7 +9,7 @@
 #include <memory>
 
 // Terminus Libraries
-#include "../../Image_Resource_Base.hpp"
+#include "../../types/Image_Resource_Base.hpp"
 
 namespace tmns::image::io{
 
