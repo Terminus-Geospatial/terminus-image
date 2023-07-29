@@ -9,7 +9,7 @@
 #include <filesystem>
 
 // Terminus Libraries
-#include <terminus/image/io/read_image.hpp>
+#include <terminus/image/io/read_image_disk.hpp>
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
 //#include <terminus/feature/find_keypoints.hpp>
 

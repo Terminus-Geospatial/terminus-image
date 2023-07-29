@@ -30,6 +30,8 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
 {
     public:
 
+        typedef Image_Resource_View<PixelT> m_ptr;
+
         /// Base Type of the image
         typedef Image_Base<Image_Resource_View<PixelT>> base_type;
 
@@ -100,7 +102,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         /**
          * Get the original resource
         */
-        const Read_Image_Resource_Base* resource() const
+        const Image_Resource_Base* resource() const
         {
             return m_resource.get();
         }
@@ -129,7 +131,8 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
                         const math::Rect2i&  bbox ) const
         {
             core::conc::Mutex::Lock lock( m_resource_mtx );
-            read_image( dest, *m_resource, bbox );
+            //m_resource->read( dest.buffer(), bbox );
+            io::read_image( dest, m_resource, bbox );
         }
 
     private:
@@ -163,7 +166,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         Read_Image_Resource_Base::ptr_t m_resource;
 
         /// Mutex lock for hitting the resource
-        core::conc::Mutex m_resource_mtx;
+        mutable core::conc::Mutex m_resource_mtx;
 
         /// Number of image planes
         int m_planes { 0 };

@@ -94,6 +94,11 @@ class Image_Format
         void set_channel_type( Channel_Type_Enum tp );
 
         /**
+         * Get the number of channels
+        */
+        int channels() const;
+
+        /**
          * Check if we should apply alpha channel adjustments
         */
         bool premultiply() const;
@@ -133,6 +138,12 @@ class Image_Format
          * Print to log-friendly string
         */
         std::string To_Log_String( size_t offset = 0 ) const;
+
+        /**
+         * Check if we can convert the two image format types.
+        */
+        static ImageResult<void> can_convert( const Image_Format&  dest,
+                                              const Image_Format&  source );
 
     private:
 

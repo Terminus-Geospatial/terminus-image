@@ -10,8 +10,8 @@
 #include <terminus/image/io/read_image.hpp>
 #include <terminus/image/pixel/Channel_Types.hpp>
 #include <terminus/image/pixel/Pixel_RGB.hpp>
+#include <terminus/image/types/Image_Memory.hpp>
 #include <terminus/image/utility/View_Utilities.hpp>
-#include <terminus/image/Image_Memory.hpp>
 
 /********************************************/
 /*          Read and write imagery          */
@@ -19,7 +19,8 @@
 TEST( io_read_image, read_image_memory )
 {
     namespace wc = tmns::image;
-
+    FAIL();
+    /*
     // Load an image
     std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };
     auto result = wc::io::read_image<wc::PixelRGB_u8>( image_to_load );
@@ -37,7 +38,7 @@ TEST( io_read_image, read_image_memory )
     if( true )
     {
         auto res = wc::utility::view_image( "Dummy Window", image );
-    }
+    }*/
 
     FAIL();
 }

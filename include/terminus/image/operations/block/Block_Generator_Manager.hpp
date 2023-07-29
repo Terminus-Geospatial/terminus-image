@@ -46,7 +46,8 @@ class Block_Generator_Manager
             if( m_block_size.width() <= 0 || m_block_size.height() <= 0 )
             {
                 return outcome::fail( core::error::ErrorCode::INVALID_SIZE,
-                                      "BlockGeneratorManager: Illegal block size: ", m_block_size );
+                                      "BlockGeneratorManager: Illegal block size: ",
+                                      m_block_size.to_string() );
             }
             if( !m_cache_ptr )
             {
@@ -57,8 +58,7 @@ class Block_Generator_Manager
             // Compute Table Status
             m_table_width  = (image->cols()-1) / m_block_size.width() + 1;
             m_table_height = (image->rows()-1) / m_block_size.height() + 1;
-            m_block_table_size = m_table_height * m_table_width;
-            m_block_table.reset( new core::cache::Cache_Local::Handle<Block_Generator<ImageT> >[ m_block_table_size ] );
+            m_block_table.resize( m_table_height * m_table_width );
             auto view_bbox = image->full_bbox();
 
             // Iterate through the block positions and insert a generator object for each block
@@ -74,6 +74,7 @@ class Block_Generator_Manager
                 block(ix,iy) = m_cache_ptr->insert( Block_Generator<ImageT>( image, bbox ) );
             }} // End loop through the blocks
 
+            return outcome::ok();
         } // End initialize()
 
         /**
@@ -100,8 +101,8 @@ class Block_Generator_Manager
          */
         math::Vector2i get_block_start_pixel( const math::Vector2i& block_index ) const
         {
-            return math::Vector2i( block_index.x() * m_block_size.width(),
-                                   block_index.y() * m_block_size.height() );
+            return math::Vector2i( { block_index.x() * m_block_size.width(),
+                                     block_index.y() * m_block_size.height() } );
         }
 
         /**
@@ -148,7 +149,7 @@ class Block_Generator_Manager
         /**
          * Return true if there is only a single block
         */
-        bool only_one_block() const { return ( m_block_table_size == 1 ); }
+        bool only_one_block() const { return ( m_block_table.size() == 1 ); }
 
         /**
          * Shortcut for when there is only a single block
@@ -176,11 +177,8 @@ class Block_Generator_Manager
         /// Table Height
         size_t m_table_height { 0 };
 
-        /// Block Table Size
-        size_t m_block_table_size { 0 };
-
         /// Block Table
-        std::shared_ptr<core::cache::Cache_Local::Handle<Block_Generator<ImageT>>> m_block_table;
+        std::vector<core::cache::Cache_Local::Handle<Block_Generator<ImageT>>> m_block_table;
 
 }; // End of Block_Generator_Manager class
 

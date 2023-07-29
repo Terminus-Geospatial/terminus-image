@@ -46,6 +46,34 @@ std::string enum_to_string( Channel_Type_Enum val )
     }
 }
 
+/************************************/
+/*      Check if "integer" type     */
+/************************************/
+bool is_integer_type( Channel_Type_Enum val )
+{
+    switch( val )
+    {
+        case Channel_Type_Enum::UINT8:
+        case Channel_Type_Enum::UINT12:
+        case Channel_Type_Enum::UINT14:
+        case Channel_Type_Enum::UINT16:
+        case Channel_Type_Enum::UINT32:
+        case Channel_Type_Enum::UINT64:
+        case Channel_Type_Enum::INT16:
+        case Channel_Type_Enum::INT32:
+        case Channel_Type_Enum::INT64:
+            return true;
+
+
+        case Channel_Type_Enum::FLOAT32:
+        case Channel_Type_Enum::FLOAT64:
+        case Channel_Type_Enum::FLOAT32Free:
+        case Channel_Type_Enum::FLOAT64Free:
+        default:
+            return false;
+    }
+}
+
 /********************************************************/
 /*          Get the size of the channel in bytes        */
 /********************************************************/

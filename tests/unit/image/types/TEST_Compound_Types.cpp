@@ -8,6 +8,9 @@
 // Terminus Libraries
 #include <terminus/image/types/Compound_Types.hpp>
 
+// C++ Libraries
+#include <type_traits>
+
 namespace tx = tmns::image;
 
 
@@ -41,6 +44,29 @@ class Test_Compound
         ChannelT values[2];
 };
 
+template<class ChannelT>
+struct tx::Compound_Channel_Type<Test_Compound<ChannelT> >
+{
+    typedef ChannelT type;
+};
+
+template<class ChannelT>
+struct tx::Compound_Channel_Count<Test_Compound<ChannelT> >
+{
+    static constexpr size_t value() { return 2; };
+};
+
+
+template<class InT, class OutT>
+struct tx::Compound_Channel_Cast<Test_Compound<InT>, OutT>
+{
+    typedef Test_Compound<OutT> type;
+};
+
+// A dummy type that is neither a scalar nor a compound type.
+class Dummy_Type {};
+
+
 /***********************************************************/
 /*      Perform basic type-trait tests using dummy types   */
 /***********************************************************/
@@ -50,10 +76,64 @@ TEST( Compound_Types, Basic_Tests )
     ASSERT_TRUE( ( std::is_same<tx::Compound_Channel_Type<Test_Compound<float> >::type, float>::value ));
 
     // Verify we can get the number of channels from this test compound type
-    ASSERT_EQ( tx::Compound_Channel_Count<Test_Compound<float> >::value, 2 );
+    ASSERT_EQ( tx::Compound_Channel_Count<Test_Compound<float> >::value(), 2 );
 
     // Verify we can build cast functors which bind properly given our new test compound type
-    ASSERT_TRUE( std::is_same<Compound_Channel_Cast<Test_Compound<float>,int>::type, Test_Compound<int> >::value );
+    auto value = std::is_same<tx::Compound_Channel_Cast<Test_Compound<float>,int>::type,Test_Compound<int>>::value;
+    ASSERT_TRUE( value );
+}
+
+/************************/
+/*      Test Traits     */
+/************************/
+TEST( Compound_Types, Traits )
+{
+    ASSERT_TRUE( !tx::Is_Compound<uint8_t>::value );
+    ASSERT_TRUE( !tx::Is_Compound<double>::value );
+    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<uint8_t> >::value );
+    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<double> >::value );
+    ASSERT_TRUE( !tx::Is_Compound<Dummy_Type>::value );
+    ASSERT_TRUE( !tx::Is_Compound<const uint8_t>::value );
+    ASSERT_TRUE( !tx::Is_Compound<const double>::value );
+    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<const uint8_t> >::value );
+    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<const double> >::value );
+    ASSERT_TRUE( !tx::Is_Compound<const Dummy_Type>::value );
+
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<uint8_t>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<double>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<uint8_t> >::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<double> >::value );
+    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<Dummy_Type>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const uint8_t>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const double>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<uint8_t> >::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<double> >::value );
+    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<const Dummy_Type>::value );
+
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<double,double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<uint8_t,double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<double>,Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<uint8_t>,Test_Compound<double> >::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<Test_Compound<double>,double>::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<double,Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const double,double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const uint8_t,double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<double>,Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<uint8_t>,Test_Compound<double> >::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const Test_Compound<double>,double>::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const double,Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<double,const double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<uint8_t,const double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<double>,const Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<uint8_t>,const Test_Compound<double> >::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<Test_Compound<double>,const double>::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<double,const Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const double,const double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const uint8_t,const double>::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<double>,const Test_Compound<double> >::value ));
+    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<uint8_t>,const Test_Compound<double> >::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const Test_Compound<double>,const double>::value ));
+    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const double,const Test_Compound<double> >::value ));
 }
 
 
@@ -64,13 +144,11 @@ template <class T> void add_in_place( T& a, T const& b ) { a += b; }
 template <class T> T add_one( T const& val ) { return val + 1; }
 template <class T> void add_one_in_place( T& val ) { val += 1; }
 
-// A dummy type that is neither a scalar nor a compound type.
-class DummyType {};
 
 namespace vw {
-  template<class ChannelT> struct CompoundChannelType<TestCompound<ChannelT> > { typedef ChannelT type; };
-  template<class ChannelT> struct CompoundNumChannels<TestCompound<ChannelT> > { static const size_t value = 2; };
-  template<class InT, class OutT> struct CompoundChannelCast<TestCompound<InT>, OutT> { typedef TestCompound<OutT> type; };
+  template<class ChannelT> struct CompoundChannelType<Test_Compound<ChannelT> > { typedef ChannelT type; };
+  template<class ChannelT> struct CompoundNumChannels<Test_Compound<ChannelT> > { static const size_t value = 2; };
+  template<class InT, class OutT> struct CompoundChannelCast<Test_Compound<InT>, OutT> { typedef Test_Compound<OutT> type; };
 }
 
 
@@ -79,60 +157,12 @@ static bool is_of_type( T2 ) {
   return boost::is_same<T1,T2>::value;
 }
 
-
-
 TEST(CompoundTypes, Traits) {
-  EXPECT_TRUE(( !IsCompound<uint8>::value ));
-  EXPECT_TRUE(( !IsCompound<double>::value ));
-  EXPECT_TRUE(( IsCompound<TestCompound<uint8> >::value ));
-  EXPECT_TRUE(( IsCompound<TestCompound<double> >::value ));
-  EXPECT_TRUE(( !IsCompound<DummyType>::value ));
-  EXPECT_TRUE(( !IsCompound<const uint8>::value ));
-  EXPECT_TRUE(( !IsCompound<const double>::value ));
-  EXPECT_TRUE(( IsCompound<TestCompound<const uint8> >::value ));
-  EXPECT_TRUE(( IsCompound<TestCompound<const double> >::value ));
-  EXPECT_TRUE(( !IsCompound<const DummyType>::value ));
-
-  EXPECT_TRUE(( IsScalarOrCompound<uint8>::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<double>::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<TestCompound<uint8> >::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<TestCompound<double> >::value ));
-  EXPECT_TRUE(( !IsScalarOrCompound<DummyType>::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<const uint8>::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<const double>::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<const TestCompound<uint8> >::value ));
-  EXPECT_TRUE(( IsScalarOrCompound<const TestCompound<double> >::value ));
-  EXPECT_TRUE(( !IsScalarOrCompound<const DummyType>::value ));
-
-  EXPECT_TRUE(( CompoundIsCompatible<double,double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<uint8,double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<TestCompound<double>,TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<TestCompound<uint8>,TestCompound<double> >::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<TestCompound<double>,double>::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<double,TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const double,double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const uint8,double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const TestCompound<double>,TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const TestCompound<uint8>,TestCompound<double> >::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<const TestCompound<double>,double>::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<const double,TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<double,const double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<uint8,const double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<TestCompound<double>,const TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<TestCompound<uint8>,const TestCompound<double> >::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<TestCompound<double>,const double>::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<double,const TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const double,const double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const uint8,const double>::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const TestCompound<double>,const TestCompound<double> >::value ));
-  EXPECT_TRUE(( CompoundIsCompatible<const TestCompound<uint8>,const TestCompound<double> >::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<const TestCompound<double>,const double>::value ));
-  EXPECT_TRUE(( !CompoundIsCompatible<const double,const TestCompound<double> >::value ));
 
   EXPECT_TRUE(( boost::is_same<CompoundAccumulatorType<uint8>::type,AccumulatorType<uint8>::type>::value ));
-  EXPECT_TRUE(( boost::is_same<CompoundAccumulatorType<TestCompound<uint8> >::type,TestCompound<AccumulatorType<uint8>::type> >::value ));
+  EXPECT_TRUE(( boost::is_same<CompoundAccumulatorType<Test_Compound<uint8> >::type,Test_Compound<AccumulatorType<uint8>::type> >::value ));
   EXPECT_TRUE(( boost::is_same<CompoundAccumulatorType<const uint8>::type,AccumulatorType<uint8>::type>::value ));
-  EXPECT_TRUE(( boost::is_same<CompoundAccumulatorType<const TestCompound<uint8> >::type,TestCompound<AccumulatorType<uint8>::type> >::value ));
+  EXPECT_TRUE(( boost::is_same<CompoundAccumulatorType<const Test_Compound<uint8> >::type,Test_Compound<AccumulatorType<uint8>::type> >::value ));
 }
 
 TEST(CompoundTypes, CompoundSelectChannel) {
@@ -144,14 +174,14 @@ TEST(CompoundTypes, CompoundSelectChannel) {
   EXPECT_EQ( 4.0, compound_select_channel<const float&>(valf,0) );
   compound_select_channel<float&>(valf,0) = 6;
   EXPECT_EQ( 6.0, compound_select_channel<const float&>(valf,0) );
-  TestCompound<uint32> valci( 1, 2 );
+  Test_Compound<uint32> valci( 1, 2 );
   EXPECT_EQ( 1u, compound_select_channel<const uint32&>(valci,0) );
   EXPECT_EQ( 2u, compound_select_channel<const uint32&>(valci,1) );
   compound_select_channel<uint32&>(valci,0) = 3;
   compound_select_channel<uint32&>(valci,1) = 4;
   EXPECT_EQ( 3u, compound_select_channel<const uint32&>(valci,0) );
   EXPECT_EQ( 4u, compound_select_channel<const uint32&>(valci,1) );
-  TestCompound<float> valcf( 2.0, 3.0 );
+  Test_Compound<float> valcf( 2.0, 3.0 );
   EXPECT_EQ( 2.0, compound_select_channel<const float&>(valcf,0) );
   EXPECT_EQ( 3.0, compound_select_channel<const float&>(valcf,1) );
   compound_select_channel<float&>(valcf,0) = 3.0;
@@ -165,10 +195,10 @@ TEST(CompoundTypes, BinaryCompoundApply) {
   EXPECT_EQ( 3u, ci );
   float af=1.0, bf=2.0, cf=compound_apply(&add<float>, af, bf);
   EXPECT_EQ( 3.0, cf );
-  TestCompound<uint32> aci(1,2), bci(3,4), cci=compound_apply(&add<uint32>, aci, bci);
+  Test_Compound<uint32> aci(1,2), bci(3,4), cci=compound_apply(&add<uint32>, aci, bci);
   EXPECT_EQ( 4u, cci[0] );
   EXPECT_EQ( 6u, cci[1] );
-  TestCompound<float> acf(1,2), bcf(3,4), ccf=compound_apply(&add<float>, acf, bcf);
+  Test_Compound<float> acf(1,2), bcf(3,4), ccf=compound_apply(&add<float>, acf, bcf);
   EXPECT_EQ( 4, ccf[0] );
   EXPECT_EQ( 6, ccf[1] );
 }
@@ -180,11 +210,11 @@ TEST(CompoundTypes, BinaryCompoundApplyInPlace) {
   float af=1.0, bf=2.0;
   compound_apply_in_place(&add_in_place<float>, af, bf);
   EXPECT_EQ( 3.0, af );
-  TestCompound<uint32> aci(1,2), bci(3,4);
+  Test_Compound<uint32> aci(1,2), bci(3,4);
   compound_apply_in_place(&add_in_place<uint32>, aci, bci);
   EXPECT_EQ( 4u, aci[0] );
   EXPECT_EQ( 6u, aci[1] );
-  TestCompound<float> acf(1,2), bcf(3,4);
+  Test_Compound<float> acf(1,2), bcf(3,4);
   compound_apply_in_place(&add_in_place<float>, acf, bcf);
   EXPECT_EQ( 4, acf[0] );
   EXPECT_EQ( 6, acf[1] );
@@ -195,10 +225,10 @@ TEST(CompoundTypes, UnaryCompoundApply) {
   EXPECT_EQ( 2u, bi );
   float af=1.0, bf=compound_apply(&add_one<float>, af);
   EXPECT_EQ( 2.0, bf );
-  TestCompound<uint32> aci(1,2), bci=compound_apply(&add_one<uint32>, aci);
+  Test_Compound<uint32> aci(1,2), bci=compound_apply(&add_one<uint32>, aci);
   EXPECT_EQ( 2u, bci[0] );
   EXPECT_EQ( 3u, bci[1] );
-  TestCompound<float> acf(1,2), bcf=compound_apply(&add_one<float>, acf);
+  Test_Compound<float> acf(1,2), bcf=compound_apply(&add_one<float>, acf);
   EXPECT_EQ( 2, bcf[0] );
   EXPECT_EQ( 3, bcf[1] );
 }
@@ -210,7 +240,7 @@ TEST( CompoundTypes, UnaryCompoundApplyInPlace) {
   double valf = 0.0;
   compound_apply_in_place( &add_one_in_place<double>, valf );
   EXPECT_EQ( 1.0, valf );
-  TestCompound<int> valc( 1, 2 );
+  Test_Compound<int> valc( 1, 2 );
   compound_apply_in_place( &add_one_in_place<int>, valc );
   EXPECT_EQ( 2, valc[0] );
   EXPECT_EQ( 3, valc[1] );

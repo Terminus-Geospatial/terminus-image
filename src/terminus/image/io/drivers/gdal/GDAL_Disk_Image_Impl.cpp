@@ -7,6 +7,7 @@
 
 /// Terminus Libraries
 #include "../../../pixel/convert.hpp"
+#include "../../../pixel/Channel_Type_Enum.hpp"
 #include "GDAL_Utilities.hpp"
 
 /// External Terminus Libraries
@@ -31,6 +32,22 @@ GDAL_Disk_Image_Impl::GDAL_Disk_Image_Impl( const std::filesystem::path& pathnam
     m_color_reference_lut( color_reference_lut )
 {
     open( m_pathname );
+}
+
+/********************************/
+/*          Constructor         */
+/********************************/
+GDAL_Disk_Image_Impl::GDAL_Disk_Image_Impl( const std::filesystem::path&             pathname,
+                                            const Image_Format&                      output_format,
+                                            const std::map<std::string,std::string>& write_options,
+                                            const math::Size2i&                      block_size,
+                                            const ColorCodeLookupT&                  color_reference_lut )
+  : m_pathname( pathname ),
+    m_color_reference_lut( color_reference_lut )
+{
+    configure_for_writing( output_format,
+                           write_options,
+                           block_size );
 }
 
 /************************************/
@@ -278,6 +295,76 @@ ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
     return convert( dest, src, rescale );
 }
 
+/****************************************************/
+/*          Write the image buffer to disk          */
+/****************************************************/
+ImageResult<void> GDAL_Disk_Image_Impl::write( const Image_Buffer& source_buffer,
+                                               const math::Rect2i& bbox,
+                                               bool                rescale )
+{
+    auto dest_format = format();
+    dest_format.set_cols( bbox.width() );
+    dest_format.set_rows( bbox.height() );
+
+    // Create output buffer
+    std::vector<uint8_t> dest_data( dest_format.raster_size_bytes() );
+    Image_Buffer dest_buffer( dest_format, dest_data.data() );
+
+    auto res = convert( dest_buffer,
+                        source_buffer,
+                        rescale );
+    if( res.has_error() )
+    {
+        tmns::log::error( "Problem inside write operation: ", res.error().message() );
+        return outcome::fail( res.error() );
+    }
+
+    {
+        std::unique_lock<std::mutex> lock( get_master_gdal_mutex() );
+
+        // Get the underlying GDAL datatype
+        auto gdal_res = channel_type_to_gdal_pixel_format( format().channel_type() );
+        if( gdal_res.has_error() )
+        {
+            return outcome::fail(gdal_res.error());
+        }
+        GDALDataType gdal_pix_fmt = gdal_res.value();
+
+        // Make sure we have valid channel count
+        auto channels = num_channels( dest_buffer.format().pixel_type() ).value();
+        auto ch_size_bytes = channel_size_bytes( dest_buffer.format().channel_type() ).value();
+
+        // Iterate over the pixel bands
+        for( size_t p = 0; p < dest_buffer.format().planes(); p++ ){
+        for( size_t c = 0; c < channels; c++ ){
+
+            GDALRasterBand *band = get_dataset_ptr().value()->GetRasterBand(c+p+1);
+
+            CPLErr result = band->RasterIO( GF_Write,
+                                            bbox.min().x(),
+                                            bbox.min().y(),
+                                            bbox.width(),
+                                            bbox.height(),
+                                            (uint8_t*)dest_buffer(0,0,p) + ch_size_bytes * c,
+                                            dest_buffer.format().cols(),
+                                            dest_buffer.format().rows(),
+                                            gdal_pix_fmt,
+                                            dest_buffer.cstride(),
+                                            dest_buffer.rstride() );
+            if (result != CE_None)
+            {
+                std::stringstream sout;
+                sout << "RasterIO trouble: '" << CPLGetLastErrorMsg();
+                get_master_gdal_logger().error( sout.str() );
+                return outcome::fail( core::error::ErrorCode::GDAL_FAILURE,
+                                      sout.str() );
+            }
+        }} // End of for each row/col
+    } // End of locked region
+
+    return outcome::ok();
+} // End of method
+
 /************************************************/
 /*          Print to log-friendly string        */
 /************************************************/
@@ -325,7 +412,7 @@ ImageResult<GDAL_Disk_Image_Impl::DatasetPtrT> GDAL_Disk_Image_Impl::get_dataset
 /************************************************/
 /*          Get the default block size          */
 /************************************************/
-math::Vector2i GDAL_Disk_Image_Impl::default_block_size() const
+math::Size2i GDAL_Disk_Image_Impl::default_block_size() const
 {
     auto dataset = get_dataset_ptr().value();
 
@@ -342,7 +429,83 @@ math::Vector2i GDAL_Disk_Image_Impl::default_block_size() const
         ysize = format().rows();
     }
 
-    return std::move( math::Vector2i( { xsize, ysize } ) );
+    return std::move( math::Size2i( { xsize, ysize } ) );
+}
+
+/*********************************************/
+/*      Check if Nodata Read Supported       */
+/*********************************************/
+bool GDAL_Disk_Image_Impl::has_nodata_read() const
+{
+    double value;
+    return (!nodata_read_ok().has_error());
+}
+
+/***********************************************/
+/*          Get the block read size            */
+/***********************************************/
+math::Size2i  GDAL_Disk_Image_Impl::block_read_size() const
+{
+    return m_blocksize;
+}
+
+/************************************************/
+/*          Get the block write size            */
+/************************************************/
+math::Size2i  GDAL_Disk_Image_Impl::block_write_size() const
+{
+    return m_blocksize;
+}
+
+/************************************************/
+/*          Set the block write size            */
+/************************************************/
+void GDAL_Disk_Image_Impl::set_block_write_size( const math::Size2i& block_size )
+{
+    m_blocksize = block_size;
+    std::unique_lock<std::mutex> lock( get_master_gdal_mutex() );
+    initialize_write_resource_locked();
+}
+
+/****************************************/
+/*          Get Nodata Read Value       */
+/****************************************/
+double GDAL_Disk_Image_Impl::nodata_read() const
+{
+    auto val = nodata_read_ok();
+    if( val.has_error() )
+    {
+        throw std::runtime_error( "Error reading dataset.  This dataset does not have nodata set." );
+    }
+    return val.value();
+}
+
+/****************************************/
+/*      Set the nodata write value      */
+/****************************************/
+void GDAL_Disk_Image_Impl::set_nodata_write( double value )
+{
+    std::unique_lock<std::mutex> lock( get_master_gdal_mutex() );
+    auto dataset = get_dataset_ptr();
+    if( dataset.value()->GetRasterBand(1)->SetNoDataValue( value ) != CE_None )
+    {
+        std::stringstream sout;
+        sout << "GDAL_Disk_Image_Impl: Unable to set nodata value";
+        get_master_gdal_logger().error( sout.str() );
+        throw std::runtime_error( sout.str() );
+    }
+}
+
+/************************************************/
+/*          Flush and Write Everything          */
+/************************************************/
+void GDAL_Disk_Image_Impl::flush()
+{
+    if( m_write_dataset )
+    {
+        std::unique_lock<std::mutex> lock( get_master_gdal_mutex() );
+        m_write_dataset.reset();
+    }
 }
 
 /************************************************************************************/
@@ -364,4 +527,200 @@ bool GDAL_Disk_Image_Impl::blocksize_whitelist( const GDALDriver* driver )
     return false;
 }
 
+/****************************************************/
+/*          Check if GDAL Supports Driver           */
+/****************************************************/
+bool GDAL_Disk_Image_Impl::gdal_has_support( const std::string& filename )
+{
+    std::unique_lock<std::mutex> lock( get_master_gdal_mutex() );
+    std::pair<GDALDriver *, bool> ret = gdal_get_driver_locked( filename, false );
+    return bool(ret.first);
+  }
+
+/*********************************************/
+/*          Initialize Output Driver         */
+/*********************************************/
+void GDAL_Disk_Image_Impl::initialize_write_resource_locked()
+{
+    if( m_write_dataset )
+    {
+        m_write_dataset.reset();
+    }
+
+    int num_bands = std::max( format().planes(),
+                              (size_t)num_channels( format().pixel_type() ).value() );
+
+    // returns Maybe driver, and whether it
+    // found a ro driver when a rw one was requested
+    std::pair<GDALDriver *, bool> ret = gdal_get_driver_locked( m_pathname, true );
+
+    if( ret.first == NULL )
+    {
+        if( ret.second )
+        {
+            std::stringstream sout;
+            sout << "Could not write: " << m_pathname << ".  Selected GDAL driver not supported.";
+            get_master_gdal_logger().error( sout.str() );
+            throw std::runtime_error( sout.str() );
+        }
+        else
+        {
+            std::stringstream sout;
+            sout << "Error opening selected GDAL file I/O driver.";
+            get_master_gdal_logger().error( sout.str() );
+            throw std::runtime_error( sout.str() );
+        }
+    }
+
+    GDALDriver *driver = ret.first;
+    char **options = NULL;
+
+    // Note:  These calls to assign "options" merely update the pointer with more info appended to it.
+
+    if( format().pixel_type() == Pixel_Format_Enum::GRAYA ||
+        format().pixel_type() == Pixel_Format_Enum::RGBA )
+    {
+        options = CSLSetNameValue( options, "ALPHA", "YES" );
+    }
+    if( format().pixel_type() != Pixel_Format_Enum::SCALAR )
+    {
+        options = CSLSetNameValue( options, "INTERLEAVE", "PIXEL" );
+    }
+    if( format().pixel_type() == Pixel_Format_Enum::RGB ||
+        format().pixel_type() == Pixel_Format_Enum::RGBA ||
+        format().pixel_type() == Pixel_Format_Enum::GENERIC_3_CHANNEL ||
+        format().pixel_type() == Pixel_Format_Enum::GENERIC_4_CHANNEL)
+    {
+        options = CSLSetNameValue( options, "PHOTOMETRIC", "RGB" );
+    }
+
+    // If the user has specified a block size, we set the option for it here.
+    if ( m_blocksize[0] != -1 && m_blocksize[1] != -1 )
+    {
+        std::ostringstream x_str, y_str;
+        x_str << m_blocksize[0];
+        y_str << m_blocksize[1];
+        options = CSLSetNameValue( options, "TILED", "YES" );
+        options = CSLSetNameValue( options, "BLOCKXSIZE", x_str.str().c_str() );
+        options = CSLSetNameValue( options, "BLOCKYSIZE", y_str.str().c_str() );
+    }
+
+    for( const Options::value_type& i : m_driver_options )
+    {
+        options = CSLSetNameValue( options, i.first.c_str(), i.second.c_str() );
+    }
+
+    GDALDataType gdal_pix_fmt = channel_type_to_gdal_pixel_format( format().channel_type() ).value();
+
+    m_write_dataset.reset( driver->Create( m_pathname.c_str(),
+                                           format().cols(),
+                                           format().rows(),
+                                           num_bands,
+                                           gdal_pix_fmt,
+                                           options ),
+                                           GDAL_Deleter_Null_Okay );
+    CSLDestroy( options );
+
+    if ( m_blocksize.width() == -1 ||
+         m_blocksize.height() == -1 )
+    {
+        m_blocksize = default_block_size();
+    }
 }
+
+/*****************************************************/
+/*           Check if nodata read was okay           */
+/*****************************************************/
+ImageResult<double> GDAL_Disk_Image_Impl::nodata_read_ok() const
+{
+    std::unique_lock<std::mutex> lck( get_master_gdal_mutex() );
+
+    auto dataset = get_dataset_ptr().value();
+    int success;
+    auto value = dataset->GetRasterBand(1)->GetNoDataValue( &success );
+    if( !success )
+    {
+        return outcome::fail( core::error::ErrorCode::NOT_FOUND,
+                              "nodata unsupported by driver." );
+    }
+
+    auto image_fmt = this->format();
+
+    // This is a bugfix. If the image has float values,
+    // must cast the nodata value to float before exporting
+    // it as double. Sometimes it is a float with extra noise
+    // which needs to be cleaned up.
+    if( image_fmt.channel_type() == Channel_Type_Enum::FLOAT32 )
+    {
+        value = std::max( float(value),
+                          -std::numeric_limits<float>::max() );
+    }
+
+    return outcome::ok<double>( value );
+}
+
+/********************************************/
+/*          Configure for Writing           */
+/********************************************/
+void GDAL_Disk_Image_Impl::configure_for_writing( const Image_Format&                      output_format,
+                                                  const std::map<std::string,std::string>& write_options,
+                                                  const math::Size2i&                      block_size )
+{
+    // Error Check
+    //    ref:  VW_ASSERT(format.planes == 1 || format.pixel_format==VW_PIXEL_SCALAR,
+    if( output_format.planes() != 1 && output_format.channels() > 1 )
+    {
+        std::stringstream sout;
+        sout << "The image cannot have both multiple channels and multiple planes.";
+        tmns::log::error( sout.str() );
+        throw std::runtime_error( sout.str() );
+    }
+
+    if( ( block_size.width() >= 0      || block_size.height() >= 0 ) &&
+        ( block_size.width() % 16 != 0 || block_size.height() % 16 != 0 ) )
+    {
+        std::stringstream sout;
+        sout << "Cannot initialize GDAL_Disk_Image_Impl class.  Block dimensions must";
+        sout << " be a multiple of 16.";
+        tmns::log::error( sout.str() );
+        throw std::runtime_error( sout.str() );
+    }
+
+    // Store away relevent information into the internal data
+    // structure for this DiskImageResource
+    m_format    = output_format;
+    m_blocksize = block_size;
+
+    m_driver_options = write_options;
+
+    if( m_driver_options["PREDICTOR"].empty() )
+    {
+        // Unless predictor was explicitly set, use predictor 3 for
+        // compression of float/double, and predictor 2 for integers,
+        // except whose size is one byte, as for those compression makes
+        // things worse.
+        if( format().channel_type() == Channel_Type_Enum::FLOAT32 ||
+            format().channel_type() == Channel_Type_Enum::FLOAT64 )
+        {
+            m_driver_options["PREDICTOR"] = "3";
+        }
+        else if( is_integer_type( format().channel_type() ) )
+        {
+            m_driver_options["PREDICTOR"] = "2";
+        }
+        else
+        {
+            m_driver_options["PREDICTOR"] = "1"; // Must not leave unset
+        }
+    }
+    else
+    {
+        m_driver_options["PREDICTOR"] = "1"; // Must not leave unset
+    }
+
+    std::unique_lock<std::mutex> lck( get_master_gdal_mutex() );
+    initialize_write_resource_locked();
+}
+
+
+} // End of tmns::image::io::gdal namespace

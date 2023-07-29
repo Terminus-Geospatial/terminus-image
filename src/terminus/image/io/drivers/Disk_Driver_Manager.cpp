@@ -10,19 +10,46 @@ namespace tmns::image::io {
 /************************************************************************************/
 /*          Pick the appropriate driver in the list for processing the dataset      */
 /************************************************************************************/
-ImageResult<Read_Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
+ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
 {
     for( const auto& factory : m_read_driver_factories )
     {
-        if( factory->is_image_supported( pathname ) )
+        if( factory->is_read_image_supported( pathname ) )
         {
-            auto new_driver = factory->create( pathname );
+            auto new_driver = factory->create_read_driver( pathname );
             if( new_driver.has_error() )
             {
                 return outcome::fail( new_driver.assume_error() );
             }
-            auto driver_ptr = std::dynamic_pointer_cast<Read_Image_Resource_Disk>( new_driver.assume_value() );
-            return outcome::ok<Read_Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );
+            auto driver_ptr = std::dynamic_pointer_cast<Image_Resource_Disk>( new_driver.assume_value() );
+            return outcome::ok<Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );
+        }
+    }
+    return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND );
+}
+
+/************************************************************************************/
+/*          Pick the appropriate driver in the list for processing the dataset      */
+/************************************************************************************/
+ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_write_driver( const std::filesystem::path&             pathname,
+                                                                                const Image_Format&                      output_format,
+                                                                                const std::map<std::string,std::string>& write_options,
+                                                                                const math::Size2i&                      block_size ) const
+{
+    for( const auto& factory : m_write_driver_factories )
+    {
+        if( factory->is_write_image_supported( pathname ) )
+        {
+            auto new_driver = factory->create_write_driver( pathname,
+                                                            output_format,
+                                                            write_options,
+                                                            block_size );
+            if( new_driver.has_error() )
+            {
+                return outcome::fail( new_driver.assume_error() );
+            }
+            auto driver_ptr = std::dynamic_pointer_cast<Image_Resource_Disk>( new_driver.assume_value() );
+            return outcome::ok<Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );
         }
     }
     return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND );
@@ -31,9 +58,17 @@ ImageResult<Read_Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driv
 /************************************************/
 /*      Add new factory to driver manager       */
 /************************************************/
-void Disk_Driver_Manager::register_read_driver_factory( Read_Driver_Factory_Base::ptr_t new_driver )
+void Disk_Driver_Manager::register_read_driver_factory( Driver_Factory_Base::ptr_t new_driver )
 {
     m_read_driver_factories.push_back( new_driver );
+}
+
+/************************************************/
+/*      Add new factory to driver manager       */
+/************************************************/
+void Disk_Driver_Manager::register_write_driver_factory( Driver_Factory_Base::ptr_t new_driver )
+{
+    m_write_driver_factories.push_back( new_driver );
 }
 
 } // End of tmns::image::io namespace

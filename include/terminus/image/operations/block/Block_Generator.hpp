@@ -31,6 +31,11 @@ class Block_Generator
             m_bbox( bbox )
         {}
 
+        static std::string class_name()
+        {
+            return "Block_Generator";
+        }
+
         /**
          * Return the size of the image in bytes that the image
          * occupies.

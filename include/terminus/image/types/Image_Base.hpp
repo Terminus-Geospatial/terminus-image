@@ -38,8 +38,8 @@ class Image_Base
 
 
         /// Methods to access the derived type when sitting in the base
-        inline ImplT&        impl()       { return static_cast<ImplT&>( *this ); }
-        inline ImplT const&  impl() const { return static_cast<ImplT const&>( *this ); }
+        ImplT&        impl()       { return static_cast<ImplT&>( *this ); }
+        ImplT const&  impl() const { return static_cast<ImplT const&>( *this ); }
 
         /// Returns an iterator pointing to the first pixel in the image.
         iterator begin()             { return       iterator(impl(),0,0,0); }
@@ -52,17 +52,23 @@ class Image_Base
         /**
          * Get the number of columns in the image.
         */
-        virtual size_t cols() const = 0;
+        size_t cols() const
+        {
+            return impl().cols();
+        }
 
         /**
          * Get the number of rows in the image
         */
-        virtual size_t rows() const = 0;
+        size_t rows() const
+        {
+            return impl().rows();
+        }
 
         /**
          * Get the number of channels in the image
         */
-        virtual size_t channels() const
+        size_t channels() const
         {
             return ImplT::pixel_type::NUM_CHANNELS;
         };
@@ -70,7 +76,10 @@ class Image_Base
         /**
          * Get the number of planes in the image
         */
-        virtual size_t planes() const = 0;
+        size_t planes() const
+        {
+            return impl().planes();
+        }
 
         /**
          * Create a Bounding Box for the full image dimensions.  Nice
@@ -110,6 +119,18 @@ class Image_Base
                                  true );
 
             return format;
+        }
+
+    protected:
+
+        /// The user can't be allowed to use these
+        Image_Base() = default;
+
+        Image_Base( const Image_Base& rhs ) = default;
+
+        Image_Base& operator = ( const Image_Base& rhs )
+        {
+            return (*this);
         }
 
 }; // End of ImageBase Class

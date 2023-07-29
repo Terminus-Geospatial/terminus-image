@@ -25,6 +25,6 @@ namespace tmns::image {
 */
 ImageResult<void> convert( const Image_Buffer&  dst,
                            const Image_Buffer&  src,
-                           bool                 rescale );
+                           bool                 rescale = false );
 
 } // End of tmns::image namespace

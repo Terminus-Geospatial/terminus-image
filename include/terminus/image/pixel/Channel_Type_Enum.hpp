@@ -34,6 +34,11 @@ enum Channel_Type_Enum
 std::string enum_to_string( Channel_Type_Enum val );
 
 /**
+ * Return true if enumeration is "integer" type (aka not float)
+*/
+bool is_integer_type( Channel_Type_Enum value );
+
+/**
  * Function to get the size of the channel in bytes.
  * Throws an error if value is unknown.
 */

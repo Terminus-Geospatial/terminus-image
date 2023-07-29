@@ -188,5 +188,55 @@ ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum c
     }
 }
 
+/********************************/
+/*          Get driver          */
+/********************************/
+std::pair<GDALDriver*, bool> gdal_get_driver_locked( const std::filesystem::path& filename,
+                                                     bool                         need_create )
+{
+    bool unsupported_driver = false;
+    GDALDriver* driver = nullptr;
+
+    // Open the appropriate GDAL I/O driver, depending on the fileFormat
+    // argument specified by the user.
+    std::list<std::string> gdal_format_strings = gdal_file_format_from_filename::format( filename );
+
+    for( const auto& gdal_string : gdal_format_strings )
+    {
+        {
+            std::stringstream sout;
+            sout <<"Trying to retrieve GDAL Driver with the following type: " << gdal_string;
+            get_master_gdal_logger().trace( sout.str() );
+        }
+
+        driver = GetGDALDriverManager()->GetDriverByName( gdal_string.c_str() );
+        if( driver == nullptr )
+        {
+            continue;
+        }
+
+        if (need_create)
+        {
+            char** metadata = driver->GetMetadata();
+            if( !CSLFetchBoolean( metadata, GDAL_DCAP_CREATE, FALSE ) )
+            {
+                get_master_gdal_logger().warn( "GDAL driver ", gdal_string, " does not support create." );
+                driver = NULL;
+                unsupported_driver = true;
+            }
+        }
+
+        if ( driver != nullptr )
+        {
+            break;
+        }
+    }
+    if (!driver)
+    {
+        get_master_gdal_logger().debug( "Could not get GDAL driver for filename:", filename );
+    }
+    return std::make_pair(driver, unsupported_driver);
+
+} // End of gdal_get_driver_locked
 
 } // end of tmns::image::io::gdal namespace

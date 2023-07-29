@@ -27,7 +27,7 @@ class Crop_View;
 template <class ImageT>
 struct Is_Floating_Point_Indexable<ops::Crop_View<ImageT> >
 {
-    typedef typename Is_Floating_Point_Indexable<ImageT>::value value;
+    static consteval bool value(){ return Is_Floating_Point_Indexable<ImageT>::value(); }
 }; // End of Is_Floating_Point_Indexable<> struct
 
 /**
@@ -58,7 +58,7 @@ class Crop_View : public Image_Base<Crop_View<ImageT>>
         /**
          * @brief If Floating-Point Indexible, use doubles, otherwise, stick with integer
         */
-        typedef typename std::conditional<Is_Floating_Point_Indexable<ImageT>::value, double, int>::type offset_type;
+        typedef typename std::conditional_t<Is_Floating_Point_Indexable<ImageT>::value(), double, int> offset_type;
 
         /**
          * Constructor
@@ -91,17 +91,17 @@ class Crop_View : public Image_Base<Crop_View<ImageT>>
         /**
          * Get the number of image columns
         */
-        size_t cols() const override { return m_di; }
+        size_t cols() const { return m_di; }
 
         /**
          * Get the number of image rows
         */
-        size_t rows() const override { return m_dj; }
+        size_t rows() const { return m_dj; }
 
         /**
          * Get the number of image planes
         */
-        size_t planes() const override { return m_child.planes(); }
+        size_t planes() const { return m_child.planes(); }
 
         /**
          * Get the image data origin
@@ -208,8 +208,8 @@ ops::Crop_View<ImageT> crop( const Image_Base<ImageT>& image,
  * Crop an image
 */
 template <typename ImageT, typename BBoxT>
-ops::Crop_View<ImageT> crop( const Image_Base<ImageT>&     image,
-                             const math::Rectangle<BBoxT>& bbox )
+ops::Crop_View<ImageT> crop_image( const Image_Base<ImageT>&     image,
+                                   const math::Rectangle<BBoxT>& bbox )
 {
     return ops::Crop_View<ImageT>( image.impl(), bbox );
 }

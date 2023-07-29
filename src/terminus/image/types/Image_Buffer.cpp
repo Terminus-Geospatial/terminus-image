@@ -5,9 +5,12 @@
 */
 #include "Image_Buffer.hpp"
 
-// Terminus Libraries
+// Terminus Image Libraries
 #include "../pixel/Channel_Type_Enum.hpp"
 #include "../pixel/Pixel_Format_Enum.hpp"
+
+// Terminus Libraries
+#include <terminus/log/utility.hpp>
 
 // C++ Libraries
 #include <iostream>
@@ -37,10 +40,10 @@ Image_Buffer::Image_Buffer( void*                data,
                             size_t               rstride,
                             size_t               pstride )
   : m_data( data ),
-   m_format( std::move( format ) ),
-   m_cstride( cstride ),
-   m_rstride( rstride ),
-   m_pstride( pstride )
+    m_format( std::move( format ) ),
+    m_cstride( cstride ),
+    m_rstride( rstride ),
+    m_pstride( pstride )
 {}
 
 /********************************/
@@ -67,6 +70,30 @@ size_t Image_Buffer::rows() const
     return m_format.rows();
 }
 
+/********************************/
+/*      Get Buffer Planes       */
+/********************************/
+size_t Image_Buffer::planes() const
+{
+    return m_format.planes();
+}
+
+/****************************************/
+/*          Get the Pixel Type          */
+/****************************************/
+Pixel_Format_Enum Image_Buffer::pixel_type() const
+{
+    return m_format.pixel_type();
+}
+
+/****************************************/
+/*          Get the Channel Type        */
+/****************************************/
+Channel_Type_Enum Image_Buffer::channel_type() const
+{
+    return m_format.channel_type();
+}
+
 /****************************/
 /*      Image Format        */
 /****************************/
@@ -75,6 +102,13 @@ Image_Format Image_Buffer::format() const
     return m_format;
 }
 
+/****************************/
+/*      Image Format        */
+/****************************/
+Image_Format& Image_Buffer::format()
+{
+    return m_format;
+}
 
 /************************/
 /*      Column Stride   */
@@ -98,6 +132,14 @@ ssize_t Image_Buffer::rstride() const
 ssize_t Image_Buffer::pstride() const
 {
     return m_pstride;
+}
+
+/************************/
+/*      Plane Stride    */
+/************************/
+void Image_Buffer::set_pstride( ssize_t value )
+{
+    m_pstride = value;
 }
 
 /************************************/

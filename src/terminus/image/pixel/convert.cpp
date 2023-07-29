@@ -446,65 +446,80 @@ ImageResult<void> convert( const Image_Buffer&  dst,
         // Do nothing for now, it's just a check
     }
 
-    /*
-    // We only support a few special conversions, and the general case where
-    // the source and destination formats are the same.  Below we assume that
-    // we're doing a supported conversion, so we check first.
-    if( dst.format.pixel_format != src.format.pixel_format ) {
+    tmns::log::info( "Destination Buffer:\n", dst.To_Log_String() );
+
+    /**
+     * We only support a few special conversions, and the general case where
+     * the source and destination formats are the same.  Below we assume that
+     * we're doing a supported conversion, so we check first.
+    */
+   if( dst.format().pixel_type() != src.format().pixel_type() )
+   {
         // We freely convert between multi-channel and multi-plane images,
         // by aliasing the multi-channel buffer as a multi-plane buffer.
-        if( src.format.pixel_format==VW_PIXEL_SCALAR && dst.format.planes==1
-            && src.format.planes==num_channels( dst.format.pixel_format ) )
+        if( src.format().pixel_type() == Pixel_Format_Enum::SCALAR &&
+            dst.format().planes()     == 1  &&
+            src.format().planes()     == num_channels( dst.format().pixel_type() ).value() )
         {
-            ImageBuffer new_dst = dst;
-            new_dst.format.pixel_format = VW_PIXEL_SCALAR;
-            new_dst.format.planes = src.format.planes;
-            new_dst.pstride = channel_size( dst.format.channel_type );
+            Image_Buffer new_dst          = dst;
+            new_dst.format().set_pixel_type( Pixel_Format_Enum::SCALAR );
+            new_dst.format().set_planes( src.format().planes() );
+            new_dst.set_pstride( channel_size_bytes( dst.format().channel_type() ).value() );
             return convert( new_dst, src );
         }
-        else if( dst.format.pixel_format==VW_PIXEL_SCALAR && src.format.planes==1
-                 && dst.format.planes==num_channels( src.format.pixel_format ) )
+        else if( dst.format().pixel_type() == Pixel_Format_Enum::SCALAR &&
+                 src.format().planes()     == 1 &&
+                 dst.format().planes()     == num_channels( src.format().pixel_type() ).value() )
         {
-            ImageBuffer new_src = src;
-            new_src.format.pixel_format = VW_PIXEL_SCALAR;
-            new_src.format.planes = dst.format.planes;
-            new_src.pstride = channel_size( src.format.channel_type );
+            Image_Buffer new_src          = src;
+            new_src.format().set_pixel_type( Pixel_Format_Enum::SCALAR );
+            new_src.format().set_planes( dst.format().planes() );
+            new_src.set_pstride( channel_size_bytes( src.format().channel_type() ).value() );
             return convert( dst, new_src );
         }
+
         // We support conversions between user specified generic pixel
         // types and the pixel types with an identical number of channels.
-        if ( ( src.format.pixel_format == VW_PIXEL_SCALAR_MASKED     && dst.format.pixel_format == VW_PIXEL_GRAYA ) ||
-             ( dst.format.pixel_format == VW_PIXEL_SCALAR_MASKED     && src.format.pixel_format == VW_PIXEL_GRAYA ) ||
-             ( src.format.pixel_format == VW_PIXEL_GRAY_MASKED       && dst.format.pixel_format == VW_PIXEL_GRAYA ) ||
-             ( dst.format.pixel_format == VW_PIXEL_GRAY_MASKED       && src.format.pixel_format == VW_PIXEL_GRAYA ) ||
-             ( src.format.pixel_format == VW_PIXEL_RGB_MASKED        && dst.format.pixel_format == VW_PIXEL_RGBA  ) ||
-             ( dst.format.pixel_format == VW_PIXEL_RGB_MASKED        && src.format.pixel_format == VW_PIXEL_RGBA  ) ||
-             ( src.format.pixel_format == VW_PIXEL_GENERIC_1_CHANNEL && dst.format.pixel_format == VW_PIXEL_GRAY  ) ||
-             ( dst.format.pixel_format == VW_PIXEL_GENERIC_1_CHANNEL && src.format.pixel_format == VW_PIXEL_GRAY  ) ||
-             ( src.format.pixel_format == VW_PIXEL_GENERIC_2_CHANNEL && dst.format.pixel_format == VW_PIXEL_GRAYA ) ||
-             ( dst.format.pixel_format == VW_PIXEL_GENERIC_2_CHANNEL && src.format.pixel_format == VW_PIXEL_GRAYA ) ||
-             ( src.format.pixel_format == VW_PIXEL_GENERIC_3_CHANNEL && dst.format.pixel_format == VW_PIXEL_RGB   ) ||
-             ( dst.format.pixel_format == VW_PIXEL_GENERIC_3_CHANNEL && src.format.pixel_format == VW_PIXEL_RGB   ) ||
-             ( src.format.pixel_format == VW_PIXEL_GENERIC_3_CHANNEL && dst.format.pixel_format == VW_PIXEL_XYZ   ) ||
-             ( dst.format.pixel_format == VW_PIXEL_GENERIC_3_CHANNEL && src.format.pixel_format == VW_PIXEL_XYZ   ) ||
-             ( src.format.pixel_format == VW_PIXEL_GENERIC_4_CHANNEL && dst.format.pixel_format == VW_PIXEL_RGBA  ) ||
-             ( dst.format.pixel_format == VW_PIXEL_GENERIC_4_CHANNEL && src.format.pixel_format == VW_PIXEL_RGBA  ) )
+        if ( ( src.format().pixel_type() == Pixel_Format_Enum::SCALAR_MASKED     && dst.format().pixel_type() == Pixel_Format_Enum::GRAYA ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::SCALAR_MASKED     && src.format().pixel_type() == Pixel_Format_Enum::GRAYA ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::GRAY_MASKED       && dst.format().pixel_type() == Pixel_Format_Enum::GRAYA ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::GRAY_MASKED       && src.format().pixel_type() == Pixel_Format_Enum::GRAYA ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::RGB_MASKED        && dst.format().pixel_type() == Pixel_Format_Enum::RGBA  ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::RGB_MASKED        && src.format().pixel_type() == Pixel_Format_Enum::RGBA  ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::GENERIC_1_CHANNEL && dst.format().pixel_type() == Pixel_Format_Enum::GRAY  ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::GENERIC_1_CHANNEL && src.format().pixel_type() == Pixel_Format_Enum::GRAY  ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::GENERIC_2_CHANNEL && dst.format().pixel_type() == Pixel_Format_Enum::GRAYA ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::GENERIC_2_CHANNEL && src.format().pixel_type() == Pixel_Format_Enum::GRAYA ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::GENERIC_3_CHANNEL && dst.format().pixel_type() == Pixel_Format_Enum::RGB   ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::GENERIC_3_CHANNEL && src.format().pixel_type() == Pixel_Format_Enum::RGB   ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::GENERIC_3_CHANNEL && dst.format().pixel_type() == Pixel_Format_Enum::XYZ   ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::GENERIC_3_CHANNEL && src.format().pixel_type() == Pixel_Format_Enum::XYZ   ) ||
+             ( src.format().pixel_type() == Pixel_Format_Enum::GENERIC_4_CHANNEL && dst.format().pixel_type() == Pixel_Format_Enum::RGBA  ) ||
+             ( dst.format().pixel_type() == Pixel_Format_Enum::GENERIC_4_CHANNEL && src.format().pixel_type() == Pixel_Format_Enum::RGBA  ) )
         {
             // Do nothing, these combinations are ok to convert.
         }
         // Other than that, we only support conversion between the core pixel formats
-        else if( ( src.format.pixel_format!=VW_PIXEL_GRAY && src.format.pixel_format!=VW_PIXEL_GRAYA &&
-                   src.format.pixel_format!=VW_PIXEL_RGB  && src.format.pixel_format!=VW_PIXEL_RGBA  &&
-                   src.format.pixel_format!=VW_PIXEL_XYZ) ||
-                 ( dst.format.pixel_format!=VW_PIXEL_GRAY && dst.format.pixel_format!=VW_PIXEL_GRAYA &&
-                   dst.format.pixel_format!=VW_PIXEL_RGB  && dst.format.pixel_format!=VW_PIXEL_RGBA  &&
-                   dst.format.pixel_format!=VW_PIXEL_XYZ) )
+        else if( ( src.format().pixel_type() != Pixel_Format_Enum::GRAY  &&
+                   src.format().pixel_type() != Pixel_Format_Enum::GRAYA &&
+                   src.format().pixel_type() != Pixel_Format_Enum::RGB   &&
+                   src.format().pixel_type() != Pixel_Format_Enum::RGBA  &&
+                   src.format().pixel_type() != Pixel_Format_Enum::XYZ ) ||
+                 ( dst.format().pixel_type() != Pixel_Format_Enum::GRAY &&
+                   dst.format().pixel_type() != Pixel_Format_Enum::GRAYA &&
+                   dst.format().pixel_type() != Pixel_Format_Enum::RGB  &&
+                   dst.format().pixel_type() != Pixel_Format_Enum::RGBA  &&
+                   dst.format().pixel_type() != Pixel_Format_Enum::XYZ ) )
         {
-            vw_throw( ArgumentErr() << "Source and destination buffers have incompatible pixel formats ("
-                                    << pixel_format_name(src.format.pixel_format) << " vs. " << pixel_format_name(dst.format.pixel_format) << ")." );
+            std::stringstream sout;
+            sout << "Source and destination buffers have incompatible pixel formats. Source: "
+                 << enum_to_string( src.format().pixel_type() ) << " vs. "
+                 << enum_to_string( dst.format().pixel_type() ) << ").";
+            tmns::log::error( sout.str() );
+            return outcome::fail( core::error::ErrorCode::INVALID_PIXEL_TYPE,
+                                  sout.str() );
         }
     }
-    */
 
     // Gather some stats
     size_t src_channels = num_channels( src.format().pixel_type() ).value();

@@ -1,5 +1,5 @@
 /**
- * @file    Read_Image_Resource_Memory.hpp
+ * @file    Image_Resource_Memory.hpp
  * @author  Marvin Smith
  * @date    7/13/2023
 */
@@ -16,13 +16,13 @@ namespace tmns::image::io {
 /**
  * Memory/Driver loading interface
 */
-class Read_Image_Resource_Memory : public Read_Image_Resource_Base,
-                                          boost::noncopyable
+class Image_Resource_Memory : public Image_Resource_Base,
+                                     boost::noncopyable
 {
     public:
 
-        typedef std::shared_ptr<Read_Image_Resource_Memory> ptr_t;
+        typedef std::shared_ptr<Image_Resource_Memory> ptr_t;
 
-}; // End of Read_Image_Resource_Memory class
+}; // End of Image_Resource_Memory class
 
 } // end of tmns::image::io namespace

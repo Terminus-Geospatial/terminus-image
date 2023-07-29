@@ -59,9 +59,19 @@ class Image_Buffer
         size_t rows() const;
 
         /**
+         * Image Planes
+        */
+        size_t planes() const;
+
+        /**
          * Get the pixel type
         */
         Pixel_Format_Enum pixel_type() const;
+
+        /**
+         * Set the pixel-type
+        */
+        void set_pixel_type( Pixel_Format_Enum value );
 
         /**
          * Get the channel type
@@ -72,6 +82,11 @@ class Image_Buffer
          * Get the image format
         */
         Image_Format format() const;
+
+        /**
+         * Get reference to image format
+        */
+        Image_Format& format();
 
         /**
          * Get the column stride
@@ -87,6 +102,11 @@ class Image_Buffer
          * Get the planar stride
         */
         ssize_t pstride() const;
+
+        /**
+         * Set the pstride
+        */
+        void set_pstride( ssize_t value );
 
         /**
          * Get the point at a specific pixel

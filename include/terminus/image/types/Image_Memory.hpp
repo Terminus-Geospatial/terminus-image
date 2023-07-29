@@ -6,8 +6,11 @@
 #pragma once
 
 // Terminus Libraries
+#include "../operations/rasterize.hpp"
+#include "../pixel/Pixel_Accessor_MemStride.hpp"
 #include "Image_Base.hpp"
 #include "Image_Buffer.hpp"
+#include "Image_Resource_Base.hpp"
 #include "Image_Traits.hpp"
 
 // C++ Libraries
@@ -31,6 +34,12 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
 
         /// Base type of the image
         typedef Image_Base<Image_Memory<PixelT>> base_type;
+
+        /// Prerasterize Type
+        typedef Image_Memory prerasterize_type;
+
+        /// Accessor Type]
+        typedef Pixel_Accessor_MemStride<PixelT> pixel_accessor;
 
         /**
          * Default Constructor
@@ -74,6 +83,12 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
          */
         template <typename ImageT>
         Image_Memory( const ImageT& old_image )
+          : m_cols(0),
+            m_rows(0),
+            m_planes(0),
+            m_origin(0),
+            m_rstride( 0 ),
+            m_pstride(0)
         {
             set_size( old_image.cols(),
                       old_image.rows(),
@@ -143,17 +158,27 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
         /**
          * Get the number of rows in the image
         */
-        size_t rows() const override { return m_rows; }
+        size_t rows() const { return m_rows; }
 
         /**
          * Get the number of columns in the image
         */
-        size_t cols() const override { return m_cols; }
+        size_t cols() const { return m_cols; }
 
         /**
          * Get the number of planes in the image
         */
-        size_t planes() const override { return m_planes; }
+        size_t planes() const { return m_planes; }
+
+        /**
+         * Get the image origin
+        */
+        pixel_accessor origin() const
+        {
+            return pixel_accessor( m_origin,
+                                   m_rstride,
+                                   m_pstride );
+        }
 
         /**
          * Returns an ImageBuffer describing the image data.
@@ -253,6 +278,53 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
             return outcome::ok();
         }
 
+        void reset()
+        {
+            m_data.reset();
+            m_cols = 0;
+            m_rows = 0;
+            m_planes = 0;
+            m_origin = 0;
+            m_rstride = 0;
+            m_pstride = 0;
+        }
+
+        /**
+         * Check if valid image
+        */
+        bool is_valid_image() const
+        {
+            return !(!m_data);
+        }
+
+        /**
+         * Check if anyone is sharing this
+        */
+        bool unique() const
+        {
+            return (!m_data) || m_data.unique();
+        }
+
+        /**
+         * Prepare an Image_Memory instance to be rasterized.  Returns the
+         * original view, since memory means it's already prepped.
+        */
+        prerasterize_type prerasterize( const math::Rect2i& bbox ) const
+        {
+            return *this;
+        }
+
+        /**
+         * Rasterize the image view.  Simply invokes the default
+         * rasterization function.
+         */
+        template <class DestT>
+        void rasterize( const DestT&       dest,
+                       const math::Rect2i& bbox ) const
+        {
+            ops::rasterize( prerasterize(bbox), dest, bbox);
+        }
+
     private:
 
         /// Pixel Data
@@ -289,5 +361,6 @@ struct Is_Multiply_Accessible<Image_Memory<PixelT>>
 {
     typedef std::true_type value;
 };
+
 
 } // End of tmns::image namespace

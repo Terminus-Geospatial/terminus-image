@@ -6,7 +6,11 @@
 #pragma once
 
 // Terminus Methods
+#include <terminus/log/utility.hpp>
 #include <terminus/math/Rectangle.hpp>
+
+// Terminus Image Methods
+#include "../types/Image_Traits.hpp"
 
 namespace tmns::image::ops {
 

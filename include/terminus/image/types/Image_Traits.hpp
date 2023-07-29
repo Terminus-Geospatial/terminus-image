@@ -24,7 +24,7 @@ struct Is_Resizable
 template <class ImplT>
 struct Is_Floating_Point_Indexable
 {
-    typedef std::false_type value;
+    static consteval bool value(){ return false; }
 };
 
 /// Indicates whether or not a type is an image base type.

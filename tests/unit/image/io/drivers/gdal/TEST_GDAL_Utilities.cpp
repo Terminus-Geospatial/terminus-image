@@ -10,7 +10,7 @@
 
 // Terminus Libraries
 #include <terminus/image/io/drivers/gdal/GDAL_Utilities.hpp>
-#include <terminus/image/io/drivers/gdal/Read_Image_Resource_Disk_GDAL.hpp>
+#include <terminus/image/io/drivers/gdal/Image_Resource_Disk_GDAL.hpp>
 
 using namespace tmns::image;
 
@@ -20,7 +20,7 @@ using namespace tmns::image;
 TEST( GDAL_Utilities, gdal_driver_to_pixel_type )
 {
     // I'm using this to just make sure my logic is sort of on the mark
-    auto reference_lut_01 = io::gdal::Read_Image_Resource_Disk_GDAL::Use_Default_Color_LUT();
+    auto reference_lut_01 = io::gdal::Image_Resource_Disk_GDAL::Use_Default_Color_LUT();
 
     // Verify grayscale
     std::vector<int> test_entry_gray{ GCI_GrayIndex };

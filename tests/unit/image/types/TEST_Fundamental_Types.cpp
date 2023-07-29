@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 // Terminus Libraries
+#include <terminus/image/pixel/Pixel_RGBA.hpp>
 #include <terminus/image/types/Fundamental_Types.hpp>
 
 /******************************************/

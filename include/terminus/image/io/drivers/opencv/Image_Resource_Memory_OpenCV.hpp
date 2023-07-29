@@ -1,5 +1,5 @@
 /**
- * @file    Read_Image_Resource_Memory_OpenCV.hpp
+ * @file    Image_Resource_Memory_OpenCV.hpp
  * @author  Marvin Smith
  * @date    7/14/2023
 */
@@ -9,19 +9,19 @@
 #include <memory>
 
 // Terminus Libraries
-#include "../../Read_Image_Resource_Memory.hpp"
+#include "../../Image_Resource_Memory.hpp"
 
 namespace tmns::image::io::ocv {
 
 /**
  * OpenCV driver for loading images into memory
 */
-class Read_Image_Resource_Memory_OpenCV : public Read_Image_Resource_Memory
+class Image_Resource_Memory_OpenCV : public Image_Resource_Memory
 {
     public:
 
         /// Parent Pointer Type
-        typedef Read_Image_Resource_Memory::ptr_t ParentPtrT;
+        typedef Image_Resource_Memory::ptr_t ParentPtrT;
 
         /**
          * Create a new resource and open the image

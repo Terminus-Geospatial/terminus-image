@@ -121,6 +121,14 @@ void Image_Format::set_channel_type( Channel_Type_Enum tp )
     m_channel_type = tp;
 }
 
+/********************************************/
+/*          Get the number of channels      */
+/********************************************/
+int Image_Format::channels() const
+{
+    return num_channels( pixel_type() ).value();
+}
+
 /****************************************/
 /*          Check if premultiply        */
 /****************************************/

@@ -1,5 +1,5 @@
 /**
- * @file    Image_IO.hpp
+ * @file    read_image.hpp
  * @author  Marvin Smith
  * @date    7/10/2023
 */
@@ -11,11 +11,10 @@
 #include <terminus/outcome/Result.hpp>
 
 // Terminus Libraries
-#include "../types/Image_Disk.hpp"
 #include "../types/Image_Memory.hpp"
 #include "drivers/Disk_Driver_Manager.hpp"
 #include "drivers/Memory_Driver_Manager.hpp"
-#include "Read_Image_Resource_Disk.hpp"
+#include "Image_Resource_Disk.hpp"
 
 // C++ Libraries
 #include <filesystem>
@@ -27,8 +26,8 @@ namespace tmns::image::io {
  * cropping the input image.
 */
 template <typename PixelT>
-ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Read_Image_Resource_Disk::ptr_t resource,
-                                                            const math::Rect2i&                   bbox )
+ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource_Disk::ptr_t resource,
+                                                            const math::Rect2i&              bbox )
 {
     // Create output image
     Image_Memory<PixelT> output_image;
@@ -62,7 +61,7 @@ ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Read_Image_Res
  * Note:  The primary method requires a bounding box, so the full image bounds will be used for this method.
 */
 template <typename PixelT>
-ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Read_Image_Resource_Disk::ptr_t resource )
+ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource_Disk::ptr_t resource )
 {
     return read_image_from_resource<PixelT>( resource,
                                              math::Rect2i( 0, 0,
@@ -71,28 +70,31 @@ ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Read_Image_Res
 }
 
 /**
- * Load an image from disk into an Image_Disk object, rather than memory
- *
- * @param pathname Path of image to load from disk.
- * @param driver_manager Factory for creating resources.  Allows you to inject your own drivers without touching
- *                       too deep into the guts of Terminus.
- *
- * @return Instance of image.  Note that a Disk-Image is lazy and doesn't actually pull it into ram.  Calls to `rasterize()`
- *          will be painful.
+ * Load an image from an image-resource into an Image_Memory container
+ * This differs from previous methods as the image is provided as an input parameter and must stay constructed.
 */
-template <typename PixelT>
-ImageResult<Image_Disk<PixelT>> read_image_disk( const std::filesystem::path&      pathname,
-                                                 const Disk_Driver_Manager::ptr_t  driver_manager = Disk_Driver_Manager::create_read_defaults() )
+template <class PixelT>
+ImageResult<void> read_image( const Image_Memory<PixelT>&           dst,
+                              const Read_Image_Resource_Base::ptr_t src,
+                              const math::Rect2i&                   bbox )
 {
-    // Create an image resource for the data
-    auto driver_res = driver_manager->pick_read_driver( pathname );
-    if( driver_res.has_error() )
-    {
-        return outcome::fail( driver_res.error() );
-    }
-    auto image_resource = driver_res.assume_value();
+    src->read( dst.buffer(), bbox );
+    return outcome::ok();
 }
 
+/**
+ * Load an image into a generic image type container
+*/
+template <typename ImageT>
+ImageResult<void> read_image( const Image_Base<ImageT>&             dest,
+                              const Read_Image_Resource_Base::ptr_t src,
+                              const math::Rect2i&                   bbox )
+{
+    Image_Memory<typename ImageT::pixel_type> intermediate;
+    read_image( intermediate, src, bbox );
+    dest.impl() = intermediate;
+    return outcome::ok();
+}
 
 /**
  * Load an image from disk

@@ -6,7 +6,7 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../io/Read_Image_Resource_Disk.hpp"
+#include "../io/Image_Resource_Disk.hpp"
 #include "Image_Base.hpp"
 #include "Image_Resource_Base.hpp"
 #include "Image_Resource_View.hpp"
@@ -22,20 +22,28 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
 {
     public:
 
+        /// Image-Type providing block-processing capabilities
+        typedef ops::Block_Rasterize_View<Image_Resource_View<PixelT> > impl_type;
+
         /// Pixel Type
-        typedef PixelT pixel_type;
+        typedef typename impl_type::pixel_type    pixel_type;
 
         /// Return type when you query actual data
-        typedef PixelT& result_type;
+        typedef typename impl_type::result_type  result_type;
 
         /// Base type of the image
         typedef Image_Base<Image_Disk<PixelT>> base_type;
 
-        /// Image-Type providing block-processing capabilities
-        typedef ops::Block_Rasterize_View<Image_Resource_View<PixelT> > impl_type;
-
         /// Pixel Iterator Type
         typedef typename impl_type::pixel_accessor pixel_accessor;
+
+        Image_Disk( io::Image_Resource_Disk::ptr_t   resource,
+                    core::cache::Cache_Local::ptr_t  cache )
+          : m_resource( resource ),
+            m_impl( resource,
+                    m_resource->block_read_size(),
+                    1,
+                    cache ){}
 
         /**
          * Destructor
@@ -45,7 +53,7 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         /**
          * Get the number of columns
          */
-        size_t cols() const override
+        size_t cols() const
         {
             return m_impl.cols();
         }
@@ -53,7 +61,7 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         /**
          * Get the number of rows.
          */
-        size_t rows() const override
+        size_t rows() const
         {
             return m_impl.rows();
         }
@@ -61,7 +69,7 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         /**
          * Get the number of planes
          */
-        size_t planes() const override
+        size_t planes() const
         {
             return m_impl.planes();
         }
@@ -100,12 +108,18 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
             m_impl.rasterize( dest, bbox );
         }
 
-        std::string pathname() const { return m_resource->pathname(); }
+        /**
+         * Get the image filename
+        */
+        std::string pathname() const
+        {
+            return m_resource->pathname();
+        }
 
     private:
 
         // Underlying
-        std::shared_ptr<io::Read_Image_Resource_Disk> m_resource;
+        std::shared_ptr<io::Image_Resource_Disk> m_resource;
 
         /// Underlying block resource
         impl_type m_impl;

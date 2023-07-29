@@ -9,11 +9,9 @@
 #include <terminus/core/error/ErrorCategory.hpp>
 
 /// Terminus Image Libraries
-#include "../Read_Image_Resource_Disk.hpp"
-#include "../Write_Image_Resource_Disk.hpp"
-#include "gdal/Read_Image_Resource_Disk_GDAL_Factory.hpp"
-#include "Read_Driver_Factory_Base.hpp"
-#include "Write_Driver_Factory_Base.hpp"
+#include "../Image_Resource_Disk.hpp"
+#include "gdal/Image_Resource_Disk_GDAL_Factory.hpp"
+#include "Driver_Factory_Base.hpp"
 
 // C++ Libraries
 #include <deque>
@@ -32,16 +30,10 @@ class Disk_Driver_Manager : boost::noncopyable
         typedef std::shared_ptr<Disk_Driver_Manager> ptr_t;
 
         /// Type for Read Drivers
-        typedef Read_Image_Resource_Disk::ptr_t  ReadDriverT;
-
-        /// Type for Write Drivers
-        typedef Write_Image_Resource_Disk::ptr_t WriteDriverT;
+        typedef Image_Resource_Disk::ptr_t  DriverT;
 
         /// Type for Read Driver Factories
-        typedef Read_Driver_Factory_Base::ptr_t ReadFactoryT;
-
-        /// Type for Write Driver Factories
-        typedef Write_Driver_Factory_Base::ptr_t WriteFactoryT;
+        typedef Driver_Factory_Base::ptr_t FactoryT;
 
         /**
          * Create a Driver-Manager using the default configuration
@@ -54,7 +46,23 @@ class Disk_Driver_Manager : boost::noncopyable
             auto instance = Disk_Driver_Manager::ptr_t( new Disk_Driver_Manager() );
 
             // Register each driver
-            instance->register_read_driver_factory( std::make_shared<gdal::Read_Image_Resource_Disk_GDAL_Factory>() );
+            instance->register_read_driver_factory( std::make_shared<gdal::Image_Resource_Disk_GDAL_Factory>() );
+
+            return instance;
+        }
+
+        /**
+         * Create a Driver-Manager using the default configuration
+         *
+         * @note The order by which a driver is chosen is the order it is registered.
+        */
+        static Disk_Driver_Manager::ptr_t create_write_defaults()
+        {
+            // Create new instance
+            auto instance = Disk_Driver_Manager::ptr_t( new Disk_Driver_Manager() );
+
+            // Register each driver
+            instance->register_write_driver_factory( std::make_shared<gdal::Image_Resource_Disk_GDAL_Factory>() );
 
             return instance;
         }
@@ -62,22 +70,25 @@ class Disk_Driver_Manager : boost::noncopyable
         /**
          * Add a read driver to the list
         */
-        void register_read_driver_factory( ReadFactoryT instance );
+        void register_read_driver_factory( FactoryT instance );
 
         /**
          * Add a write driver to the list
         */
-        void register_write_driver_factory( WriteFactoryT instance );
+        void register_write_driver_factory( FactoryT instance );
 
         /**
          * Select a driver based on the file.
         */
-        ImageResult<ReadDriverT> pick_read_driver( const std::filesystem::path& pathname ) const;
+        ImageResult<DriverT> pick_read_driver( const std::filesystem::path& pathname ) const;
 
         /**
          * Select a driver based on the file.
         */
-        ImageResult<WriteDriverT> pick_write_driver( const std::filesystem::path& pathname ) const;
+        ImageResult<DriverT> pick_write_driver( const std::filesystem::path&             pathname,
+                                                const Image_Format&                      output_format,
+                                                const std::map<std::string,std::string>& write_options,
+                                                const math::Size2i&                      block_size ) const;
 
     private:
 
@@ -85,8 +96,8 @@ class Disk_Driver_Manager : boost::noncopyable
         Disk_Driver_Manager() = default;
 
         /// List of Drivers
-        std::deque<ReadFactoryT> m_read_driver_factories;
-        std::deque<WriteFactoryT> m_write_driver_factories;
+        std::deque<FactoryT> m_read_driver_factories;
+        std::deque<FactoryT> m_write_driver_factories;
 
 }; // End of Disk_Driver_Manager Class
 

@@ -79,14 +79,14 @@ struct Compound_Channel_Cast
  * Channel-Cast method for Const Pixel-Types
 */
 template <class PixelT, class ChannelT>
-struct Compound_Channel_Cast<const PixelT, ChannelT> : public Compound_Channel_Cast<PixelT, ChannelT> {};
+struct Compound_Channel_Cast<const PixelT, ChannelT> : public Compound_Channel_Cast<PixelT, ChannelT>{};
 
 /**
  * Test if type is a compound type.  Compound being a complex type unlike "float" for
  * example.  THis basically verifies that a type based on a "float" isn't in fact just a float.
 */
 template <class PixelT>
-struct Is_Compound : public std::negate< std::is_same< typename Compound_Channel_Type<PixelT>::type, PixelT > >::type
+struct Is_Compound : public std::negation< std::is_same< typename Compound_Channel_Type<PixelT>::type, PixelT > >
 {
 }; // End of Is_Compound Struct
 

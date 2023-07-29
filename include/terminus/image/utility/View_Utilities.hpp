@@ -6,8 +6,10 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../error/ErrorCategory.hpp"
-#include "../Image_Base.hpp"
+#include "../types/Image_Base.hpp"
+
+// Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
 
 // OpenCV Libraries
 #include <opencv2/highgui.hpp>
@@ -15,8 +17,8 @@
 namespace tmns::image::utility {
 
 template <typename ImageType>
-ImageResult<void> view_image( const std::string&      window_name,
-                              const Image<ImageType>& image )
+ImageResult<void> view_image( const std::string&             window_name,
+                              const Image_Memory<ImageType>& image )
 {
     // convert to opencv image
     cv::Mat tmp_image( image.rows(), image.cols(), CV_MAKE_TYPE(CV_8U, image.channels()), image.data() );
@@ -26,4 +28,4 @@ ImageResult<void> view_image( const std::string&      window_name,
     return tmns::outcome::ok();
 }
 
-} // End of tmns::warp::utility namespace
+} // End of tmns::image::utility namespace

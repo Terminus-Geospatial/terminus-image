@@ -27,9 +27,15 @@ std::string enum_to_string( Pixel_Format_Enum val )
             return "RGB";
         case Pixel_Format_Enum::RGBA:
             return "RGBA";
+        case Pixel_Format_Enum::GENERIC_3_CHANNEL:
+            return "GENERIC_3_CHANNEL";
+        case Pixel_Format_Enum::GENERIC_4_CHANNEL:
+            return "GENERIC_4_CHANNEL";
         case Pixel_Format_Enum::UNKNOWN:
-        default:
             return "UNKNOWN";
+        default:
+
+            throw std::runtime_error( "Don't be lazy!" );
     }
 }
 
@@ -48,14 +54,18 @@ ImageResult<int> num_channels( Pixel_Format_Enum value )
             return outcome::ok<int>( 2 );
 
         case Pixel_Format_Enum::RGB:
+        case Pixel_Format_Enum::GENERIC_3_CHANNEL:
             return outcome::ok<int>( 3 );
 
         case Pixel_Format_Enum::RGBA:
+        case Pixel_Format_Enum::GENERIC_4_CHANNEL:
             return outcome::ok<int>( 3 );
 
         case Pixel_Format_Enum::UNKNOWN:
-        default:
             return outcome::fail( core::error::ErrorCode::INVALID_PIXEL_TYPE );
+
+        default:
+            throw std::runtime_error( "Don't be lazy" );
     }
 }
 

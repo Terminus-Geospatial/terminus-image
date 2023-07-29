@@ -1,5 +1,5 @@
 /**
- * @file    Read_Image_Resource_Disk.hpp
+ * @file    Image_Resource_Disk.hpp
  * @author  Marvin Smith
  * @date    7/12/2023
 */
@@ -23,20 +23,35 @@ namespace tmns::image::io {
 /**
  * Disk/Driver loading interface
 */
-class Read_Image_Resource_Disk : public Read_Image_Resource_Base,
-                                        boost::noncopyable
+class Image_Resource_Disk : public Image_Resource_Base,
+                                   boost::noncopyable
 {
     public:
 
         /// Pointer Type
-        typedef std::shared_ptr<Read_Image_Resource_Disk> ptr_t;
+        typedef std::shared_ptr<Image_Resource_Disk> ptr_t;
 
-        ~Read_Image_Resource_Disk() override = default;
+        ~Image_Resource_Disk() override = default;
+
+        /**
+         * Return the name of the resource
+        */
+        virtual std::string resource_name() const = 0;
 
         /**
          * Return the filename of the disk image file.
          */
         std::filesystem::path pathname() const;
+
+        /**
+         * Specify if we should rescale when converting pixel types.
+        */
+        void set_rescale( bool rescale );
+
+        /**
+         * Specify global default for rescaling.
+         */
+        static void set_default_rescale( bool rescale );
 
         /**
          * Print to log-friendly string
@@ -49,10 +64,7 @@ class Read_Image_Resource_Disk : public Read_Image_Resource_Base,
          * Constructor
          * @param pathname Image to load.
         */
-        Read_Image_Resource_Disk( const std::filesystem::path& pathname );
-
-        /// Image Buffer Information
-        Image_Format m_format;
+        Image_Resource_Disk( const std::filesystem::path& pathname );
 
         /// Pathname
         std::filesystem::path m_pathname;
@@ -63,7 +75,7 @@ class Read_Image_Resource_Disk : public Read_Image_Resource_Base,
         /// Flag for default behavior [Initialized to true]
         static bool s_default_rescale;
 
-}; // End of Read_Image_Resource_Disk class
+}; // End of Image_Resource_Disk class
 
 
 } // end of tmns::image::io namespace

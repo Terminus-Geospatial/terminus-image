@@ -8,4 +8,4 @@ add_subdirectory( drivers )
 include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/image/io )
 
 add_library( TERMINUS_IMAGE_IO OBJECT
-                Read_Image_Resource_Disk.cpp )
+                Image_Resource_Disk.cpp )

@@ -16,9 +16,12 @@ add_executable( ${TEST}
     image/io/TEST_read_image.cpp
     image/io/drivers/gdal/TEST_GDAL_Codes.cpp
     image/io/drivers/gdal/TEST_GDAL_Utilities.cpp
-    image/io/drivers/gdal/TEST_Read_Image_Resource_Disk_GDAL_Factory.cpp
+    image/io/drivers/gdal/TEST_Image_Resource_Disk_GDAL_Factory.cpp
     image/types/TEST_Compound_Types.cpp
     image/types/TEST_Fundamental_Types.cpp
+    image/types/TEST_Image_Memory.cpp
+    UNIT_TEST_ONLY/Options.cpp
+    UNIT_TEST_ONLY/Options.hpp
 )
 
 target_link_libraries( ${TEST} PRIVATE
