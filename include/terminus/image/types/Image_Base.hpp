@@ -121,6 +121,19 @@ class Image_Base
             return format;
         }
 
+        /**
+         * Get this class name
+        */
+        static std::string class_name()
+        {
+            return "Image_Base";
+        }
+
+        static std::string full_name()
+        {
+            return "Image_Base<" + ImplT::class_name() + ">";
+        }
+
     protected:
 
         /// The user can't be allowed to use these

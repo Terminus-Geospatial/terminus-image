@@ -13,6 +13,7 @@ set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
     feature/TEST_find_keypoints.cpp
+    image/io/TEST_read_image_disk.cpp
     image/io/TEST_read_image.cpp
     image/io/drivers/gdal/TEST_GDAL_Codes.cpp
     image/io/drivers/gdal/TEST_GDAL_Utilities.cpp

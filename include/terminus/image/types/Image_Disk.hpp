@@ -6,6 +6,7 @@
 #pragma once
 
 // Terminus Image Libraries
+#include "../utility/Log_Utilities.hpp"
 #include "../io/Image_Resource_Disk.hpp"
 #include "Image_Base.hpp"
 #include "Image_Resource_Base.hpp"
@@ -105,7 +106,9 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         void rasterize( const DestT&        dest,
                         const math::Rect2i& bbox ) const
         {
+            tmns::log::trace( LOG_IMAGE_TAG(), "start of rasterize" );
             m_impl.rasterize( dest, bbox );
+            tmns::log::trace( LOG_IMAGE_TAG(), "end of rasterize" );
         }
 
         /**
@@ -114,6 +117,19 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         std::string pathname() const
         {
             return m_resource->pathname();
+        }
+
+        /**
+         * Get this class name
+        */
+        static std::string class_name()
+        {
+            return "Image_Disk";
+        }
+
+        static std::string full_name()
+        {
+            return "Image_Disk<" + pixel_type::class_name() + ">";
         }
 
     private:

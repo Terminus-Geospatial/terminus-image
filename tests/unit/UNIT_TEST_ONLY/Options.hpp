@@ -9,6 +9,7 @@
 #include <terminus/log/configure.hpp>
 
 // C++ Libraries
+#include <optional>
 #include <sstream>
 
 class Options
@@ -28,6 +29,11 @@ class Options
         std::string get_log_config() const;
 
         /**
+         * Get the image cache
+        */
+        std::optional<std::filesystem::path> get_image_cache() const;
+
+        /**
          * Print Usage Instructions
         */
         std::string usage() const;
@@ -42,5 +48,7 @@ class Options
 
         /// Log Severity
         std::string m_log_severity { "info" };
+
+        std::optional<std::filesystem::path> m_image_cache;
 
 }; // End of options class

@@ -168,6 +168,8 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
         void rasterize( const DestT&        dest,
                         const math::Rect2i& bbox ) const
         {
+            tmns::log::trace( LOG_IMAGE_TAG(), "start of rasterize. bbox: ", bbox.to_string() );
+
             // Create functor to rasterize this image into the destination image
             Rasterize_Functor<DestT> rasterizer( *this, dest, bbox.min() );
 
@@ -178,6 +180,21 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
 
             // Tell the block processor to do all the work.
             process( bbox );
+
+            tmns::log::trace( LOG_IMAGE_TAG(), "end of rasterize" );
+        }
+
+        /**
+         * Get this class name
+        */
+        static std::string class_name()
+        {
+            return "Block_Rasterize_View";
+        }
+
+        static std::string full_name()
+        {
+            return class_name() + "<" + ImageT::full_name() + ">";
         }
 
     private:
@@ -211,6 +228,7 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
                  */
                 void operator()( const math::Rect2i& bbox ) const
                 {
+                    //tmns::log::trace( LOG_IMAGE_TAG(), "start of method. bbox: ", bbox.to_string() );
                     if( m_image.m_cache_ptr )
                     {
                         // Ask the cache managing object to get the image tile,
@@ -231,6 +249,19 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
                         auto offset_bbox = bbox-m_offset;
                         m_image.child().rasterize( crop_image( m_dest, offset_bbox ), bbox );
                     }
+                }
+
+                /**
+                 * Get this class name
+                 */
+                static std::string class_name()
+                {
+                    return "Rasterize_Functor";
+                }
+
+                static std::string full_name()
+                {
+                    return class_name() + "<" + DestT::full_name() + ">";
                 }
 
             private:

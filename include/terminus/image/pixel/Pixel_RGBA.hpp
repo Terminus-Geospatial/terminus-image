@@ -56,6 +56,11 @@ class Pixel_RGBA : public Pixel_Base<ChannelT>
         /// Number of channels
         static constexpr int NUM_CHANNELS = 4;
 
+        static std::string class_name()
+        {
+            return "Pixel_RGBA<" + ChannelT::name() + ">";
+        }
+
     private:
 
         /// Underlying Pixel Data

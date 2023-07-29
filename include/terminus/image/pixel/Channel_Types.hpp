@@ -45,7 +45,7 @@ class Channel_Type
         /// Bit-Precision of the Pixel Data
         static constexpr int PRECISION = 0;
 
-        static consteval std::string name() { return "Channel_Type<>"; };
+        static std::string name() { return "Channel_Type<>"; };
 
 }; // End of Channel_Type
 
@@ -69,7 +69,7 @@ class Channel_Type<uint8_t,8>
 
         static constexpr int PRECISION = 0;
 
-        static consteval std::string name() { return "Channel_Type<uint8_t,8>"; };
+        static std::string name() { return "Channel_Type<uint8_t,8>"; };
 
 }; // End of Channel_Type
 
@@ -93,7 +93,7 @@ class Channel_Type<uint16_t,12>
 
         static constexpr int PRECISION = 0;
 
-        static consteval std::string name() { return "Channel_Type<uint16_t,12>"; };
+        static std::string name() { return "Channel_Type<uint16_t,12>"; };
 
 }; // End of Channel_Type
 
@@ -117,7 +117,7 @@ class Channel_Type<uint16_t,14>
 
         static constexpr int PRECISION = 0;
 
-        static consteval std::string name() { return "Channel_Type<uint16_t,14>"; };
+        static std::string name() { return "Channel_Type<uint16_t,14>"; };
 
 }; // End of Channel_Type
 
@@ -141,7 +141,7 @@ class Channel_Type<uint16_t,16>
 
         static constexpr int PRECISION = 0;
 
-        static consteval std::string name() { return "Channel_Type<uint16_t,16>"; };
+        static std::string name() { return "Channel_Type<uint16_t,16>"; };
 
 }; // End of Channel_Type
 
@@ -165,7 +165,7 @@ class Channel_Type<double,1>
 
         static constexpr int PRECISION = 64;
 
-        static consteval std::string name() { return "Channel_Type<double,1>"; };
+        static std::string name() { return "Channel_Type<double,1>"; };
 
 }; // End of Channel_Type
 
@@ -189,7 +189,7 @@ class Channel_Type<double,2>
 
         static constexpr int PRECISION = 64;
 
-        static consteval std::string name() { return "Channel_Type<double,2>"; };
+        static std::string name() { return "Channel_Type<double,2>"; };
 
 }; // End of Channel_Type
 

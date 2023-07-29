@@ -89,6 +89,9 @@ std::string Options::usage() const
     sout << std::endl;
     sout << " -v  : Log with debug logging." << std::endl;
     sout << " -vv : Log with trace logging." << std::endl;
+    sout << std::endl;
+    sout << " -i <image-data-cache> : Path to terminus_test_data repo where some bigger images are." << std::endl;
+    sout << "         This is not required to perform all tests.  It will only allow for some beefier cases." << std::endl;
 
     return sout.str();
 }

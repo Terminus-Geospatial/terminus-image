@@ -47,6 +47,11 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
             m_data[2] = b;
         }
 
+        static std::string class_name()
+        {
+            return "Pixel_RGB<" + ChannelT::name() + ">";
+        }
+
         /// Number of channels
         static constexpr int NUM_CHANNELS = 3;
 
