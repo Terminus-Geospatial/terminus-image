@@ -7,30 +7,32 @@
 
 // Terminus Image Libraries
 #include "../types/Image_Base.hpp"
+#include "../types/Image_Buffer.hpp"
+#include "../types/Image_Memory.hpp"
 
 // Terminus Libraries
 #include <terminus/core/error/ErrorCategory.hpp>
 
-// OpenCV Libraries
-#include <opencv2/highgui.hpp>
-
 namespace tmns::image::utility {
+
+/**
+ * Render the actual scene.
+*/
+ImageResult<void> visualize( const std::string&  window_name,
+                             const Image_Buffer& buffer_data,
+                             int                 window_sleep = 0 );
 
 /**
  * Simple test tool for viewing an image
 */
 template <typename ImageType>
 ImageResult<void> view_image( const std::string&             window_name,
-                              const Image_Memory<ImageType>& image )
+                              const Image_Memory<ImageType>& image,
+                              int                            window_sleep = 0 )
 {
-    // convert to opencv image
-    tmns::log::trace( "Creating OpenCV Image" );
-    cv::Mat tmp_image( image.rows(), image.cols(), CV_MAKE_TYPE(CV_8U, image.channels()), image.data() );
-
-    tmns::log::trace( "Rendering window: ", window_name );
-    cv::imshow( window_name.c_str(), tmp_image );
-    cv::waitKey( 0 );
-    return tmns::outcome::ok();
+    return visualize( window_name,
+                      image.buffer(),
+                      window_sleep );
 }
 
 /**
@@ -38,8 +40,10 @@ ImageResult<void> view_image( const std::string&             window_name,
 */
 template <typename ImageType>
 ImageResult<void> view_image( const std::string&  window_name,
-                              const ImageType&    image )
+                              const ImageType&    image,
+                              int                 window_sleep = 0 )
 {
+    tmns::log::info( ADD_CURRENT_LOC(), "Input Image Traits: ", image.format().to_string() );
     // Convert to Image_Memory
     Image_Memory<typename ImageType::pixel_type> temp;
     temp = image;

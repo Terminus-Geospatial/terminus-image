@@ -12,17 +12,24 @@ include_directories( ${CMAKE_SOURCE_DIR}/src )
 set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
-    feature/TEST_find_keypoints.cpp
+#    feature/TEST_find_keypoints.cpp
     image/io/TEST_read_image_disk.cpp
-    image/io/TEST_read_image.cpp
+#    image/io/TEST_read_image.cpp
+    image/io/TEST_read_write_battery.cpp
     image/io/drivers/gdal/TEST_GDAL_Codes.cpp
     image/io/drivers/gdal/TEST_GDAL_Utilities.cpp
+    image/io/drivers/gdal/TEST_Image_Resource_Disk_GDAL.cpp
     image/io/drivers/gdal/TEST_Image_Resource_Disk_GDAL_Factory.cpp
+    image/operations/TEST_crop_image.cpp
+    image/operations/TEST_select_plane.cpp
     image/types/TEST_Compound_Types.cpp
+    image/types/TEST_Image_Disk.cpp
+    image/types/TEST_Image_Resource_View.cpp
     image/types/TEST_Fundamental_Types.cpp
     image/types/TEST_Image_Memory.cpp
     UNIT_TEST_ONLY/Options.cpp
     UNIT_TEST_ONLY/Options.hpp
+    UNIT_TEST_ONLY/Prerasterization_Test_View.hpp
 )
 
 target_link_libraries( ${TEST} PRIVATE

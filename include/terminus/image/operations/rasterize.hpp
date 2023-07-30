@@ -38,7 +38,10 @@ void rasterize( const SrcT&          src,
         dest.planes()      != src.planes() )
     {
         std::stringstream sout;
-        sout << "rasterize: Source and destination must have same dimensions.";
+        sout << "rasterize: Source and destination must have same dimensions. Source: "
+            << src.cols() << " x " << src.rows() << ", Dest: " << dest.cols() << " x "
+            << dest.rows();
+
         tmns::log::error( sout.str() );
         throw std::runtime_error( sout.str() );
     }

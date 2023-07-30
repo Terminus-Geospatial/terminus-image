@@ -162,12 +162,12 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
 
         /**
          * Get the number of columns in the image
-        */
+         */
         size_t cols() const { return m_cols; }
 
         /**
          * Get the number of planes in the image
-        */
+         */
         size_t planes() const { return m_planes; }
 
         /**
@@ -178,6 +178,15 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
             return pixel_accessor( m_origin,
                                    m_rstride,
                                    m_pstride );
+        }
+        /**
+         * Return specific pixel position
+         */
+        result_type operator()( size_t col,
+                                size_t row,
+                                size_t plane = 0 ) const
+        {
+            return *( m_origin + col + row * m_rstride + plane * m_pstride );
         }
 
         /**
@@ -281,10 +290,10 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
         void reset()
         {
             m_data.reset();
-            m_cols = 0;
-            m_rows = 0;
-            m_planes = 0;
-            m_origin = 0;
+            m_cols    = 0;
+            m_rows    = 0;
+            m_planes  = 0;
+            m_origin  = 0;
             m_rstride = 0;
             m_pstride = 0;
         }

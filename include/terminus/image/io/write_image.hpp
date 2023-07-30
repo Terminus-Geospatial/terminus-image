@@ -18,6 +18,7 @@
 
 // Boost Libraries
 #include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
 
 namespace tmns::image::io {
 
@@ -173,8 +174,8 @@ ImageResult<void> write_image( Image_Resource_Base::ptr_t         resource,
             progress_callback.report_progress( ( processed_row_blocks + processed_col_blocks ) / static_cast<float>( total_num_blocks ) );
 
             // Rasterize this image block
-            Image_Memory<typename ImageT::pixel_type> image_block( crop( image.impl(),
-                                                                         current_bbox ) );
+            Image_Memory<typename ImageT::pixel_type> image_block( crop_image( image.impl(),
+                                                                               current_bbox ) );
 
             Image_Buffer buf = image_block.buffer();
             resource->write( buf, current_bbox );
@@ -278,6 +279,7 @@ ImageResult<void> write_image( const std::filesystem::path&             pathname
                                const Disk_Driver_Manager::ptr_t         driver_manager = Disk_Driver_Manager::create_write_defaults(),
                                core::utility::Progress_Callback&        progress_callback = core::utility::Progress_Callback::dummy_instance() )
 {
+    tmns::log::trace( ADD_CURRENT_LOC(), "Start of Method" );
     Image_Format out_image_format = out_image.format();
 
     unsigned files = 1;
@@ -296,11 +298,16 @@ ImageResult<void> write_image( const std::filesystem::path&             pathname
             boost::replace_last( name, "*",  str( boost::format("%1%") % p ) );
         }
 
-        std::stringstream sout;
-        sout << "Saving image: " << name << "\t";
+        {
+            std::stringstream sout;
+            sout << "Saving image: " << name << ", pixel-type: " << enum_to_string( out_image.channel_type() )
+                 << ", channel-type: " << enum_to_string( out_image.format().pixel_type() );
+            tmns::log::info( sout.str() );
+        }
 
         // Create an image resource for the data
         math::Size2i block_size( { -1, -1 } ); // Basically ignore
+        tmns::log::trace( ADD_CURRENT_LOC(), "Picking Write Driver" );
         auto driver_res = driver_manager->pick_write_driver( pathname,
                                                              out_image_format,
                                                              write_options,
@@ -311,9 +318,6 @@ ImageResult<void> write_image( const std::filesystem::path&             pathname
         }
         auto resource = driver_res.assume_value();
 
-        //auto resource = DiskImageResource::create( name, out_image_format );
-        sout << resource->cols() << "x" << resource->rows() << "x" << resource->planes()
-             << "  " << resource->channels() << " channel(s)";
 
         if ( files > 1 )
         {

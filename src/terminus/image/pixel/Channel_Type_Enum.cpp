@@ -28,6 +28,8 @@ std::string enum_to_string( Channel_Type_Enum val )
             return "UINT16";
         case Channel_Type_Enum::UINT32:
             return "UINT32";
+        case Channel_Type_Enum::INT8:
+            return "INT8";
         case Channel_Type_Enum::INT16:
             return "INT16";
         case Channel_Type_Enum::INT32:
@@ -59,6 +61,7 @@ bool is_integer_type( Channel_Type_Enum val )
         case Channel_Type_Enum::UINT16:
         case Channel_Type_Enum::UINT32:
         case Channel_Type_Enum::UINT64:
+        case Channel_Type_Enum::INT8:
         case Channel_Type_Enum::INT16:
         case Channel_Type_Enum::INT32:
         case Channel_Type_Enum::INT64:
@@ -83,6 +86,7 @@ ImageResult<size_t> channel_size_bytes( Channel_Type_Enum val )
     {
         // Single-Byte Entries
         case Channel_Type_Enum::UINT8:
+        case Channel_Type_Enum::INT8:
             return outcome::ok<size_t>( 1 );
 
         // Two-byte entries

@@ -137,7 +137,7 @@ class Image_Format
         /**
          * Print to log-friendly string
         */
-        std::string To_Log_String( size_t offset = 0 ) const;
+        std::string to_string( size_t offset = 0 ) const;
 
         /**
          * Check if we can convert the two image format types.

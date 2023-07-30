@@ -155,7 +155,7 @@ class Crop_View : public Image_Base<Crop_View<ImageT>>
         typedef Crop_View<typename ImageT::prerasterize_type> prerasterize_type;
         prerasterize_type prerasterize( const math::Rect2i& bbox ) const
         {
-            return prerasterize_type( m_child.prerasterize( bbox + math::Point2_<offset_type>( m_ci, m_cj ) ),
+            return prerasterize_type( m_child.prerasterize( bbox + math::Point2_<offset_type>( { m_ci, m_cj } ) ),
                                                             m_ci,
                                                             m_cj,
                                                             m_di,
@@ -191,11 +191,11 @@ class Crop_View : public Image_Base<Crop_View<ImageT>>
  * Crop an image
  */
 template <typename ImageT>
-ops::Crop_View<ImageT> crop( const Image_Base<ImageT>& image,
-                             size_t                    ulx,
-                             size_t                    uly,
-                             size_t                    width,
-                             size_t                    height )
+ops::Crop_View<ImageT> crop_image( const Image_Base<ImageT>& image,
+                                   size_t                    ulx,
+                                   size_t                    uly,
+                                   size_t                    width,
+                                   size_t                    height )
 {
     return ops::Crop_View<ImageT>( image.impl(),
                                    ulx,

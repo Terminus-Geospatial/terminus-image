@@ -5,6 +5,9 @@
 */
 #include "Disk_Driver_Manager.hpp"
 
+// Terminus Libraries
+#include <terminus/log/utility.hpp>
+
 namespace tmns::image::io {
 
 /************************************************************************************/
@@ -19,7 +22,9 @@ ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( c
             auto new_driver = factory->create_read_driver( pathname );
             if( new_driver.has_error() )
             {
-                return outcome::fail( new_driver.assume_error() );
+                return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND,
+                                      "Failed to find new write driver: ",
+                                      ADD_CURRENT_LOC(), "MSG: ", new_driver.error().message() );
             }
             auto driver_ptr = std::dynamic_pointer_cast<Image_Resource_Disk>( new_driver.assume_value() );
             return outcome::ok<Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );
@@ -36,6 +41,7 @@ ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_write_driver( 
                                                                                 const std::map<std::string,std::string>& write_options,
                                                                                 const math::Size2i&                      block_size ) const
 {
+    tmns::log::trace( ADD_CURRENT_LOC(), "Start of Method" );
     for( const auto& factory : m_write_driver_factories )
     {
         if( factory->is_write_image_supported( pathname ) )
@@ -46,7 +52,9 @@ ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_write_driver( 
                                                             block_size );
             if( new_driver.has_error() )
             {
-                return outcome::fail( new_driver.assume_error() );
+                return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND,
+                                      "Failed to find new write driver: ",
+                                      ADD_CURRENT_LOC(), "MSG: ", new_driver.error().message() );
             }
             auto driver_ptr = std::dynamic_pointer_cast<Image_Resource_Disk>( new_driver.assume_value() );
             return outcome::ok<Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );

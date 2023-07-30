@@ -31,5 +31,5 @@ TEST( Image_Memory, basic_checks_RGBA_uint8 )
     ASSERT_EQ( buffer_01.pixel_type(), tx::Pixel_Format_Enum::RGBA );
     ASSERT_EQ( buffer_01.channel_type(), tx::Channel_Type_Enum::UINT8 );
 
-    tmns::log::trace( buffer_01.To_Log_String() );
+    tmns::log::trace( buffer_01.to_string() );
 }

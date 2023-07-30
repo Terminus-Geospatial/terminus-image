@@ -70,7 +70,7 @@ class Image_Base
         */
         size_t channels() const
         {
-            return ImplT::pixel_type::NUM_CHANNELS;
+            return Compound_Channel_Count<typename ImplT::pixel_type>::value;
         };
 
         /**
@@ -100,11 +100,20 @@ class Image_Base
 
         /**
          * Get the channel-type from the image's pixel type
+         *
+         * Note, if you ever get UNKNOWN returned from this method, see Channel_Type_ID<> specification.
+         * One likely scenario is you didn't register a template specialization of that class, for that channel-type.
+         *
+         * If the channel-type is basic, then use standard types or review the overrides after the custom channels in
+         * that same file.
         */
         Channel_Type_Enum channel_type() const
         {
-            typedef typename ImplT::pixel_type ptype;
-            return Channel_Type_ID<typename ptype::channel_type>::value;
+            typedef typename ImplT::pixel_type ptype; // Get the underlying datatype
+            typedef typename Compound_Channel_Type<ptype>::type cp_type; // Resolve for if this is a compound or simple type
+            return Channel_Type_ID<cp_type>::value;
+
+            //return ChannelTypeID<typename CompoundChannelType<typename ImplT::pixel_type>::type>::value;
         }
 
 

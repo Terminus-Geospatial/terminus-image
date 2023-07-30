@@ -103,6 +103,8 @@ using PixelRGBA_u12 = Pixel_RGBA<ChannelType_u12>;
 using PixelRGBA_u14 = Pixel_RGBA<ChannelType_u14>;
 using PixelRGBA_u16 = Pixel_RGBA<ChannelType_u16>;
 
+using PixelRGBA_f32  = Pixel_RGBA<ChannelType_f32>;
+using PixelRGBA_f32f = Pixel_RGBA<ChannelType_f32f>;
 using PixelRGBA_f64  = Pixel_RGBA<ChannelType_f64>;
 using PixelRGBA_f64f = Pixel_RGBA<ChannelType_f64f>;
 

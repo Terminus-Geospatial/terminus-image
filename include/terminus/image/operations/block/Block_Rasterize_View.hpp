@@ -8,7 +8,7 @@
 // Terminus Image Libraries
 #include "../../pixel/Pixel_Accessor_Loose.hpp"
 #include "../../types/Image_Base.hpp"
-#include "../Crop_View.hpp"
+#include "../crop_image.hpp"
 #include "Block_Generator_Manager.hpp"
 #include "Block_Processor.hpp"
 #include "Block_Utilities.hpp"
@@ -145,7 +145,7 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
         ImageT*       child()       { return *m_child; }
         const ImageT& child() const { return *m_child; }
 
-        typedef Crop_View<Image_Base<pixel_type> > prerasterize_type;
+        typedef Crop_View<Image_Memory<pixel_type> > prerasterize_type;
         prerasterize_type prerasterize( const math::Rect2i& bbox ) const
         {
             // Init output data
@@ -228,7 +228,6 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
                  */
                 void operator()( const math::Rect2i& bbox ) const
                 {
-                    //tmns::log::trace( LOG_IMAGE_TAG(), "start of method. bbox: ", bbox.to_string() );
                     if( m_image.m_cache_ptr )
                     {
                         // Ask the cache managing object to get the image tile,

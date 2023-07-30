@@ -184,7 +184,7 @@ ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum c
             return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE,
                                   "Cannot convert tmns::pixel::Channel_Type_Enum::",
                                   enum_to_string( channel_type ),
-                                  "to GDALDataType" );
+                                  " to GDALDataType" );
     }
 }
 

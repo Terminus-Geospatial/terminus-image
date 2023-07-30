@@ -446,7 +446,7 @@ ImageResult<void> convert( const Image_Buffer&  dst,
         // Do nothing for now, it's just a check
     }
 
-    tmns::log::info( "Destination Buffer:\n", dst.To_Log_String() );
+    tmns::log::info( "Destination Buffer:\n", dst.to_string() );
 
     /**
      * We only support a few special conversions, and the general case where

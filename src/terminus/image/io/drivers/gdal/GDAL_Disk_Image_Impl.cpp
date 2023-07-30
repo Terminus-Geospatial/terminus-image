@@ -226,8 +226,6 @@ ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
     src_fmt.set_cols( bbox.width() );
     src_fmt.set_rows( bbox.height() );
 
-    tmns::log::error( src_fmt.To_Log_String() );
-
     std::shared_ptr<uint8_t> src_data(new uint8_t[ src_fmt.raster_size_bytes() ]);
     Image_Buffer src(src_fmt, src_data.get());
 
@@ -375,7 +373,7 @@ std::string GDAL_Disk_Image_Impl::To_Log_String( size_t offset ) const
     sout << gap << "   - pathname: " << m_pathname << std::endl;
     sout << gap << "   - read dataset set : " << std::boolalpha << (m_read_dataset != 0) << std::endl;
     sout << gap << "   - write dataset set: " << std::boolalpha << (m_write_dataset != 0) << std::endl;
-    sout << m_format.To_Log_String( offset + 2 );
+    sout << m_format.to_string( offset + 2 );
     sout << gap << "   - Block Size: " << m_blocksize.to_string() << std::endl;
     sout << gap << "   - Color Table Size: " << m_color_table.size() << std::endl;
     return sout.str();

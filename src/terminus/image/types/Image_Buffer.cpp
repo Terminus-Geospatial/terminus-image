@@ -153,12 +153,12 @@ void* Image_Buffer::operator()( int col, int row, int plane ) const
 /********************************************/
 /*      Print to Log-Friendly String        */
 /********************************************/
-std::string Image_Buffer::To_Log_String( size_t offset ) const
+std::string Image_Buffer::to_string( size_t offset ) const
 {
     std::string gap( offset, ' ' );
     std::stringstream sout;
     sout << gap << "Image_Buffer: " << std::endl;
-    sout << format().To_Log_String( offset + 4 );
+    sout << format().to_string( offset + 4 );
     sout << gap << " - CStride: " << cstride() << std::endl;
     sout << gap << " - RStride: " << rstride() << std::endl;
     sout << gap << " - PStride: " << pstride() << std::endl;

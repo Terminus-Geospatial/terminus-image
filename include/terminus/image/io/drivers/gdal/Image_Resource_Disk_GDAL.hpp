@@ -33,14 +33,14 @@ class Image_Resource_Disk_GDAL : public Image_Resource_Disk
         typedef std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>> ColorCodeLookupT;
 
         /**
-         * Parameterized Constructor
+         * Parameterized Constructor for reading images.
          * @param pathname Image to open
         */
         Image_Resource_Disk_GDAL( const std::filesystem::path& pathname,
-                                  const ColorCodeLookupT&      color_reference_lut = Use_Default_Color_LUT() );
+                                  ColorCodeLookupT             color_reference_lut = Use_Default_Color_LUT() );
 
         /**
-         * Parameterized Constructor
+         * Parameterized Constructor for writing images.
          * @param pathname Image to open
         */
         Image_Resource_Disk_GDAL( const std::filesystem::path&             pathname,

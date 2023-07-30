@@ -44,7 +44,9 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
             m_impl( resource,
                     m_resource->block_read_size(),
                     1,
-                    cache ){}
+                    cache )
+        {
+        }
 
         /**
          * Destructor
@@ -129,7 +131,7 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
 
         static std::string full_name()
         {
-            return "Image_Disk<" + pixel_type::class_name() + ">";
+            return class_name() + "<" + pixel_type::class_name() + ">";
         }
 
     private:

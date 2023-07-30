@@ -39,6 +39,7 @@ class Pixel_Accessor_MemStride
                                   ssize_t rstride,
                                   ssize_t pstride )
           : m_ptr( ptr ),
+            m_origin( ptr ),
             m_rstride( rstride ),
             m_pstride( pstride )
         {
@@ -174,10 +175,31 @@ class Pixel_Accessor_MemStride
             return *m_ptr;
         }
 
+        ssize_t distance() const
+        {
+            return std::distance( m_origin, m_ptr );
+        }
+
+        /**
+         * Get this class name
+        */
+        static std::string class_name()
+        {
+            return "Pixel_Accessor_MemStride";
+        }
+
+        static std::string full_name()
+        {
+            return class_name() + "<" + pixel_type::class_name() + ">";
+        }
+
     private:
 
         /// @brief Raw pointer to pixels.  Notice the type isn't a channel or base type.
         PixelT* m_ptr { nullptr };
+
+        /// @brief Position to origin (only for estimating offsets when troubleshooting)
+        PixelT* m_origin { nullptr };
 
         /// @brief  Row-Stride
         ssize_t m_rstride { 0 };

@@ -15,4 +15,5 @@ include_directories( TERMINUS_IMAGE_PIXEL PRIVATE
 add_subdirectory( io )
 add_subdirectory( pixel )
 add_subdirectory( types )
+add_subdirectory( utility )
 

@@ -21,7 +21,7 @@ class Select_Plane_View : public Image_Base<Select_Plane_View<ImageT> >
         /// @brief Underlying Pixel Type
         typedef typename ImageT::pixel_type pixel_type;
 
-        /// @brief Result from a pixel operation (copy)
+        /// @brief Result from a pixel operation
         typedef typename ImageT::result_type result_type;
 
         /// @brief Iterator type
@@ -118,7 +118,7 @@ class Select_Plane_View : public Image_Base<Select_Plane_View<ImageT> >
         void rasterize( const DestT&        dest,
                         const math::Rect2i& bbox ) const
         {
-            rasterize( prerasterize(bbox), dest, bbox );
+            ops::rasterize( prerasterize(bbox), dest, bbox );
         }
 
     private:

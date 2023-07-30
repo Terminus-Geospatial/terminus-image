@@ -8,6 +8,9 @@
 // C++ Libraries
 #include <algorithm>
 
+// Terminus Libraries
+#include <terminus/log/utility.hpp>
+
 namespace tmns::image::io::gdal {
 
 /********************************************************/
@@ -36,19 +39,16 @@ bool Image_Resource_Disk_GDAL_Factory::is_read_image_supported( const std::files
 /********************************************************/
 bool Image_Resource_Disk_GDAL_Factory::is_write_image_supported( const std::filesystem::path& pathname ) const
 {
-    // Check if file exists
-    if( std::filesystem::exists( pathname ) )
+    // Get the extension
+    auto ext = pathname.extension();
+    if( std::find( m_supported_extensions.begin(),
+                   m_supported_extensions.end(),
+                   ext.native() )
+        != m_supported_extensions.end() )
     {
-        // Get the extension
-        auto ext = pathname.extension();
-        if( std::find( m_supported_extensions.begin(),
-                       m_supported_extensions.end(),
-                       ext.native() )
-            != m_supported_extensions.end() )
-        {
-            return true;
-        }
+        return true;
     }
+
     return false;
 }
 

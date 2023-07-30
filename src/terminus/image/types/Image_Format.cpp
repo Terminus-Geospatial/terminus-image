@@ -185,7 +185,7 @@ size_t Image_Format::raster_size_bytes() const
 /************************************************/
 /*          Print to Log-Friendly String        */
 /************************************************/
-std::string Image_Format::To_Log_String( size_t offset ) const
+std::string Image_Format::to_string( size_t offset ) const
 {
     std::string gap( offset, ' ' );
     std::stringstream sout;

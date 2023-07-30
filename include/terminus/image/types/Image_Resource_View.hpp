@@ -7,11 +7,12 @@
 
 // Terminus Libraries
 #include <terminus/core/concurrency/Mutex.hpp>
+#include <terminus/outcome/Result.hpp>
 
 // Terminus Image Libraries
 #include "../io/read_image.hpp"
 #include "../operations/block/Block_Rasterize_View.hpp"
-#include "../operations/Crop_View.hpp"
+#include "../operations/crop_image.hpp"
 #include "../pixel/Pixel_Accessor_Loose.hpp"
 #include "../pixel/Pixel_Format_Enum.hpp"
 #include "../pixel/Pixel_Format_ID.hpp"
@@ -53,13 +54,21 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
           : m_resource( resource ),
             m_planes( m_resource->planes() )
         {
-            initialize();
+            m_constructor_status = initialize();
         }
 
         /**
          * Default Destructor
         */
         ~Image_Resource_View() = default;
+
+        /**
+         * Get the construction status
+        */
+        ImageResult<void> get_constructor_status() const
+        {
+            return m_constructor_status;
+        }
 
         /**
          * Get Image Cols
@@ -115,7 +124,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         {
             Image_Memory<PixelT> buffer( bbox.width(),
                                          bbox.height() );
-            rasterize( buffer, bbox );
+            this->rasterize( buffer, bbox );
             return Crop_View<Image_Memory<PixelT> >( buffer,
                                                      math::Rect2i( -bbox.min().x(),
                                                                    -bbox.min().y(),
@@ -141,11 +150,11 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
          * Determine the number of planes for the image based on the
          * resource and your desired destination pixel type.
         */
-        void initialize()
+        ImageResult<void> initialize()
         {
             // If the user has requested a multi-channel pixel type, but the
             // file is a multi-plane, scalar-pixel file, we force a single-plane interpretation.
-            if( Pixel_Format_ID<PixelT>::num_channels > 1 &&
+            if( Compound_Channel_Count<PixelT>::value > 1 &&
                 m_resource->pixel_type() == Pixel_Format_Enum::SCALAR )
             {
                 m_planes = 1;
@@ -160,6 +169,8 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
             {
                 m_planes = m_resource->channels();
             }
+
+            return outcome::ok();
         }
 
         /// Image Resource Data
@@ -170,6 +181,9 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
 
         /// Number of image planes
         int m_planes { 0 };
+
+        /// Load Status (Created after constructor runs)
+        ImageResult<void> m_constructor_status { tmns::outcome::ok() };
 
 }; // End of Image_Resource_View Class
 

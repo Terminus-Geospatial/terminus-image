@@ -15,7 +15,7 @@ namespace tmns::image::io::gdal {
 /*          Constructor         */
 /********************************/
 Image_Resource_Disk_GDAL::Image_Resource_Disk_GDAL( const std::filesystem::path& pathname,
-                                                    const ColorCodeLookupT&      color_reference_lut )
+                                                    ColorCodeLookupT             color_reference_lut )
   : Image_Resource_Disk( pathname ),
     m_color_reference_lut( color_reference_lut )
 {

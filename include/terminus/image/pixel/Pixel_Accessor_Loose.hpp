@@ -170,6 +170,19 @@ class Pixel_Accessor_Loose
             return m_image(m_c,m_r,m_p);
         }
 
+        /**
+         * Get this class name
+        */
+        static std::string class_name()
+        {
+            return "Pixel_Accessor_Loose";
+        }
+
+        static std::string full_name()
+        {
+            return class_name() + "<" + pixel_type::class_name() + ">";
+        }
+
     private:
 
         const ImageT& m_image;

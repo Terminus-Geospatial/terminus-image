@@ -8,6 +8,9 @@
 // Terminus Libraries
 #include <terminus/core/work/Thread.hpp>
 
+// Terminus Image Libraries
+#include <terminus/image/utility/Log_Utilities.hpp>
+
 namespace tmns::image::ops::block {
 
 /**
