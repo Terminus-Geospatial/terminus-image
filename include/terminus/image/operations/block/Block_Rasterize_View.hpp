@@ -168,8 +168,6 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
         void rasterize( const DestT&        dest,
                         const math::Rect2i& bbox ) const
         {
-            tmns::log::trace( LOG_IMAGE_TAG(), "start of rasterize. bbox: ", bbox.to_string() );
-
             // Create functor to rasterize this image into the destination image
             Rasterize_Functor<DestT> rasterizer( *this, dest, bbox.min() );
 
@@ -180,8 +178,6 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
 
             // Tell the block processor to do all the work.
             process( bbox );
-
-            tmns::log::trace( LOG_IMAGE_TAG(), "end of rasterize" );
         }
 
         /**

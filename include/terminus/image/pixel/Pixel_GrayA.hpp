@@ -7,7 +7,6 @@
 
 // Terminus Image Libraries
 #include "../types/Compound_Types.hpp"
-#include "Channel_Types.hpp"
 #include "Pixel_Base.hpp"
 
 namespace tmns::image {
@@ -88,14 +87,12 @@ struct Compound_Channel_Cast<Pixel_GrayA<OldChannelT>, const NewChannelT>
 
 
 /// Aliases for easier typing
-using PixelGrayA_u8  = Pixel_GrayA<ChannelType_u8>;
-using PixelGrayA_u12 = Pixel_GrayA<ChannelType_u12>;
-using PixelGrayA_u14 = Pixel_GrayA<ChannelType_u14>;
-using PixelGrayA_u16 = Pixel_GrayA<ChannelType_u16>;
+using PixelGrayA_u8  = Pixel_GrayA<uint8_t>;
+using PixelGrayA_u16 = Pixel_GrayA<uint16_t>;
+using PixelGrayA_u32 = Pixel_GrayA<uint32_t>;
+using PixelGrayA_u64 = Pixel_GrayA<uint64_t>;
 
-using PixelGrayA_f32  = Pixel_GrayA<ChannelType_f32>;
-using PixelGrayA_f32f = Pixel_GrayA<ChannelType_f32f>;
-using PixelGrayA_f64  = Pixel_GrayA<ChannelType_f64>;
-using PixelGrayA_f64f = Pixel_GrayA<ChannelType_f64f>;
+using PixelGrayA_f32  = Pixel_GrayA<float>;
+using PixelGrayA_f64  = Pixel_GrayA<double>;
 
 } // End of tmns::image namespace

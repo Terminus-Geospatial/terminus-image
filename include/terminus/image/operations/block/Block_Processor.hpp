@@ -88,22 +88,16 @@ class Block_Processor
                         // Advance the block_bbox to point to the next block to process.
                         void advance()
                         {
-                            tmns::log::info( "Start of Advance. block_bbox: ", m_block_bbox.to_string(),
-                                             ", block_size: ", m_block_size.to_string(),
-                                             ", total_bbox: ", m_total_bbox.to_string() );
                             m_block_bbox.min().x() += m_block_size.width();
 
-                            tmns::log::info( "New block bbox: ", m_block_bbox.to_string() );
                             if( m_block_bbox.min().x() >= m_total_bbox.max().x() )
                             {
-                                tmns::log::info( "Adjusting" );
                                 m_block_bbox.min().x() = round_down( m_total_bbox.min().x(),
                                                                      m_block_size.width() );
                                 m_block_bbox.min().y() += m_block_size.height();
 
                                 m_block_bbox.height() = m_block_size.height();
                             }
-                            tmns::log::info( "New block bbox: ", m_block_bbox.to_string() );
                             m_block_bbox.width() = m_block_size.width();
                         }
 

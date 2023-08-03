@@ -8,7 +8,6 @@
 // Terminus Libraries
 #include <terminus/log/utility.hpp>
 #include <terminus/image/io/read_image_disk.hpp>
-#include <terminus/image/pixel/Channel_Types.hpp>
 #include <terminus/image/pixel/Pixel_RGB.hpp>
 #include <terminus/image/types/Image_Memory.hpp>
 #include <terminus/image/utility/View_Utilities.hpp>

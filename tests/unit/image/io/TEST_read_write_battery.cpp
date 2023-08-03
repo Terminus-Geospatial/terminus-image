@@ -58,5 +58,4 @@ TEST( io_read_write_battery, small_rgba_jpg_to_png )
     ASSERT_EQ( image.channels(), test_image.channels() );
     ASSERT_EQ( image.channels(), test_image.channels() );
 
-    wc::utility::view_image( "Image", test_image );
 }

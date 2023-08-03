@@ -13,6 +13,7 @@ set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
 #    feature/TEST_find_keypoints.cpp
+    feature/drivers/ocv/TEST_ocv_gftt.cpp
     image/io/TEST_read_image_disk.cpp
 #    image/io/TEST_read_image.cpp
     image/io/TEST_read_write_battery.cpp
@@ -22,6 +23,7 @@ add_executable( ${TEST}
     image/io/drivers/gdal/TEST_Image_Resource_Disk_GDAL_Factory.cpp
     image/operations/TEST_crop_image.cpp
     image/operations/TEST_select_plane.cpp
+    image/pixel/TEST_Pixel_Cast_Utilities.cpp
     image/types/TEST_Compound_Types.cpp
     image/types/TEST_Image_Disk.cpp
     image/types/TEST_Image_Resource_View.cpp

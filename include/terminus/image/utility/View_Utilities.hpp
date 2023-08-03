@@ -6,6 +6,7 @@
 #pragma once
 
 // Terminus Image Libraries
+#include "../operations/pixel_cast.hpp"
 #include "../types/Image_Base.hpp"
 #include "../types/Image_Buffer.hpp"
 #include "../types/Image_Memory.hpp"
@@ -25,11 +26,14 @@ ImageResult<void> visualize( const std::string&  window_name,
 /**
  * Simple test tool for viewing an image
 */
-template <typename ImageType>
-ImageResult<void> view_image( const std::string&             window_name,
-                              const Image_Memory<ImageType>& image,
-                              int                            window_sleep = 0 )
+template <typename PixelT>
+ImageResult<void> view_image( const std::string&          window_name,
+                              const Image_Memory<PixelT>& image,
+                              int                         window_sleep = 0 )
 {
+    // We need all images to be uint8
+    typedef typename Compound_Channel_Cast<PixelT,uint8_t>::type DestPixelT;
+    //Image_Memory<DestPixelT> temp = ops::pixel_cast_rescale<DestPixelT>( image );
     return visualize( window_name,
                       image.buffer(),
                       window_sleep );
@@ -45,7 +49,7 @@ ImageResult<void> view_image( const std::string&  window_name,
 {
     tmns::log::info( ADD_CURRENT_LOC(), "Input Image Traits: ", image.format().to_string() );
     // Convert to Image_Memory
-    Image_Memory<typename ImageType::pixel_type> temp;
+    Image_Memory<typename Compound_Channel_Cast<typename ImageType::pixel_type,uint8_t>::type> temp;
     temp = image;
     return view_image( window_name, temp );
 }

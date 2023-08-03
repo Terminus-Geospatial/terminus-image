@@ -7,7 +7,6 @@
 
 // Terminus Image Libraries
 #include "../types/Compound_Types.hpp"
-#include "Channel_Types.hpp"
 #include "Pixel_Base.hpp"
 
 namespace tmns::image {
@@ -21,7 +20,6 @@ class Pixel_Gray : public Pixel_Base<ChannelT>
     public:
 
         typedef ChannelT channel_type;
-        typedef typename ChannelT::data_type data_type;
 
         /**
          * Default Constructor
@@ -31,9 +29,42 @@ class Pixel_Gray : public Pixel_Base<ChannelT>
         /**
          * Set all channels to the same luminance value
         */
-        Pixel_Gray( const data_type& pix )
+        Pixel_Gray( channel_type pix )
           : m_data( pix )
         {}
+
+        /**
+         * Conversion from other channel-type
+         */
+        template <typename OtherChT>
+        Pixel_Gray( const OtherChT& other )
+        {
+            m_data = ChannelT( other );
+        }
+
+        /**
+         * Downcast to the raw channel-type
+        */
+        operator ChannelT() const
+        {
+            return m_data;
+        }
+
+        /**
+         * Indexing Operators
+        */
+        const channel_type& operator[]( size_t idx ) const
+        {
+            return m_data;
+        }
+
+        /**
+         * Indexing Operators
+        */
+        channel_type& operator[]( size_t idx )
+        {
+            return m_data;
+        }
 
         /// Number of channels
         static constexpr int NUM_CHANNELS = 1;
@@ -46,7 +77,7 @@ class Pixel_Gray : public Pixel_Base<ChannelT>
     private:
 
         /// Underlying Pixel Data
-        data_type m_data{ 0 };
+        channel_type m_data{ 0 };
 
 }; // End of Pixe_Gray Class
 
@@ -80,14 +111,10 @@ struct Compound_Channel_Cast<Pixel_Gray<OldChannelT>, const NewChannelT>
 
 
 /// Aliases for easier typing
-using PixelGray_u8  = Pixel_Gray<ChannelType_u8>;
-using PixelGray_u12 = Pixel_Gray<ChannelType_u12>;
-using PixelGray_u14 = Pixel_Gray<ChannelType_u14>;
-using PixelGray_u16 = Pixel_Gray<ChannelType_u16>;
+using PixelGray_u8  = Pixel_Gray<uint8_t>;
+using PixelGray_u16 = Pixel_Gray<uint16_t>;
 
-using PixelGray_f32  = Pixel_Gray<ChannelType_f32>;
-using PixelGray_f32f = Pixel_Gray<ChannelType_f32f>;
-using PixelGray_f64  = Pixel_Gray<ChannelType_f64>;
-using PixelGray_f64f = Pixel_Gray<ChannelType_f64f>;
+using PixelGray_f32  = Pixel_Gray<float>;
+using PixelGray_f64  = Pixel_Gray<double>;
 
 } // End of tmns::image namespace

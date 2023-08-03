@@ -334,6 +334,19 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
             ops::rasterize( prerasterize(bbox), dest, bbox);
         }
 
+        /**
+         * Get this class name
+        */
+        static std::string class_name()
+        {
+            return "Image_Memory";
+        }
+
+        static std::string full_name()
+        {
+            return class_name() + "<" + Compound_Name<pixel_type>::name() + ">";
+        }
+
     private:
 
         /// Pixel Data

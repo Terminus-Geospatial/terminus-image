@@ -1,5 +1,5 @@
 /**
- * @file    find_keypoints.hpp
+ * @file    detect_interest_points.hpp
  * @author  Marvin Smith
  * @date    7/20/2023
 */
@@ -12,9 +12,9 @@ namespace tmns::feature {
 /**
  * Preform feature detection on an image, returning the KeyPoints
  */
-ImageResult<std::vector<KeyPoint>> find_keypoints( const Image_Base<ImageT>&              image,
-                                                   const FeatureDetectorConfigBase::ptr_t fd_config = DEFAULT_DETECTOR_CONFIG(),
-                                                   const core::Session_Context&           session_context )
+ImageResult<std::vector<KeyPoint>> detect_interest_points( const Image_Base<ImageT>&              image,
+                                                           const FeatureDetectorConfigBase::ptr_t fd_config = DEFAULT_DETECTOR_CONFIG(),
+                                                           const core::Session_Context&           session_context )
 {
     // Create a Feature Extraction Service
     auto feature_detector = FeatureDetectorFactory::create( fd_config );

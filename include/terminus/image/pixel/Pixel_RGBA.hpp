@@ -7,7 +7,6 @@
 
 // Terminus Libraries
 #include "../types/Compound_Types.hpp"
-#include "Channel_Types.hpp"
 #include "Pixel_Base.hpp"
 
 // C++ Libraries
@@ -24,7 +23,6 @@ class Pixel_RGBA : public Pixel_Base<ChannelT>
     public:
 
         typedef ChannelT channel_type;
-        typedef typename ChannelT::data_type data_type;
 
         /**
          * Default Constructor
@@ -34,23 +32,47 @@ class Pixel_RGBA : public Pixel_Base<ChannelT>
         /**
          * Set all channels to the same luminance value
         */
-        Pixel_RGBA( const data_type& pix )
+        Pixel_RGBA( const channel_type& pix )
         {
-            std::copy( m_data, m_data + 3, pix );
+            m_data.fill( pix );
         }
 
         /**
          * Set all channels independently
         */
-        Pixel_RGBA( const data_type& r,
-                    const data_type& g,
-                    const data_type& b,
-                    const data_type& a )
+        Pixel_RGBA( const channel_type& r,
+                    const channel_type& g,
+                    const channel_type& b,
+                    const channel_type& a )
         {
             m_data[0] = r;
             m_data[1] = g;
             m_data[2] = b;
             m_data[3] = a;
+        }
+
+        /**
+         * Get the pixel at the specified location
+        */
+        const channel_type& operator[]( size_t idx ) const
+        {
+            return m_data[idx];
+        }
+
+        /**
+         * Get the pixel reference at the specified location
+        */
+        channel_type& operator[]( size_t idx )
+        {
+            return m_data[idx];
+        }
+
+        /**
+         * Send an all white pixel back
+        */
+        static Pixel_RGBA<ChannelT> max()
+        {
+            return Pixel_RGBA<ChannelT>( ChannelT::MAX_VALUE );
         }
 
         /// Number of channels
@@ -64,7 +86,7 @@ class Pixel_RGBA : public Pixel_Base<ChannelT>
     private:
 
         /// Underlying Pixel Data
-        std::array<data_type,4> m_data{ 0, 0, 0, 0 };
+        std::array<channel_type,4> m_data{ 0, 0, 0, 0 };
 
 }; // End of Pixel_RGBA Class
 
@@ -98,14 +120,10 @@ struct Compound_Channel_Cast<Pixel_RGBA<OldChannelT>, const NewChannelT>
 
 
 /// Aliases for easier typing
-using PixelRGBA_u8  = Pixel_RGBA<ChannelType_u8>;
-using PixelRGBA_u12 = Pixel_RGBA<ChannelType_u12>;
-using PixelRGBA_u14 = Pixel_RGBA<ChannelType_u14>;
-using PixelRGBA_u16 = Pixel_RGBA<ChannelType_u16>;
+using PixelRGBA_u8  = Pixel_RGBA<uint8_t>;
+using PixelRGBA_u16 = Pixel_RGBA<uint16_t>;
 
-using PixelRGBA_f32  = Pixel_RGBA<ChannelType_f32>;
-using PixelRGBA_f32f = Pixel_RGBA<ChannelType_f32f>;
-using PixelRGBA_f64  = Pixel_RGBA<ChannelType_f64>;
-using PixelRGBA_f64f = Pixel_RGBA<ChannelType_f64f>;
+using PixelRGBA_f32  = Pixel_RGBA<float>;
+using PixelRGBA_f64  = Pixel_RGBA<double>;
 
 } // End of tmns::image namespace

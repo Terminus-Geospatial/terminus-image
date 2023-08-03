@@ -6,7 +6,8 @@
 #pragma once
 
 // Terminus Libraries
-#include "Channel_Types.hpp"
+#include "../types/Compound_Types.hpp"
+#include "Channel_Range.hpp"
 #include "Pixel_Base.hpp"
 
 namespace tmns::image {
@@ -20,7 +21,6 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
     public:
 
         typedef ChannelT channel_type;
-        typedef typename ChannelT::data_type data_type;
 
         /**
          * Default Constructor
@@ -30,21 +30,45 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
         /**
          * Set all channels to the same luminance value
         */
-        Pixel_RGB( const data_type& pix )
+        Pixel_RGB( const channel_type& pix )
         {
-            std::copy( m_data, m_data + 3, pix );
+            m_data.fill( pix );
         }
 
         /**
          * Set all channels independently
         */
-        Pixel_RGB( const data_type& r,
-                   const data_type& g,
-                   const data_type& b )
+        Pixel_RGB( const channel_type& r,
+                   const channel_type& g,
+                   const channel_type& b )
         {
             m_data[0] = r;
             m_data[1] = g;
             m_data[2] = b;
+        }
+
+        /**
+         * Get the pixel at the specified location
+        */
+        const channel_type& operator[]( size_t idx ) const
+        {
+            return m_data[idx];
+        }
+
+        /**
+         * Get the pixel reference at the specified location
+        */
+        channel_type& operator[]( size_t idx )
+        {
+            return m_data[idx];
+        }
+
+        /**
+         * Send an all white pixel back
+        */
+        static Pixel_RGB<ChannelT> max()
+        {
+            return Pixel_RGB<ChannelT>( Channel_Range<ChannelT>::max() );
         }
 
         static std::string class_name()
@@ -58,7 +82,7 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
     private:
 
         /// Underlying Pixel Data
-        std::array<data_type,3> m_data{ 0, 0, 0 };
+        std::array<channel_type,3> m_data{ 0, 0, 0 };
 
 }; // End of Pixel_RGB Class
 
@@ -91,14 +115,10 @@ struct Compound_Channel_Cast<Pixel_RGB<OldChannelT>, const NewChannelT>
 }; // End of Compound_Channel_Cast<> structure
 
 /// Aliases for easier typing
-using PixelRGB_u8  = Pixel_RGB<ChannelType_u8>;
-using PixelRGB_u12 = Pixel_RGB<ChannelType_u12>;
-using PixelRGB_u14 = Pixel_RGB<ChannelType_u14>;
-using PixelRGB_u16 = Pixel_RGB<ChannelType_u16>;
+using PixelRGB_u8  = Pixel_RGB<uint8_t>;
+using PixelRGB_u16 = Pixel_RGB<uint16_t>;
 
-using PixelRGB_f32  = Pixel_RGB<ChannelType_f32>;
-using PixelRGB_f32f = Pixel_RGB<ChannelType_f32f>;
-using PixelRGB_f64  = Pixel_RGB<ChannelType_f64>;
-using PixelRGB_f64f = Pixel_RGB<ChannelType_f64f>;
+using PixelRGB_f32  = Pixel_RGB<float>;
+using PixelRGB_f64  = Pixel_RGB<double>;
 
 } // End of tmns::image namespace

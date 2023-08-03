@@ -6,6 +6,9 @@
 #include <gtest/gtest.h>
 
 // Terminus Libraries
+#include <terminus/image/pixel/Pixel_Gray.hpp>
+#include <terminus/image/pixel/Pixel_RGB.hpp>
+#include <terminus/image/pixel/Pixel_RGBA.hpp>
 #include <terminus/image/types/Compound_Types.hpp>
 
 // C++ Libraries
@@ -99,17 +102,6 @@ TEST( Compound_Types, Traits )
     ASSERT_TRUE(  tx::Is_Compound<Test_Compound<const double> >::value );
     ASSERT_TRUE( !tx::Is_Compound<const Dummy_Type>::value );
 
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<uint8_t>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<double>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<uint8_t> >::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<double> >::value );
-    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<Dummy_Type>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const uint8_t>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const double>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<uint8_t> >::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<double> >::value );
-    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<const Dummy_Type>::value );
-
     ASSERT_TRUE((  tx::Compound_Is_Compatible<double,double>::value ));
     ASSERT_TRUE((  tx::Compound_Is_Compatible<uint8_t,double>::value ));
     ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<double>,Test_Compound<double> >::value ));
@@ -136,6 +128,58 @@ TEST( Compound_Types, Traits )
     ASSERT_TRUE(( !tx::Compound_Is_Compatible<const double,const Test_Compound<double> >::value ));
 }
 
+/**************************************/
+/*    Test Is_Scalar_Or_Compound      */
+/**************************************/
+TEST( Compound_Types, Is_Scalar_Or_Compound )
+{
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<uint8_t>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<double>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<uint8_t> >::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<double> >::value );
+    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<Dummy_Type>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const uint8_t>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const double>::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<uint8_t> >::value );
+    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<double> >::value );
+    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<const Dummy_Type>::value );
+
+    // Do actual tests
+    ASSERT_TRUE( tx::Is_Scalar_Or_Compound<tx::PixelGray_u16>::value );
+    ASSERT_TRUE( tx::Is_Scalar_Or_Compound<tx::PixelGray_u16>::value );
+}
+
+/******************************************/
+/*      Test the Compound Name Method     */
+/******************************************/
+TEST( Compound_Types, Compound_Name )
+{
+    // Check Compound Names
+    ASSERT_EQ( tx::Compound_Name<uint8_t>::name(),           "uint8_t" );
+    ASSERT_EQ( tx::Compound_Name<tx::PixelRGBA_u8>::name(),  "uint8_t" );
+    ASSERT_EQ( tx::Compound_Name<uint16_t>::name(),          "uint16_t" );
+    ASSERT_EQ( tx::Compound_Name<uint32_t>::name(),          "uint32_t" );
+    ASSERT_EQ( tx::Compound_Name<float>::name(),             "float" );
+    ASSERT_EQ( tx::Compound_Name<double>::name(),            "double" );
+}
+
+/****************************************************/
+/*      Test the Channel Conversion Cast Method     */
+/****************************************************/
+TEST( Compound_Types, Compound_Channel_Cast )
+{
+    // Convert from RGB_F32 to RGB_U8
+    typedef typename tx::Compound_Channel_Cast<tx::PixelRGB_f32,uint8_t>::type rgb_u8_tp;
+    auto pix01 = rgb_u8_tp::max();
+    ASSERT_EQ( pix01[0], 255 );
+    ASSERT_EQ( pix01[1], 255 );
+    ASSERT_EQ( pix01[2], 255 );
+
+    // Convert from uint16 to uint8
+    typedef typename tx::Compound_Channel_Cast<uint16_t,uint8_t>::type plain_u8_tp;
+    plain_u8_tp pix02 = std::numeric_limits<plain_u8_tp>::max();
+    ASSERT_EQ( pix02, 255 );
+}
 
 /*
 // Simple functions to test the compound_apply logic.

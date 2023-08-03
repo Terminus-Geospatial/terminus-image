@@ -44,4 +44,26 @@ template <class ValueT> struct Accumulator_Type<std::complex<ValueT> >
     typedef std::complex<typename Accumulator_Type<ValueT>::type> type;
 };
 
+/**
+ * Simply class for getting the name of the datatype
+*/
+template <typename ValueT>
+struct Data_Type_Name
+{
+    static std::string name() { return ""; }
+};
+
+template <> struct Data_Type_Name<uint8_t>{   static std::string name(){ return "uint8_t"; }  };
+template <> struct Data_Type_Name<uint16_t>{  static std::string name(){ return "uint16_t"; } };
+template <> struct Data_Type_Name<uint32_t>{  static std::string name(){ return "uint32_t"; } };
+template <> struct Data_Type_Name<uint64_t>{  static std::string name(){ return "uint64_t"; } };
+
+template <> struct Data_Type_Name<int8_t>{   static std::string name(){ return "int8_t"; }  };
+template <> struct Data_Type_Name<int16_t>{  static std::string name(){ return "int16_t"; } };
+template <> struct Data_Type_Name<int32_t>{  static std::string name(){ return "int32_t"; } };
+template <> struct Data_Type_Name<int64_t>{  static std::string name(){ return "int64_t"; } };
+
+template <> struct Data_Type_Name<float>{   static std::string name(){ return "float"; }  };
+template <> struct Data_Type_Name<double>{  static std::string name(){ return "double"; } };
+
 } // End of tmns::image namespace

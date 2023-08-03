@@ -133,4 +133,19 @@ struct Compound_Accumulator_Type
                                             typename Accumulator_Type<typename Compound_Channel_Type<PixelT>::type>::type>::type type;
 };
 
+
+/**
+ * Get the name of the datatype
+*/
+template <typename PixelT>
+struct Compound_Name
+{
+    typedef typename std::conditional< Is_Compound<PixelT>::value,
+                                            Data_Type_Name<typename Compound_Channel_Type<PixelT>::type>,
+                                            Data_Type_Name<PixelT>>::type type;
+
+    static std::string name() { return type::name(); }
+
+}; // End of Compound_Name Class
+
 } // end of tmns::image namespace
