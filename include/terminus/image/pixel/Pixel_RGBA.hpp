@@ -52,6 +52,18 @@ class Pixel_RGBA : public Pixel_Base<ChannelT>
         }
 
         /**
+         * Convert channel-types
+         */
+        template <typename OtherChannelT>
+        explicit Pixel_RGBA( const Pixel_RGBA<OtherChannelT>& other )
+        {
+            for( size_t i = 0; i < 4; i++ )
+            {
+                m_data[i] = ChannelT( other[i] );
+            }
+        }
+
+        /**
          * Get the pixel at the specified location
         */
         const channel_type& operator[]( size_t idx ) const

@@ -7,6 +7,9 @@
 
 // Terminus Libraries
 #include "../types/Functors.hpp"
+#include "Pixel_Gray.hpp"
+#include "Pixel_RGB.hpp"
+#include "Pixel_RGBA.hpp"
 #include "Channel_Cast_Utilities.hpp"
 
 namespace tmns::image::pix {
@@ -53,7 +56,7 @@ typename std::enable_if_t<Is_Scalar_Or_Compound<SourceT>::value, DestT>
     typedef Pixel_Cast_Helper< IsSameT::value, (sizeof(SourceChannelT) > sizeof(DestChannelT) ),false> helper;
 
     // Do the conversion
-    return helper::template convert<DestChannelT>( src );
+    return helper::template convert<DestT>( src );
 }
 
 /**

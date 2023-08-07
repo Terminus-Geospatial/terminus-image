@@ -29,5 +29,7 @@ TEST( find_feature_points, disk_image_example_01 )
 
     auto disk_image = view.assume_value();
 
+    // Create the feature detector
+    
 
 }

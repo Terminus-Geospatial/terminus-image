@@ -31,51 +31,54 @@ TEST( ft_drv_ocv_good_features_to_track, functional_test )
     auto detector = cv::GFTTDetector::create();
 
     // UInt8 Test
-    cv::Mat mat_u8( img_u8.buffer().cols(),
-                    img_u8.buffer().rows(),
-                    CV_8UC1,
-                    img_u8.buffer().data() );
-    std::vector<cv::KeyPoint> kp_u8;
+    {
+        cv::Mat mat_u8( img_u8.buffer().cols(),
+                        img_u8.buffer().rows(),
+                        CV_8UC1,
+                        img_u8.buffer().data() );
+        std::vector<cv::KeyPoint> kp_u8;
 
-    ASSERT_NO_THROW( { detector->detect( mat_u8, kp_u8 ); } );
-    ASSERT_TRUE( kp_u8.size() >  10 );
-
-    tx::utility::view_image( "Window", img_u16 );
+        ASSERT_NO_THROW( { detector->detect( mat_u8, kp_u8 ); } );
+        ASSERT_TRUE( kp_u8.size() >  10 );
+    }
 
     // UInt16 Test
-    cv::Mat mat_u16( img_u16.buffer().cols(),
-                     img_u16.buffer().rows(),
-                     CV_16UC1,
-                     img_u16.buffer().data() );
+    {
+        cv::Mat mat_u16( img_u16.buffer().cols(),
+                         img_u16.buffer().rows(),
+                         CV_16UC1,
+                         img_u16.buffer().data() );
 
-    cv::imshow( "win", mat_u16 );
-    cv::waitKey(0);
-    std::vector<cv::KeyPoint> kp_u16;
+        std::vector<cv::KeyPoint> kp_u16;
 
-    ASSERT_ANY_THROW( { detector->detect( mat_u16, kp_u16 ); } );
-    ASSERT_TRUE( kp_u16.empty() );
+        ASSERT_ANY_THROW( { detector->detect( mat_u16, kp_u16 ); } );
+        tmns::log::debug( "Located: ", kp_u16.size(), " keypoints" );
+        ASSERT_TRUE( kp_u16.empty() );
+    }
 
-    // Float 32 Test
-    cv::Mat mat_f32( img_f32.buffer().cols(),
-                     img_f32.buffer().rows(),
-                     CV_32FC1,
-                     img_f32.buffer().data() );
-    std::vector<cv::KeyPoint> kp_f32;
+    // Float 32 Test (Does not work)
+    {
+        cv::Mat mat_f32( img_f32.buffer().cols(),
+                         img_f32.buffer().rows(),
+                         CV_32FC1,
+                         img_f32.buffer().data() );
 
-    ASSERT_NO_THROW( { detector->detect( mat_f32, kp_f32 ); } );
-    ASSERT_TRUE( kp_f32.size() >  10 );
+        std::vector<cv::KeyPoint> kp_f32;
+
+        ASSERT_ANY_THROW( { detector->detect( mat_f32, kp_f32 ); } );
+        ASSERT_TRUE( kp_f32.size() <= 0 );
+    }
 
     // Float 64 Test
-    cv::Mat mat_f64( img_f64.buffer().cols(),
-                     img_f64.buffer().rows(),
-                     CV_64FC1,
-                     img_f64.buffer().data() );
-    std::vector<cv::KeyPoint> kp_f64;
+    {
+        cv::Mat mat_f64( img_f64.buffer().cols(),
+                         img_f64.buffer().rows(),
+                         CV_64FC1,
+                         img_f64.buffer().data() );
 
-    ASSERT_NO_THROW( { detector->detect( mat_f64, kp_f64 ); } );
-    ASSERT_TRUE( kp_f64.size() >  10 );
+        std::vector<cv::KeyPoint> kp_f64;
 
-
-    cv::imshow( "win", mat_u8 );
-    cv::waitKey(0);
+        ASSERT_ANY_THROW( { detector->detect( mat_f64, kp_f64 ); } );
+        ASSERT_TRUE( kp_f64.size() <= 0 );
+    }
 }

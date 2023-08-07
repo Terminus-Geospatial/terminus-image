@@ -33,10 +33,12 @@ ImageResult<void> view_image( const std::string&          window_name,
 {
     // We need all images to be uint8
     typedef typename Compound_Channel_Cast<PixelT,uint8_t>::type DestPixelT;
-    //Image_Memory<DestPixelT> temp = ops::pixel_cast_rescale<DestPixelT>( image );
-    return visualize( window_name,
-                      image.buffer(),
-                      window_sleep );
+    Image_Memory<DestPixelT> temp = ops::pixel_cast_rescale<DestPixelT>( image );
+    auto result = visualize( window_name,
+                             temp.buffer(),
+                             window_sleep );
+
+    return result;
 }
 
 /**

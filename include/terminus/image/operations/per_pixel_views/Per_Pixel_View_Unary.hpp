@@ -112,7 +112,7 @@ class Per_Pixel_View_Unary : public Image_Base<Per_Pixel_View_Unary<ImageT,Funct
         typedef Per_Pixel_View_Unary<typename ImageT::prerasterize_type, FunctorT> prerasterize_type;
         prerasterize_type prerasterize( const math::Rect2i& bbox ) const
         {
-            return prerasterize_type( prerasterize( bbox ),
+            return prerasterize_type( m_image.prerasterize( bbox ),
                                       m_func );
         }
 

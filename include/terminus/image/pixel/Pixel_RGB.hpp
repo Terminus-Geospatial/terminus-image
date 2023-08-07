@@ -48,6 +48,17 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
         }
 
         /**
+         * Constructor
+        */
+        template <typename OtherChannelT>
+        Pixel_RGB( const Pixel_RGB<OtherChannelT>& other )
+        {
+            m_data[0] = ChannelT( other[0] );
+            m_data[1] = ChannelT( other[1] );
+            m_data[2] = ChannelT( other[2] );
+        }
+
+        /**
          * Get the pixel at the specified location
         */
         const channel_type& operator[]( size_t idx ) const
