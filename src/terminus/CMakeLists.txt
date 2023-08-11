@@ -4,7 +4,7 @@
 #
 
 #  Add include paths
-include_directories( TERMINUS_IMAGE_PIXEL PRIVATE
+include_directories( ${CMAKE_SOURCE_DIR}/include
                      ${Boost_INCLUDE_DIRS}
                      ${terminus_log_INCLUDE_DIRS}
                      ${terminus_math_INCLUDE_DIRS}

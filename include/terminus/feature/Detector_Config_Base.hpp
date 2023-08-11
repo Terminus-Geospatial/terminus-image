@@ -27,7 +27,7 @@ class Detector_Config_Base
         /**
          * Print log-friendly string
          */
-        virtual std::string to_string() const = 0;
+        virtual std::string to_string( size_t offset ) const = 0;
 
 }; // End of Detector_Config_Base class
 

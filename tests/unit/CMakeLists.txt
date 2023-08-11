@@ -12,7 +12,8 @@ include_directories( ${CMAKE_SOURCE_DIR}/src )
 set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
-#    feature/TEST_find_keypoints.cpp
+    #feature/TEST_detect_interest_points.cpp
+    feature/drivers/ocv/TEST_Detector_OCV_GFTT.cpp
     feature/drivers/ocv/TEST_ocv_gftt.cpp
     image/io/TEST_read_image_disk.cpp
 #    image/io/TEST_read_image.cpp

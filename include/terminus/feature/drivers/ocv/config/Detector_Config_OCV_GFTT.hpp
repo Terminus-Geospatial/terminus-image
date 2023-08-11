@@ -17,6 +17,8 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
 {
     public:
 
+        typedef std::shared_ptr<Detector_Config_OCV_GFTT> ptr_t;
+
         /**
          * OpenCV Shi-Thomasi Good-Features-To-Track configuration.
          *
@@ -64,6 +66,11 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
          * Get the name to use for the detector's logger instance
         */
         std::string logger_name() const override;
+
+        /**
+         * Print to a logging string
+        */
+        std::string to_string( size_t offset = 0 ) const override;
 
     private:
 

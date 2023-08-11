@@ -20,6 +20,18 @@ class Detector_OCV_Base : public Detector_Base
          */
         Detector_OCV_Base( Detector_Config_Base::ptr_t config );
 
+        /**
+         * Destructor
+        */
+        ~Detector_OCV_Base() override = default;
+
+    protected:
+
+        /**
+         * Get the internal configuration instance
+        */
+        Detector_Config_OCV_Base::ptr_t get_ocv_detector_config() const;
+
     private:
 
         /// Configuration

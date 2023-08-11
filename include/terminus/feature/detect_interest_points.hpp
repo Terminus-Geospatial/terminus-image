@@ -5,16 +5,20 @@
 */
 #pragma once
 
-// C++ Lib
+// Terminus Libraries
+#include <terminus/core/Session_Context.hpp>
+
+// C++ Libraries
 
 namespace tmns::feature {
 
 /**
- * Preform feature detection on an image, returning the KeyPoints
+ * Perform feature detection on an image, returning the interest points
  */
-ImageResult<std::vector<KeyPoint>> detect_interest_points( const Image_Base<ImageT>&              image,
-                                                           const FeatureDetectorConfigBase::ptr_t fd_config = DEFAULT_DETECTOR_CONFIG(),
-                                                           const core::Session_Context&           session_context )
+template <typename ImageT>
+ImageResult<std::vector<Interest_Point>> detect_interest_points( const Image_Base<ImageT>&     image,
+                                                                 const Detector_Base::ptr_t    detector,
+                                                                 const core::Session_Context&  session_context )
 {
     // Create a Feature Extraction Service
     auto feature_detector = FeatureDetectorFactory::create( fd_config );
@@ -29,5 +33,16 @@ ImageResult<std::vector<KeyPoint>> detect_interest_points( const Image_Base<Imag
 
     }
 }
+
+/**
+ * Run the detector, but store the keypoints within the image
+*/
+template <typename ImageT>
+ImageResult<void> detect_interest_points( Image_Base<ImageT>& image,
+                                          std::string         detector_driver,
+                                          const core::Session_Context& session_context = core::Session_Context::GREEDY() )
+{
+
+} // End of detect_interest_points method
 
 } // End of tmns::feature namespace

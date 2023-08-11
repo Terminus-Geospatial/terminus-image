@@ -15,17 +15,42 @@ namespace tmns::feature::ocv {
  * OpenCV implementation of the Shi-Thomasi Good-Features-To-Track
  * algorithm.
 */
-class Detector_OCV_GFFT : public Detector_OCV_Base
+class Detector_OCV_GFTT : public Detector_OCV_Base
 {
     public:
 
-        Detector_OCV_GFFT( Detector_Config_OCV_GFTT::ptr_t config );
+        /**
+         * Default Constructor
+         */
+        Detector_OCV_GFTT();
+
+        /**
+         * Parameterized Constructor
+        */
+        Detector_OCV_GFTT( Detector_Config_Base::ptr_t config );
+
+        /**
+         * Destructor
+        */
+        ~Detector_OCV_GFTT() override = default;
+
+        /**
+         * Process the image and detect keypoints
+         */
+        ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image,
+                                                        size_t                      max_features,
+                                                        bool                        cast_if_ctype_unsupported ) override;
+
+        /**
+         * Get the class name
+         */
+        std::string class_name() const override;
 
     private:
 
         /// Configuration
         Detector_Config_OCV_GFTT::ptr_t m_config { nullptr };
 
-}; // End of Detector_OCV_GFFT class
+}; // End of Detector_OCV_GFTT class
 
 } // End of tmns::feature::ocv namespace

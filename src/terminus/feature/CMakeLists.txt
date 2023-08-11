@@ -8,4 +8,5 @@ add_subdirectory( drivers )
 include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/feature )
 
 add_library( TERMINUS_FEATURE_BASE OBJECT
-                Detector_Base.cpp )
+                Detector_Base.cpp
+                Interest_Point.cpp )

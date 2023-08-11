@@ -77,4 +77,57 @@ ImageResult<int> get_pixel_type_code( Pixel_Format_Enum  pixel_type,
                                            ch_res.value() ) );
 }
 
+/********************************************/
+/*      Convert OpenCV Type to String       */
+/********************************************/
+std::string opencv_type_to_string( int tp )
+{
+    switch( tp )
+    {
+        // 8-bit unsigned
+        case CV_8UC1:
+            return "CV_8UC1";
+        case CV_8UC2:
+            return "CV_8UC2";
+        case CV_8UC3:
+            return "CV_8UC3";
+        case CV_8UC4:
+            return "CV_8UC4";
+
+        // 16-bit unsigned
+        case CV_16UC1:
+            return "CV_16UC1";
+        case CV_16UC2:
+            return "CV_16UC2";
+        case CV_16UC3:
+            return "CV_16UC3";
+        case CV_16UC4:
+            return "CV_16UC4";
+
+        // 32-bit float
+        case CV_32FC1:
+            return "CV_32FC1";
+        case CV_32FC2:
+            return "CV_32FC2";
+        case CV_32FC3:
+            return "CV_32FC3";
+        case CV_32FC4:
+            return "CV_32FC4";
+        
+        // 64-bit float
+        case CV_64FC1:
+            return "CV_64FC1";
+        case CV_64FC2:
+            return "CV_64FC2";
+        case CV_64FC3:
+            return "CV_64FC3";
+        case CV_64FC4:
+            return "CV_64FC4";
+        
+        // Error
+        default:
+            return "UNKNOWN";
+    }
+}
+
 } // End of tmns::image::utility::ocv namespace

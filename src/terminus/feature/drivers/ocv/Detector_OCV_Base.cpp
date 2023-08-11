@@ -16,4 +16,12 @@ Detector_OCV_Base::Detector_OCV_Base( Detector_Config_Base::ptr_t config )
 {
 }
 
+/********************************************/
+/*    Get the OCV Detector Config Object    */
+/********************************************/
+Detector_Config_OCV_Base::ptr_t Detector_OCV_Base::get_ocv_detector_config() const
+{
+    return m_config;
+}
+
 } // End of tmns::feature::ocv namespace

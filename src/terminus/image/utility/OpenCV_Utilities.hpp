@@ -6,8 +6,8 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../pixel/Channel_Type_Enum.hpp"
-#include "../pixel/Pixel_Format_Enum.hpp"
+#include <terminus/image/pixel/Channel_Type_Enum.hpp>
+#include <terminus/image/pixel/Pixel_Format_Enum.hpp>
 
 // Terminus Libraries
 #include <terminus/core/error/ErrorCategory.hpp>
@@ -26,5 +26,10 @@ ImageResult<int> get_data_type_code( Channel_Type_Enum channel_type );
 */
 ImageResult<int> get_pixel_type_code( Pixel_Format_Enum  pixel_type,
                                       Channel_Type_Enum  channel_type );
+
+/**
+ * Convert the OpenCV type code to a string
+*/
+std::string opencv_type_to_string( int tp );
 
 } // End of tmns::image::utility::ocv

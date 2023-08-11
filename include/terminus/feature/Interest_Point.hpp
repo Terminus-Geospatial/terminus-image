@@ -10,7 +10,7 @@
 #include <terminus/math/VectorN.hpp>
 
 // C++ Libraries
-#include <deque>
+#include <vector>
 
 namespace tmns::feature {
 
@@ -22,15 +22,26 @@ class Interest_Point
     public:
 
         /**
-         * Initial Constructor
+         * Default Constructor
+         */
+        Interest_Point() = default;
+
+        /**
+         * Constructor
         */
-        Interest_Point( float x,
-                        float y );
+        Interest_Point( float px,
+                        float py );
+
+        
+        /**
+         * Constructor
+        */
+        Interest_Point( const math::Point2f& pixel_loc );
 
     private:
 
         /// Pixel Location
-        math::Point2d m_pixel_loc { { 0, 0 } };
+        math::Point2f m_pixel_loc { { 0, 0 } };
 
         /// Scale
         float m_scale { 1 };
@@ -45,6 +56,6 @@ class Interest_Point
 
 
 /// Typedef for Interest_Point_List
-typedef std::deque<Interest_Point> Interest_Point_List;
+typedef std::vector<Interest_Point> Interest_Point_List;
 
 } // End of tmns::feature namespace

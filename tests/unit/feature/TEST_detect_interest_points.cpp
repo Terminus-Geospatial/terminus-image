@@ -11,7 +11,7 @@
 // Terminus Libraries
 #include <terminus/image/io/read_image_disk.hpp>
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
-//#include <terminus/feature/find_keypoints.hpp>
+#include <terminus/feature/find_keypoints.hpp>
 
 namespace tx=tmns::image;
 
@@ -19,7 +19,7 @@ namespace tx=tmns::image;
 /*          Test the Find Keypoints on a test image         */
 /*          - Disk Image Example                            */
 /************************************************************/
-TEST( find_feature_points, disk_image_example_01 )
+TEST( detect_feature_points, image_disk_example_01 )
 {
     // Using a NITF, load the image, then perform feature detection on it
     std::filesystem::path image_to_load( "data/tif/test_image_01.tif" );
@@ -29,7 +29,6 @@ TEST( find_feature_points, disk_image_example_01 )
 
     auto disk_image = view.assume_value();
 
-    // Create the feature detector
-    
+    // Run Good Features to Track
 
 }
