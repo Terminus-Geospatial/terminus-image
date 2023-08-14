@@ -7,6 +7,7 @@
 
 // Terminus Libraries
 #include "../types/Compound_Types.hpp"
+#include "Channel_Range.hpp"
 #include "Pixel_Base.hpp"
 
 // C++ Libraries
@@ -18,7 +19,7 @@ namespace tmns::image {
  * RGBA PixelType
 */
 template <typename ChannelT>
-class Pixel_RGBA : public Pixel_Base<ChannelT>
+class Pixel_RGBA : public Pixel_Base<Pixel_RGBA<ChannelT>>
 {
     public:
 

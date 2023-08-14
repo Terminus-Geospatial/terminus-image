@@ -62,9 +62,9 @@ class GDAL_Disk_Image_Impl
         /**
          * Read the raster from disk
         */
-        ImageResult<void> read( const Image_Buffer&         dest,
-                                const math::Rectangle<int>& bbox,
-                                bool                        rescale ) const;
+        ImageResult<void> read( const Image_Buffer&  dest,
+                                const math::Rect2i&  bbox,
+                                bool                 rescale ) const;
 
         /**
          * Write the resource to disk

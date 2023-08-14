@@ -177,11 +177,64 @@ class Channel_Cast_Round_Clamp_Functor : public Return_Fixed_Type<DestT>
  * Method to apply a function on an argument in a typesafe manner
 */
 template <typename FunctorT,
-          typename ArgT>
-typename Compound_Result<FunctorT,ArgT>::type
-  compound_apply( const FunctorT& func, const ArgT& arg )
+          typename ArgumentT>
+typename Compound_Result<FunctorT,ArgumentT>::type
+  compound_apply( const FunctorT& func, const ArgumentT& arg )
 {
-    return cmp::Unary_Compound_Functor<FunctorT,ArgT>(func)(arg);
+    return cmp::Unary_Compound_Functor<FunctorT,ArgumentT>(func)(arg);
+}
+
+/**
+ * Compound apply for binary compound functors
+*/
+template <typename FunctorT,
+          typename Argument1T,
+          typename Argument2T>
+typename Compound_Result<FunctorT,Argument1T,Argument2T>::type
+  compound_apply( const FunctorT&   func,
+                  const Argument1T& arg1,
+                  const Argument2T& arg2 )
+{
+    return cmp::Binary_Compound_Functor<FunctorT,
+                                        Argument1T,
+                                        Argument2T>(func)(arg1,arg2);
+}
+
+/**
+ * Apply in place
+*/
+template <typename FunctorT,
+          typename ArgumentT>
+ArgumentT& compound_apply_in_place( FunctorT& func,
+                                    ArgumentT& arg )
+{
+    return Unary_In_Place_Compound_Functor<FunctorT&,ArgumentT>(func)(arg);
+}
+
+template <typename FunctorT,
+          typename ArgumentT>
+const ArgumentT& compound_apply_in_place( FunctorT&        func, 
+                                          const ArgumentT& arg )
+{
+    return Unary_In_Place_Compound_Functor<FunctorT&,ArgumentT>( func )( arg );
+}
+
+template <typename FunctorT,
+          typename ArgumentT>
+ArgumentT& compound_apply_in_place( const FunctorT&  func,
+                                    ArgumentT&       arg )
+{
+    return Unary_In_Place_Compound_Functor<const FunctorT&,
+                                           ArgumentT>( func )( arg );
+}
+
+template <typename FunctorT,
+          typename ArgumentT>
+const ArgumentT& compound_apply_in_place( const FunctorT&  func,
+                                          const ArgumentT& arg )
+{
+    return Unary_In_Place_Compound_Functor<const FunctorT&,
+                                           ArgumentT>( func )( arg );
 }
 
 /********************************************************************/

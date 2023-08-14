@@ -12,6 +12,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/src )
 set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
+    TEST_scratch.cpp
     #feature/TEST_detect_interest_points.cpp
     feature/drivers/ocv/TEST_Detector_OCV_GFTT.cpp
     feature/drivers/ocv/TEST_ocv_gftt.cpp
@@ -22,6 +23,7 @@ add_executable( ${TEST}
     image/io/drivers/gdal/TEST_GDAL_Utilities.cpp
     image/io/drivers/gdal/TEST_Image_Resource_Disk_GDAL.cpp
     image/io/drivers/gdal/TEST_Image_Resource_Disk_GDAL_Factory.cpp
+    image/operations/drawing/TEST_drawing_functions.cpp
     image/operations/TEST_crop_image.cpp
     image/operations/TEST_select_plane.cpp
     image/pixel/TEST_Pixel_Cast_Utilities.cpp

@@ -7,6 +7,7 @@
 
 // Terminus Image Libraries
 #include "../types/Compound_Types.hpp"
+#include "Channel_Range.hpp"
 #include "Pixel_Base.hpp"
 
 namespace tmns::image {
@@ -15,7 +16,7 @@ namespace tmns::image {
  * Grayscale Pixeltype
 */
 template <typename ChannelT>
-class Pixel_Gray : public Pixel_Base<ChannelT>
+class Pixel_Gray : public Pixel_Base<Pixel_Gray<ChannelT>>
 {
     public:
 

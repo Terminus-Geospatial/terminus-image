@@ -61,7 +61,7 @@ class Image_Format
         /**
          * Get an image bounding box
         */
-        math::Rectangle<int> bbox() const;
+        math::Rect2i bbox() const;
 
         /**
          * Get the number of image planes

@@ -68,9 +68,9 @@ void Image_Format::set_rows( size_t rows )
 /********************************************/
 /*      Return an image bounding box        */
 /********************************************/
-math::Rectangle<int> Image_Format::bbox() const
+math::Rect2i Image_Format::bbox() const
 {
-    return math::Rectangle<int>( 0, 0, cols(), rows() );
+    return math::Rect2i( 0, 0, cols(), rows() );
 }
 
 /************************************/

@@ -79,8 +79,8 @@ class Crop_View : public Image_Base<Crop_View<ImageT>>
          * Constructor
         */
         template<class RealT>
-        Crop_View( const ImageT&                 image,
-                   const math::Rectangle<RealT>& bbox )
+        Crop_View( const ImageT&                   image,
+                   const math::Rectangle<RealT,2>& bbox )
          : m_child( image ),
            m_ci( ( offset_type )( bbox.min()[0] ) ),
            m_cj( ( offset_type )( bbox.min()[1] ) ),
@@ -208,8 +208,8 @@ ops::Crop_View<ImageT> crop_image( const Image_Base<ImageT>& image,
  * Crop an image
 */
 template <typename ImageT, typename BBoxT>
-ops::Crop_View<ImageT> crop_image( const Image_Base<ImageT>&     image,
-                                   const math::Rectangle<BBoxT>& bbox )
+ops::Crop_View<ImageT> crop_image( const Image_Base<ImageT>&       image,
+                                   const math::Rectangle<BBoxT,2>& bbox )
 {
     return ops::Crop_View<ImageT>( image.impl(), bbox );
 }

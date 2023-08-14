@@ -15,7 +15,7 @@ namespace tmns::image {
  * Grayscale w/ Alpha Pixeltype
 */
 template <typename ChannelT>
-class Pixel_GrayA : public Pixel_Base<ChannelT>
+class Pixel_GrayA : public Pixel_Base<Pixel_GrayA<ChannelT>>
 {
     public:
 

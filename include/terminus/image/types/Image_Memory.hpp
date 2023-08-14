@@ -6,6 +6,9 @@
 #pragma once
 
 // Terminus Libraries
+#include <terminus/math/Point.hpp>
+
+// Terminus Image Libraries
 #include "../operations/rasterize.hpp"
 #include "../pixel/Pixel_Accessor_MemStride.hpp"
 #include "Image_Base.hpp"
@@ -187,6 +190,15 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
                                 size_t plane = 0 ) const
         {
             return *( m_origin + col + row * m_rstride + plane * m_pstride );
+        }
+
+        /**
+         * Return specific pixel position
+         */
+        result_type operator()( const tmns::math::Point2i& loc,
+                                size_t                     plane = 0 ) const
+        {
+            return this->operator()( loc.x(), loc.y(), plane );
         }
 
         /**

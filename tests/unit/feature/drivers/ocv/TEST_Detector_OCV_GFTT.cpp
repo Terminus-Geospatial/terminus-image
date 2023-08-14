@@ -19,10 +19,11 @@ TEST( Detector_OCV_GFTT, image_test_01 )
     ASSERT_TRUE( std::filesystem::exists( image_to_load ) );
 
     // Load in multiple formats
-    tx::Image_Memory<tx::PixelGray_u8>  img_u8  = tx::io::read_image_disk<tx::PixelGray_u8>(  image_to_load ).value();
-    tx::Image_Memory<tx::PixelGray_u16> img_u16 = tx::io::read_image_disk<tx::PixelGray_u16>( image_to_load ).value();
-    tx::Image_Memory<tx::PixelGray_f32> img_f32 = tx::io::read_image_disk<tx::PixelGray_f32>( image_to_load ).value();
-    tx::Image_Memory<tx::PixelGray_f64> img_f64 = tx::io::read_image_disk<tx::PixelGray_f64>( image_to_load ).value();
+    tx::Image_Memory<tx::PixelGray_u8>  img_u8     = tx::io::read_image_disk<tx::PixelGray_u8>(  image_to_load ).value();
+    tx::Image_Memory<tx::PixelGray_u16> img_u16    = tx::io::read_image_disk<tx::PixelGray_u16>( image_to_load ).value();
+    tx::Image_Memory<tx::PixelGray_f32> img_f32    = tx::io::read_image_disk<tx::PixelGray_f32>( image_to_load ).value();
+    tx::Image_Memory<tx::PixelGray_f64> img_f64    = tx::io::read_image_disk<tx::PixelGray_f64>( image_to_load ).value();
+    tx::Image_Memory<tx::PixelRGB_u8>   img_rgb_u8 = tx::io::read_image_disk<tx::PixelRGB_u8>( image_to_load ).value();
 
     // Create feature point detector
     auto detector = std::make_shared<tf::ocv::Detector_OCV_GFTT>();
@@ -61,6 +62,19 @@ TEST( Detector_OCV_GFTT, image_test_01 )
     {
         auto kp_uf64 = detector->operator()( img_f64, 1000, false );
         ASSERT_TRUE( kp_uf64.has_error() );
+    }
+
+    // Test RGB Image
+    {
+        tmns::log::debug( ADD_CURRENT_LOC(), "testing detector on RGB u8 image" );
+        auto kp_u8 = detector->operator()( img_rgb_u8, 1000 );
+        ASSERT_FALSE( kp_u8.has_error() );
+        ASSERT_GT( kp_u8.assume_value().size(), 500 );
+
+        // Visualize
+        //tx::utility::view_image( "RGB U8 Keypoint Results",
+        //                         tf::utility::draw_feature_points( ))
+
     }
 
 }

@@ -208,9 +208,9 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
 /********************************************/
 /*          Read memory from disk           */
 /********************************************/
-ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&         dest,
-                                              const math::Rectangle<int>& bbox,
-                                              bool                        rescale ) const
+ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&  dest,
+                                              const math::Rect2i&  bbox,
+                                              bool                 rescale ) const
 {
     // Perform bounds checks
     if( !format().bbox().is_inside( bbox ) )

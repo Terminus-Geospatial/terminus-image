@@ -16,7 +16,7 @@ namespace tmns::image {
  * RGB PixelType
 */
 template <typename ChannelT>
-class Pixel_RGB : public Pixel_Base<ChannelT>
+class Pixel_RGB : public Pixel_Base<Pixel_RGB<ChannelT>>
 {
     public:
 
@@ -84,7 +84,15 @@ class Pixel_RGB : public Pixel_Base<ChannelT>
 
         static std::string class_name()
         {
-            return "Pixel_RGB<" + ChannelT::name() + ">";
+            return "Pixel_RGB<" + Data_Type_Name<ChannelT>::name() + ">";
+        }
+
+        std::string to_string() const
+        {
+            std::stringstream sout;
+            sout << class_name() << "( r:" << m_data[0]
+                 << ", g: " << m_data[1] << ", b: " << m_data[2] << ")";
+            return sout.str();
         }
 
         /// Number of channels

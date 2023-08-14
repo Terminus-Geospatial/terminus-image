@@ -48,7 +48,7 @@ class Binary_Compound_Functor
         {
             typedef typename Compound_Channel_Type<Arg1T>::type                    arg1_type;
             typedef typename Compound_Channel_Type<Arg2T>::type                    arg2_type;
-            typedef typename std::invoke_result_t<FunctorT( arg1_type, arg2_type)> result_type;
+            typedef typename std::invoke_result_t<FunctorT, arg1_type, arg2_type>  result_type;
             typedef typename Compound_Channel_Cast<Arg1T,result_type>::type        type;
         };
 

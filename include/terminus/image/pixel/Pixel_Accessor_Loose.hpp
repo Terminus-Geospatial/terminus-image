@@ -24,7 +24,7 @@ class Pixel_Accessor_Loose
     public:
 
         /// @brief  Indexing Type
-        typedef typename std::conditional<Is_Floating_Point_Indexable<ImageT>::value, double, int>::type offset_type;
+        typedef typename std::conditional<Is_Floating_Point_Indexable<ImageT>::value(), double, int>::type offset_type;
 
         /// @brief Pixel Type
         typedef typename ImageT::pixel_type  pixel_type;
