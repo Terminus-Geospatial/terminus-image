@@ -109,6 +109,4 @@ TEST( io_read_image_disk, read_disk_isis_cube )
     auto mean_pixel_value = tmns::image::ops::mean_pixel_value( image );
 
     ASSERT_NEAR( mean_pixel_value[0], 0.082, 0.1 );
-
-    auto norm_image = tx::ops::normalize( image );
 }
