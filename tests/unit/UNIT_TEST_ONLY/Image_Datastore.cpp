@@ -9,13 +9,16 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
+// Terminus Libraries
+#include <terminus/log/utility.hpp>
+
 /************************************/
 /*          Load Images             */
 /************************************/
 std::optional<Image_Datastore> Image_Datastore::load( const std::filesystem::path& config_path )
 {   
     // If config path doesn't exist, return nothing
-    if( std::filesystem::exists( config_path ) )
+    if( !std::filesystem::exists( config_path ) )
     {
         return {};
     }
@@ -35,6 +38,7 @@ std::optional<Image_Datastore> Image_Datastore::load( const std::filesystem::pat
             std::string val = it->second.get_value<std::string>();
 
             image_list[key] = std::filesystem::path( val );
+            tmns::log::trace( "Adding Image-Datastore Entry  Key=", key, ", Value=", val );
         }
     }
 

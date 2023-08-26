@@ -210,7 +210,7 @@ template <typename FunctorT,
 ArgumentT& compound_apply_in_place( FunctorT& func,
                                     ArgumentT& arg )
 {
-    return Unary_In_Place_Compound_Functor<FunctorT&,ArgumentT>(func)(arg);
+    return cmp::Unary_In_Place_Compound_Functor<FunctorT&,ArgumentT>(func)(arg);
 }
 
 template <typename FunctorT,
@@ -218,7 +218,7 @@ template <typename FunctorT,
 const ArgumentT& compound_apply_in_place( FunctorT&        func, 
                                           const ArgumentT& arg )
 {
-    return Unary_In_Place_Compound_Functor<FunctorT&,ArgumentT>( func )( arg );
+    return cmp::Unary_In_Place_Compound_Functor<FunctorT&,ArgumentT>( func )( arg );
 }
 
 template <typename FunctorT,
@@ -226,8 +226,8 @@ template <typename FunctorT,
 ArgumentT& compound_apply_in_place( const FunctorT&  func,
                                     ArgumentT&       arg )
 {
-    return Unary_In_Place_Compound_Functor<const FunctorT&,
-                                           ArgumentT>( func )( arg );
+    return cmp::Unary_In_Place_Compound_Functor<const FunctorT&,
+                                                ArgumentT>( func )( arg );
 }
 
 template <typename FunctorT,

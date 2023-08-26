@@ -5,14 +5,32 @@
 */
 #include "Test_Environment.hpp"
 
-static Test_Environment new_env;
+// Terminus Libraries
+#include <terminus/log/utility.hpp>
+
+// C++ Libraries
+#include <memory>
+
+static std::unique_ptr<Test_Environment> new_env;
 
 /********************************/
 /*          Initialize          */
 /********************************/
 void Test_Environment::initialize( const std::optional<Image_Datastore>& image_datastore )
 {
-    new_env = Test_Environment( image_datastore );
+    Image_Datastore output_img_ds;
+    if( !image_datastore )
+    {
+        tmns::log::warn( "Image datastore not initialized." );
+    }
+    else
+    {
+        tmns::log::trace( "Initializing Test Environment" );
+        output_img_ds = image_datastore.value();
+    }
+    
+    
+    new_env = std::unique_ptr<Test_Environment>( new Test_Environment( output_img_ds ) );
 }
 
 /*************************************/
@@ -20,7 +38,11 @@ void Test_Environment::initialize( const std::optional<Image_Datastore>& image_d
 /*************************************/
 Image_Datastore const& Test_Environment::get_image_datastore() 
 {
-    return new_env.get_image_datastore();
+    if( !new_env )
+    {
+        tmns::log::fatal( "Test_Environment not initialized." );
+    }
+    return new_env->m_image_datastore;
 }
 
 /********************************/

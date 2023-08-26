@@ -8,6 +8,8 @@
 // Terminus Libraries
 #include <terminus/log/utility.hpp>
 #include <terminus/image/io/read_image_disk.hpp>
+#include <terminus/image/io/write_image.hpp>
+#include <terminus/image/operations/normalize.hpp>
 #include <terminus/image/operations/statistics/pixel_operations.hpp>
 #include <terminus/image/pixel/Pixel_RGB.hpp>
 #include <terminus/image/types/Image_Memory.hpp>
@@ -61,7 +63,7 @@ TEST( io_read_image_disk, read_disk_jpg )
 /***************************************************/
 /*          Read and write imagery (ISIS)          */
 /***************************************************/
-TEST( read_image_disk, read_disk_isis_cube )
+TEST( io_read_image_disk, read_disk_isis_cube )
 {
     namespace tx = tmns::image;
 
@@ -79,7 +81,7 @@ TEST( read_image_disk, read_disk_isis_cube )
         GTEST_SKIP();
     }
     tmns::log::trace( ADD_CURRENT_LOC(), "Loading Image: ", *image_to_load );
-    auto result = tx::io::read_image_disk<tx::PixelRGB_u8>( *image_to_load );
+    auto result = tx::io::read_image_disk<tx::PixelGray_f32>( *image_to_load );
     tmns::log::trace( ADD_CURRENT_LOC(), "End of read_image_disk" );
 
     if( result.has_error() )
@@ -97,16 +99,16 @@ TEST( read_image_disk, read_disk_isis_cube )
         auto res = tx::utility::view_image( "Dummy Window", image );
     }
 
-    ASSERT_EQ( image.cols(), 512 );
-    ASSERT_EQ( image.rows(), 512 );
-    ASSERT_EQ( image.channels(), 3 );
-    ASSERT_EQ( image.format().channel_type(), tx::Channel_Type_Enum::UINT8 );
-    ASSERT_EQ( image.format().pixel_type(),   tx::Pixel_Format_Enum::RGB );
+    ASSERT_EQ( image.cols(), 1024 );
+    ASSERT_EQ( image.rows(), 25000 );
+    ASSERT_EQ( image.channels(), 1 );
+    ASSERT_EQ( image.format().channel_type(), tx::Channel_Type_Enum::FLOAT32 );
+    ASSERT_EQ( image.format().pixel_type(),   tx::Pixel_Format_Enum::GRAY );
 
     // Compute the mean of the image
     auto mean_pixel_value = tmns::image::ops::mean_pixel_value( image );
 
-    ASSERT_NEAR( mean_pixel_value[0], 180.214, 0.1 );
-    ASSERT_NEAR( mean_pixel_value[1],  99.049, 0.1 );
-    ASSERT_NEAR( mean_pixel_value[2], 105.415, 0.1 );
+    ASSERT_NEAR( mean_pixel_value[0], 0.082, 0.1 );
+
+    auto norm_image = tx::ops::normalize( image );
 }

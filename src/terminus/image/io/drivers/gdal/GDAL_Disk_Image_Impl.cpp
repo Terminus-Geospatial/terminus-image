@@ -134,7 +134,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         }
         sout << "Will attempt to determine by simple channel counts.";
 
-        logger.error( sout.str() );
+        logger.debug( sout.str() );
 
         // Check next set of rules
         if( channel_codes.size() == 1 )

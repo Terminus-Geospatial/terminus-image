@@ -51,7 +51,7 @@ class Image_Resource_Disk_GDAL_Factory : public Driver_Factory_Base
     private:
 
         /// List of supported extensions
-        std::vector<std::string> m_supported_extensions { ".tif", ".png", ".jpg", ".ntf" };
+        std::vector<std::string> m_supported_extensions { ".cub", ".jpg", ".ntf", ".png", ".tif" };
 
 }; // end of Image_Resource_Disk_GDAL_Factory
 

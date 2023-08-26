@@ -11,7 +11,7 @@
 // Unit-Test Libraries
 #include "Image_Datastore.hpp"
 
-class Test_Environment : public ::testing::Environment
+class Test_Environment
 {
     public:
 

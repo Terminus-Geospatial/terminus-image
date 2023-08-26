@@ -49,6 +49,9 @@ target_link_libraries( ${TEST} PRIVATE
 #gtest_discover_tests( ${TEST} )
 
 #  Copy Unit-Test Data
-file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data
+file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/images
+      DESTINATION ${CMAKE_BINARY_DIR}/data )
+
+file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/test_images.ini
       DESTINATION ${CMAKE_BINARY_DIR}/data )
       

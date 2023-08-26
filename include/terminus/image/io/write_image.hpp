@@ -158,7 +158,7 @@ ImageResult<void> write_image( Image_Resource_Base::ptr_t         resource,
         for( int j = 0; j < rows; j+= block_size.height() ) {
         for( int i = 0; i < cols; i+= block_size.width()  ) {
 
-            tmns::log::debug( "writing block at [", i, ", ", j, "]/[", rows, ", ",
+            tmns::log::trace( "writing block at [", i, ", ", j, "]/[", rows, ", ",
                               cols, "] blocksize = ", block_size.width(), " x ",
                               block_size.height() );
 
