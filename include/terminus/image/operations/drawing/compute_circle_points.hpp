@@ -12,6 +12,7 @@
 
 // Terminus Image Libraries
 #include "Drawing_Enums.hpp"
+#include "compute_line_points.hpp"
 
 namespace tmns::image::ops::drawing {
 
@@ -20,9 +21,11 @@ namespace tmns::image::ops::drawing {
 */
 template <typename PixelT>
 ImageResult<void> compute_circle_points( const tmns::math::Point2i&                  center,
-                                         int                                         radius,
+                                         double                                      radius,
                                          const PixelT&                               color,
                                          int                                         thickness,
+                                         Line_Overlap_Mode                           overlap_mode,
+                                         int                                         max_circle_segment_length,
                                          std::shared_ptr<blob::Uniform_Blob<PixelT>> output )
 {
     tmns::log::trace( ADD_CURRENT_LOC(),
@@ -38,11 +41,42 @@ ImageResult<void> compute_circle_points( const tmns::math::Point2i&             
     {
         output = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
     }
-
-    // Create output
-    output->clear();
     
-    // Break circle into 
+    // For each segment, compute start and end points
+    double angle = 0;
+    double angle_step = std::atan2( max_circle_segment_length, 
+                                   radius );
+
+    math::Point2i start_pos( { (int) std::round( std::cos( angle ) * radius + center.x() ),
+                               (int) std::round( std::sin( angle ) * radius + center.y() ) } );
+    math::Point2i end_pos;
+
+    while( angle < ( 0.5 * M_PI ) )
+    {
+        angle += angle_step + 0.1;
+
+        // Create ending position
+        end_pos.x() = std::round( std::cos( angle ) * radius + center.x() );
+        end_pos.y() = std::round( std::sin( angle ) * radius + center.y() );
+
+        auto dist = math::Point2i::distance( start_pos,
+                                             end_pos );
+        
+        tmns::log::info( "Angle: ", ( angle * M_PI / 180.0 ), ", Step: ",
+                         angle_step, ", Start-Pos: ", start_pos.to_string(),
+                         ", End-Pos: ", end_pos.to_string(), ", Dist: ", dist );
+        
+        // Set the new line segment
+        auto result = compute_line_points( start_pos,
+                                           end_pos,
+                                           color,
+                                           thickness,
+                                           overlap_mode,
+                                           output );
+
+        // Update start pos
+        start_pos = end_pos;
+    }
 
     return tmns::outcome::ok();
 }

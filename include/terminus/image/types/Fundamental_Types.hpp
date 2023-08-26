@@ -66,4 +66,30 @@ template <> struct Data_Type_Name<int64_t>{  static std::string name(){ return "
 template <> struct Data_Type_Name<float>{   static std::string name(){ return "float"; }  };
 template <> struct Data_Type_Name<double>{  static std::string name(){ return "double"; } };
 
+/**
+ * Simple wrapper that converts char types for printing.
+*/
+template <typename TP>
+TP numeric( TP v )
+{
+    return v;
+}
+
+/**
+ * uint8 overload
+*/
+inline uint16_t numeric( uint8_t v )
+{
+    return v;
+}
+
+/**
+ * int8 overload
+*/
+inline int16_t numeric( int8_t v )
+{
+    return v;
+}
+
+
 } // End of tmns::image namespace

@@ -14,6 +14,75 @@
 
 namespace tmns::image::pix {
 
+/**
+ * Method to fetch the underlying channel type from a pixel
+*/
+template <typename PixelT>
+struct Pixel_Channel_Type : Compound_Channel_Type<PixelT>{};
+
+/**
+ * Method to get the number of channels
+*/
+template <typename PixelT>
+struct Pixel_Channel_Count : Compound_Channel_Count<PixelT>{};
+
+/**
+ * Method to cast the Channel-Type
+*/
+template <typename PixelT,
+          typename ChannelT>
+struct Pixel_Channel_Cast : Compound_Channel_Cast<PixelT,ChannelT> {};
+
+/**
+ * Check if Pixel-Type has an alpha channel
+*/
+template <typename PixelT>
+struct Pixel_Has_Alpha : std::false_type {};
+
+/**
+ * Cast the pixel such that it will now have an alpha channel
+*/
+template <class PixelT> 
+struct Pixel_With_Alpha {};
+
+/**
+ * Strip the alpha, if it has one
+*/
+template <class PixelT> 
+struct Pixel_Without_Alpha { typedef PixelT type; };
+
+/**
+ * Create a Complex Pixel Type
+template <class PixelT>
+struct PixelMakeComplex {
+    typedef typename PixelChannelCast<PixelT,typename MakeComplex<typename PixelChannelType<PixelT>::type>::type>::type type;
+};
+
+template <class PixelT>
+struct PixelMakeReal {
+    typedef typename PixelChannelCast<PixelT,typename MakeReal<typename PixelChannelType<PixelT>::type>::type>::type type;
+};
+*/
+
+/**
+ * Use this to get the raw underlying type of an image type (ex: double, int, float)
+ */
+template <typename ImageT>
+struct Image_Channel_Type
+{
+    typedef typename Pixel_Channel_Type<typename ImageT::pixel_type>::type type;
+};
+
+/**
+ * Get the pixel size in bytes
+*/
+template <class PixelT>
+struct Pixel_Size_Bytes
+{
+    static const size_t value =  size_t(Pixel_Channel_Count<PixelT>::value) * 
+                                 sizeof(typename Pixel_Channel_Type<PixelT>::type);
+};
+
 /************************************************************/
 /*          All Pixel_Cast_Helper Classes Go Here           */
 /************************************************************/

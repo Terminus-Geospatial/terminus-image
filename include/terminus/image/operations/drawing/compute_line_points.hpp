@@ -49,89 +49,91 @@ ImageResult<void> compute_line_points_thin( const tmns::math::Point2i&          
     if( p1.x() == p2.x() ||
         p1.y() == p2.y() )
     {
-        for( size_t c = point_rect.bl().x(); c <= point_rect.tr().x(); c++ )
-        for( size_t r = point_rect.tr().y(); r <= point_rect.tr().y(); r++ )
+        for( int c = point_rect.bl().x(); c <= point_rect.tr().x(); c++ )
+        for( int r = point_rect.bl().y(); r <= point_rect.tr().y(); r++ )
         {
             output->insert( c, r, 0, color );
         }
     }
-
-    // calculate direction
-    auto delta = p2 - p1;
-    tmns::math::Point2i step { { 1, 1 } };
-    if( delta.x() < 0 )
-    {
-        delta.x() = -delta.x();
-        step.x() = -1;
-    }
-    if( delta.y() < 0 )
-    {
-        delta.y() = -delta.y();
-        step.y() = -1;
-    }
-        
-    tmns::math::Point2i delta_x2( { delta.x() << 1,
-                                    delta.y() << 1 } );
-    
-    // Add starting pixel
-    output->insert( p1, color );
-
-    if ( delta.x() > delta.y() )
-    {
-        // start value represents a half step in Y direction
-        error = delta_x2.y() - delta.x();
-        
-        while ( p1.x() != p2.x() )
-        {
-            // step in main direction
-            p1.x() += step.x();
-            if( error >= 0 )
-            {
-                if ( overlap_mode & Line_Overlap_Mode::MAJOR )
-                {
-                    output->insert( p1, color );
-                }
-
-                // change Y
-                p1.y() += step.y();
-                
-                if( overlap_mode & Line_Overlap_Mode::MINOR)
-                {
-                    // draw pixel in minor direction before changing
-                    output->insert( tmns::math::Point2i( { p1.x() - step.x(),
-                                                          p1.y() } ),
-                                   color );
-                }
-                error -= delta_x2.x();
-            }
-            error += delta_x2.y();
-
-            output->insert( p1, color );
-        }
-    }
     else
     {
-        error = delta_x2.x() - delta.y();
-        while( p1.y() != p2.y() )
+        // calculate direction
+        auto delta = p2 - p1;
+        tmns::math::Point2i step { { 1, 1 } };
+        if( delta.x() < 0 )
         {
-            p1.y() += step.y();
-            if( error >= 0 )
+            delta.x() = -delta.x();
+            step.x() = -1;
+        }
+        if( delta.y() < 0 )
+        {
+            delta.y() = -delta.y();
+            step.y() = -1;
+        }
+        
+        tmns::math::Point2i delta_x2( { delta.x() << 1,
+                                        delta.y() << 1 } );
+    
+        // Add starting pixel
+        output->insert( p1, color );
+
+        if ( delta.x() > delta.y() )
+        {
+            // start value represents a half step in Y direction
+            error = delta_x2.y() - delta.x();
+        
+            while ( p1.x() != p2.x() )
             {
-                if( overlap_mode & Line_Overlap_Mode::MAJOR )
-                {
-                    output->insert( p1, color );
-                }
+                // step in main direction
                 p1.x() += step.x();
-                if( overlap_mode & Line_Overlap_Mode::MINOR )
+                if( error >= 0 )
                 {
-                    output->insert( tmns::math::Point2i( { p1.x(),
-                                                           p1.y() - step.y() } ),
-                                   color );
+                    if ( overlap_mode & Line_Overlap_Mode::MAJOR )
+                    {
+                        output->insert( p1, color );
+                    }
+
+                    // change Y
+                    p1.y() += step.y();
+                
+                    if( overlap_mode & Line_Overlap_Mode::MINOR)
+                    {
+                        // draw pixel in minor direction before changing
+                        output->insert( tmns::math::Point2i( { p1.x() - step.x(),
+                                                               p1.y() } ),
+                                        color );
+                    }
+                    error -= delta_x2.x();
                 }
-                error -= delta_x2.y();
+                error += delta_x2.y();
+
+                output->insert( p1, color );
             }
-            error += delta_x2.x();
-            output->insert( p1, color );
+        }
+        else
+        {
+            error = delta_x2.x() - delta.y();
+            while( p1.y() != p2.y() )
+            {
+                p1.y() += step.y();
+                if( error >= 0 )
+                {
+                    if( overlap_mode & Line_Overlap_Mode::MAJOR )
+                    {
+                        output->insert( p1, color );
+                    }
+                    p1.x() += step.x();
+                    if( overlap_mode & Line_Overlap_Mode::MINOR )
+                    {
+                        output->insert( tmns::math::Point2i( { p1.x(),
+                                                               p1.y() - step.y() } ),
+                                       color );
+                    }
+                    error -= delta_x2.y();
+                }
+                error += delta_x2.x();
+                output->insert( p1, color );
+            }
         }
     }
 
@@ -165,11 +167,25 @@ ImageResult<void> compute_line_points( const tmns::math::Point2i&               
     }
 
     // Create output
-    output->clear();
     auto p1 = p1_orig;
     auto p2 = p2_orig;
-    int thickness_mode = Line_Thickness_Mode::DRAW_COUNTERCLOCKWISE;
+    int thickness_mode = Line_Thickness_Mode::DRAW_CLOCKWISE;
 
+    // If either axis is the same, then draw a box
+    if( p1.x() == p2.x() ||
+        p1.y() == p2.y() )
+    {
+        math::Rect2i point_rect_pre( p1, p2 );
+        auto point_rect = point_rect_pre.expand( thickness / 2 );
+        for( int c = point_rect.bl().x(); c <= point_rect.tr().x(); c++ )
+        for( int r = point_rect.bl().y(); r <= point_rect.tr().y(); r++ )
+        {
+            output->insert( c, r, 0, color );
+        }
+        return outcome::ok();
+    }
+
+    // If thickness is a single line, or a fill, continue
     if( thickness <= 1 )
     {
         return compute_line_points_thin<PixelT>( p1_orig,
@@ -264,7 +280,7 @@ ImageResult<void> compute_line_points( const tmns::math::Point2i&               
             auto result = compute_line_points_thin<PixelT>( p1,
                                                             p2,
                                                             color,
-                                                            Line_Overlap_Mode::NONE,
+                                                            Line_Overlap_Mode::BOTH,
                                                             output );
             if( result.has_error() )
             {
@@ -284,7 +300,7 @@ ImageResult<void> compute_line_points( const tmns::math::Point2i&               
             p1.x() += step.x();
             p2.x() += step.x();
             
-            overlap = Line_Overlap_Mode::NONE;
+            overlap = Line_Overlap_Mode::BOTH;
             if( error >= 0 )
             {
                 // change Y

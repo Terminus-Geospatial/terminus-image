@@ -31,7 +31,7 @@ class Options
         /**
          * Get the image cache
         */
-        std::optional<std::filesystem::path> get_image_cache() const;
+        std::filesystem::path get_test_image_config_path() const;
 
         /**
          * Print Usage Instructions
@@ -49,6 +49,7 @@ class Options
         /// Log Severity
         std::string m_log_severity { "info" };
 
-        std::optional<std::filesystem::path> m_image_cache;
+        /// Path pointing to test images
+        std::filesystem::path m_test_image_config_path { "data/test_images.ini" };
 
 }; // End of options class

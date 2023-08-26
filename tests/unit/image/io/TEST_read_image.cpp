@@ -14,7 +14,7 @@
 #include <terminus/image/utility/View_Utilities.hpp>
 
 /********************************************/
-/*          Read and write imagery          */
+/*          Read Image From Disk            */
 /********************************************/
 TEST( io_read_image, read_image_memory )
 {

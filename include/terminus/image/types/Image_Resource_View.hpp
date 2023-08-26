@@ -95,9 +95,11 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
             core::conc::Mutex::Lock lck( m_resource_mtx );
 
             // Create output image memory object
-            Image_Memory<PixelT> buffer( 1, 1, m_planes );
-            read_image( buffer, *m_resource, math::Rect2i( x, y, 1, 1 ) );
-            return buffer( 0, 0, plane );
+            Image_Memory<PixelT> dest_image( 1, 1, m_planes );
+            io::read_image( dest_image, 
+                            m_resource,
+                            math::Rect2i( x, y, 1, 1 ) );
+            return dest_image( 0, 0, plane );
         }
 
         /**

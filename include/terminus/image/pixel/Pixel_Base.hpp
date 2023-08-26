@@ -86,11 +86,11 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>::type
-    operator += ( const Pixel_Base<Pixel1T>& pixel1,
+typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>
+    operator += ( Pixel_Base<Pixel1T>&       pixel1,
                   const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return pix::compound_apply_in_place( Arg_Arg_In_Place_Sum_Functor(),
+    return cmp::compound_apply_in_place( Arg_Arg_In_Place_Sum_Functor(),
                                          pixel1.impl(),
                                          pixel2.impl() );
 }
@@ -263,6 +263,17 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
 /**
  * Division Between Pixel and a Scalar
 */
+template <typename PixelT,
+          typename ScalarT>
+typename std::enable_if_t< Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<Arg_Val_Quotient_Functor<ScalarT>,
+                           PixelT>::type >
+  operator / ( const Pixel_Base<PixelT>& pixel,
+               ScalarT                   scalar )
+{
+    return pix::compound_apply( Arg_Val_Quotient_Functor<ScalarT>(scalar),
+                                pixel.impl() );
+}
 
 /**
  * Division Between Scalar and a Pixel

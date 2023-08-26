@@ -32,9 +32,13 @@ add_executable( ${TEST}
     image/types/TEST_Image_Resource_View.cpp
     image/types/TEST_Fundamental_Types.cpp
     image/types/TEST_Image_Memory.cpp
+    UNIT_TEST_ONLY/Image_Datastore.cpp 
+    UNIT_TEST_ONLY/Image_Datastore.hpp
     UNIT_TEST_ONLY/Options.cpp
     UNIT_TEST_ONLY/Options.hpp
     UNIT_TEST_ONLY/Prerasterization_Test_View.hpp
+    UNIT_TEST_ONLY/Test_Environment.cpp
+    UNIT_TEST_ONLY/Test_Environment.hpp
 )
 
 target_link_libraries( ${TEST} PRIVATE
@@ -45,5 +49,6 @@ target_link_libraries( ${TEST} PRIVATE
 #gtest_discover_tests( ${TEST} )
 
 #  Copy Unit-Test Data
-file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/images
+file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data
       DESTINATION ${CMAKE_BINARY_DIR}/data )
+      

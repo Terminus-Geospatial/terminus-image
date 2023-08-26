@@ -119,7 +119,7 @@ class Block_Rasterize_View : public Image_Base<Block_Rasterize_View<ImageT>>
                 }
 
                 // Otherwise, figure out first what block to fetch
-                auto block_index   = m_block_manager.get_block_index( { x, y } );
+                auto block_index   = m_block_manager.get_block_index( tmns::math::Point2i( { (int)x, (int)y } ) );
                 const auto& handle = m_block_manager.block( block_index );
 
                 auto start_pixel = m_block_manager.get_block_start_pixel( block_index );

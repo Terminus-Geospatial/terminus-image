@@ -12,8 +12,8 @@
 #include <terminus/core/cache/Cache_Local.hpp>
 #include <terminus/core/error/ErrorCategory.hpp>
 #include <terminus/math/Rectangle.hpp>
+#include <terminus/math/Point_Utilities.hpp>
 #include <terminus/math/Size.hpp>
-#include <terminus/math/Vector_Utilities.hpp>
 
 namespace tmns::image::ops::block {
 
@@ -80,17 +80,17 @@ class Block_Generator_Manager
         /**
          * Get the block index given an input pixel coordinate
         */
-        math::Vector2i get_block_index( const math::Vector2i& pixel ) const
+        math::Point2i get_block_index( const math::Point2i& pixel ) const
         {
-            return math::ToVector2<int>( pixel.x() / m_block_size.width(),
-                                         pixel.y() / m_block_size.height() );
+            return math::ToPoint2<int>( pixel.x() / m_block_size.width(),
+                                        pixel.y() / m_block_size.height() );
         }
 
         /**
          * Get the block index for a region which must entirely fall within the bounding box
          * @note: This does not safety check.
         */
-        math::Vector2i get_block_index( const math::Rect2i& bbox ) const
+        math::Point2i get_block_index( const math::Rect2i& bbox ) const
         {
             auto block_index = get_block_index( bbox.min() );
             return block_index;
@@ -99,16 +99,16 @@ class Block_Generator_Manager
         /**
          * Get the top-left pixel coordinate for a given block
          */
-        math::Vector2i get_block_start_pixel( const math::Vector2i& block_index ) const
+        math::Point2i get_block_start_pixel( const math::Point2i& block_index ) const
         {
-            return math::Vector2i( { block_index.x() * m_block_size.width(),
-                                     block_index.y() * m_block_size.height() } );
+            return math::Point2i( { block_index.x() * m_block_size.width(),
+                                    block_index.y() * m_block_size.height() } );
         }
 
         /**
          * Make sure the block is not out of bounds
          */
-        void check_block_index( const math::Vector2i& block_index ) const
+        void check_block_index( const math::Point2i& block_index ) const
         {
             int ix = block_index.x();
             int iy = block_index.y();
@@ -129,7 +129,7 @@ class Block_Generator_Manager
         /**
          * Get the block generator for the requested block
          */
-        const core::cache::Cache_Local::Handle<Block_Generator<ImageT>>& block( const math::Vector2i& block_index ) const
+        const core::cache::Cache_Local::Handle<Block_Generator<ImageT>>& block( const math::Point2i& block_index ) const
         {
             int ix = block_index.x();
             int iy = block_index.y();
@@ -142,7 +142,7 @@ class Block_Generator_Manager
         */
         core::cache::Cache_Local::Handle<Block_Generator<ImageT>>& block( size_t ix, size_t iy )
         {
-            check_block_index( math::ToVector2<int>( ix, iy ) );
+            check_block_index( math::ToPoint2<int>( ix, iy ) );
             return m_block_table[ ix + iy * m_table_width ];
         }
 

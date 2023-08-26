@@ -10,7 +10,9 @@
 #include <terminus/log/utility.hpp>
 
 // Unit-Test Libraries
+#include "UNIT_TEST_ONLY/Image_Datastore.hpp"
 #include "UNIT_TEST_ONLY/Options.hpp"
+#include "UNIT_TEST_ONLY/Test_Environment.hpp"
 
 int main(int argc, char* argv[], char* envp[] )
 {
@@ -24,6 +26,18 @@ int main(int argc, char* argv[], char* envp[] )
         tmns::log::error( "Unable to configure logging. Using defaults." );
     }
     tmns::log::info( "Logger initialized" );
+
+    // Load image datastore
+    auto image_datastore = Image_Datastore::load( options.get_test_image_config_path() );
+    if( !image_datastore )
+    {
+        tmns::log::warn( "Unable to find image datastore at ", 
+                         options.get_test_image_config_path(), 
+                         " expect to skip test which require large images." );
+    }
+    
+    // Create test environment
+    Test_Environment::initialize( image_datastore ); 
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

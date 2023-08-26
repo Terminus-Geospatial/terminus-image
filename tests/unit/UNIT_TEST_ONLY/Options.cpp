@@ -79,6 +79,14 @@ std::string Options::get_log_config() const
     return m_log_config;
 }
 
+/****************************************************************/
+/*          Get the test image configuration file path          */
+/****************************************************************/
+std::filesystem::path Options::get_test_image_config_path() const
+{
+    return m_test_image_config_path;
+}
+
 /********************************************/
 /*          Print Usage Instructions        */
 /********************************************/

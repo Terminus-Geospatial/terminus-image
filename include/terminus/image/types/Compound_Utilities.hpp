@@ -7,7 +7,9 @@
 
 // Terminus Libraries
 #include "compounds/Binary_Compound_Functor.hpp"
+#include "compounds/Binary_In_Place_Compound_Functor.hpp"
 #include "compounds/Unary_Compound_Functor.hpp"
+#include "compounds/Unary_In_Place_Compound_Functor.hpp"
 #include "Compound_Types.hpp"
 
 namespace tmns::image {

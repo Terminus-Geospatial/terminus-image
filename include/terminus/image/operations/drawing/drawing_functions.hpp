@@ -11,6 +11,7 @@
 // Terminus Image Libraries
 #include "../blob/Sparse_Image_View.hpp"
 #include "../blob/Uniform_Blob.hpp"
+#include "compute_circle_points.hpp"
 #include "compute_line_points.hpp"
 
 // C++ Libraries
@@ -39,7 +40,6 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
 {
     typedef typename ImageT::pixel_type PixelT;
 
-
     // Construct list of coordinates
     auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
     Line_Overlap_Mode overlap_mode = Line_Overlap_Mode::BOTH;
@@ -49,6 +49,136 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
                                              thickness,
                                              overlap_mode,
                                              uniform_blob );
+
+    // Build the Sparse Image View
+    std::deque<std::shared_ptr<blob::Uniform_Blob<PixelT>>> blobs;
+    blobs.push_back( uniform_blob );
+
+    return blob::Sparse_Image_View<ImageT,
+                                   blob::Uniform_Blob<PixelT>>( input_image, 
+                                                                blobs );
+}
+
+/**
+ * Draw a circle on the image
+ * 
+ * @param input_image
+ * @param center
+ * @param radius
+ * @param color
+ * @param thickness
+ * 
+ * @returns Image with line drawn on it.
+*/
+template <typename ImageT>
+blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>> 
+        draw_circle( const ImageT&                      input_image,
+                     const tmns::math::Point2i&         center,
+                     double                             radius,
+                     const typename ImageT::pixel_type& color,
+                     int                                thickness,
+                     int                                max_circle_segment_length = 10 )
+{
+    typedef typename ImageT::pixel_type PixelT;
+
+    // Construct list of coordinates
+    auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
+    Line_Overlap_Mode overlap_mode = Line_Overlap_Mode::BOTH;
+    auto res = drawing::compute_circle_points( center,
+                                               radius,
+                                               color,
+                                               thickness,
+                                               overlap_mode,
+                                               max_circle_segment_length,
+                                               uniform_blob );
+
+    // Build the Sparse Image View
+    std::deque<std::shared_ptr<blob::Uniform_Blob<PixelT>>> blobs;
+    blobs.push_back( uniform_blob );
+
+    return blob::Sparse_Image_View<ImageT,
+                                   blob::Uniform_Blob<PixelT>>( input_image, 
+                                                                blobs );
+}
+
+/**
+ * Draw a circle on the image
+ * 
+ * @param input_image
+ * @param center
+ * @param radius
+ * @param color
+ * @param thickness
+ * 
+ * @returns Image with line drawn on it.
+*/
+template <typename ImageT>
+blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>> 
+        draw_rectangle( const ImageT&                      input_image,
+                        const tmns::math::Rect2i&          bbox,
+                        const typename ImageT::pixel_type& color,
+                        int                                thickness )
+{
+    typedef typename ImageT::pixel_type PixelT;
+
+    // Construct list of coordinates
+    auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
+    Line_Overlap_Mode overlap_mode = Line_Overlap_Mode::BOTH;
+
+    // If the thickness is < 0, then it's a simple fill
+    if( thickness < 0 )
+    {
+        // compute bounds
+        auto new_bbox = bbox.expand( thickness / 2 );
+
+        for( int x = new_bbox.bl().x(); x < new_bbox.tr().x(); x++ )
+        for( int y = new_bbox.bl().y(); y < new_bbox.tr().y(); y++ )
+        {
+            uniform_blob->insert( x, y, 0, color );
+        }
+    }
+    else
+    {
+        // TL -> TR
+        {
+            auto res = drawing::compute_line_points( bbox.tl(),
+                                                     bbox.tr(),
+                                                     color,
+                                                     thickness,
+                                                     overlap_mode,
+                                                     uniform_blob );
+        }
+
+        // TR -> BR
+        {
+            auto res = drawing::compute_line_points( bbox.tr(),
+                                                     bbox.br(),
+                                                     color,
+                                                     thickness,
+                                                     overlap_mode,
+                                                     uniform_blob );
+        }
+
+        // BR -> BL
+        {
+            auto res = drawing::compute_line_points( bbox.br(),
+                                                     bbox.bl(),
+                                                     color,
+                                                     thickness,
+                                                     overlap_mode,
+                                                     uniform_blob );
+        }
+
+        // BL -> TL
+        {
+            auto res = drawing::compute_line_points( bbox.bl(),
+                                                     bbox.tl(),
+                                                     color,
+                                                     thickness,
+                                                     overlap_mode,
+                                                     uniform_blob );
+        }
+    }
 
     // Build the Sparse Image View
     std::deque<std::shared_ptr<blob::Uniform_Blob<PixelT>>> blobs;

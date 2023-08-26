@@ -42,30 +42,31 @@ class Binary_Compound_Functor
          * Pass-by-Value Specialization
         */
         template <typename F,
-                  typename Arg1T,
-                  typename Arg2T>
-        struct result<F(Arg1T,Arg2T)>
+                  typename Argument1T,
+                  typename Argument2T>
+        struct result<F(Argument1T,Argument2T)>
         {
-            typedef typename Compound_Channel_Type<Arg1T>::type                    arg1_type;
-            typedef typename Compound_Channel_Type<Arg2T>::type                    arg2_type;
+            typedef typename Compound_Channel_Type<Argument1T>::type               arg1_type;
+            typedef typename Compound_Channel_Type<Argument2T>::type               arg2_type;
             typedef typename std::invoke_result_t<FunctorT, arg1_type, arg2_type>  result_type;
-            typedef typename Compound_Channel_Cast<Arg1T,result_type>::type        type;
+            typedef typename Compound_Channel_Cast<Argument1T,result_type>::type   type;
         };
 
         /**
          * Call Operator
          */
-        template <typename Arg1T,
-                  typename Arg2T>
-        typename result<Binary_Compound_Functor( Arg1T, Arg2T )>::type
-            operator()( Arg1T const& arg1, Arg2T const& arg2 ) const
+        template <typename Argument1T,
+                  typename Argument2T>
+        typename result<Binary_Compound_Functor( Argument1T, Argument2T )>::type
+            operator()( const Argument1T& arg1,
+                        const Argument2T& arg2 ) const
         {
-            typedef typename result<Binary_Compound_Functor(Arg1T,Arg2T)>::type result_type;
+            typedef typename result<Binary_Compound_Functor(Argument1T,Argument2T)>::type result_type;
             return Helper<Is_Compound<result_type>::value,
                           Compound_Channel_Count<result_type>::value,
                           result_type,
-                          Arg1T,
-                          Arg2T>::construct( m_func, arg1, arg2 );
+                          Argument1T,
+                          Argument2T>::construct( m_func, arg1, arg2 );
         }
 
     private:
@@ -78,13 +79,13 @@ class Binary_Compound_Functor
         template <bool     CompoundB,
                   size_t   ChannelsN,
                   typename ResultT,
-                  typename Arg1T,
-                  typename Arg2T>
+                  typename Argument1T,
+                  typename Argument2T>
         struct Helper
         {
-            static ResultT construct( const FunctorT& func,
-                                      const Arg1T&    arg1,
-                                      const Arg2T&    arg2 )
+            static ResultT construct( const FunctorT&    func,
+                                      const Argument1T&  arg1,
+                                      const Argument2T&  arg2 )
             {
                 ResultT result;
                 for( size_t i=0; i<ChannelsN; ++i ){
@@ -98,13 +99,13 @@ class Binary_Compound_Functor
          * Specialization for non-compound types
          */
         template <typename ResultT,
-                  typename Arg1T,
-                  typename Arg2T>
-        struct Helper<false,1,ResultT,Arg1T,Arg2T>
+                  typename Argument1T,
+                  typename Argument2T>
+        struct Helper<false,1,ResultT,Argument1T,Argument2T>
         {
-            static ResultT construct( const FunctorT& func,
-                                      const Arg1T&    arg1,
-                                      const Arg2T&    arg2 )
+            static ResultT construct( const FunctorT&    func,
+                                      const Argument1T&  arg1,
+                                      const Argument2T&  arg2 )
             {
                 return func(arg1,arg2);
             }
@@ -114,15 +115,15 @@ class Binary_Compound_Functor
          * Specialization for one-channel types
          */
         template <typename ResultT,
-                  typename Arg1T,
-                  typename Arg2T>
-        struct Helper<true,1,ResultT,Arg1T,Arg2T>
+                  typename Argument1T,
+                  typename Argument2T>
+        struct Helper<true,1,ResultT,Argument1T,Argument2T>
         {
-            static ResultT construct( const FunctorT& func,
-                                      const Arg1T&    arg1,
-                                      const Arg2T&    arg2 )
+            static ResultT construct( const FunctorT&   func,
+                                      const Argument1T& arg1,
+                                      const Argument2T& arg2 )
             {
-                return ResultT( func(arg1[0],arg2[0]) );
+                return ResultT( func( arg1[0], arg2[0] ) );
             }
         };
 
@@ -130,13 +131,13 @@ class Binary_Compound_Functor
          * Helper struct for two-channel types
          */
         template <typename ResultT,
-                  typename Arg1T,
-                  typename Arg2T>
-        struct Helper<true,2,ResultT,Arg1T,Arg2T>
+                  typename Argument1T,
+                  typename Argument2T>
+        struct Helper<true,2,ResultT,Argument1T,Argument2T>
         {
-            static ResultT construct( const FunctorT& func,
-                                      const Arg1T&    arg1,
-                                      const Arg2T&    arg2 )
+            static ResultT construct( const FunctorT&   func,
+                                      const Argument1T& arg1,
+                                      const Argument2T& arg2 )
             {
                 return ResultT( func( arg1[0], arg2[0] ),
                                 func( arg1[1], arg2[1] ) );
@@ -147,13 +148,13 @@ class Binary_Compound_Functor
          * Helper struct for 3-channel pixel types
          */
         template <typename ResultT,
-                  typename Arg1T,
-                  typename Arg2T>
-        struct Helper<true,3,ResultT,Arg1T,Arg2T>
+                  typename Argument1T,
+                  typename Argument2T>
+        struct Helper<true,3,ResultT,Argument1T,Argument2T>
         {
-            static ResultT construct( const FunctorT& func,
-                                      const Arg1T&    arg1,
-                                      const Arg2T&    arg2 )
+            static ResultT construct( const FunctorT&    func,
+                                      const Argument1T&  arg1,
+                                      const Argument2T&  arg2 )
             {
                 return ResultT( func( arg1[0], arg2[0] ),
                                 func( arg1[1], arg2[1] ),
@@ -165,16 +166,16 @@ class Binary_Compound_Functor
          * Helper Struct for 4 channel Pixel-Types
         */
         template <typename ResultT,
-                  typename Arg1T,
-                  typename Arg2T>
-        struct Helper<true,4,ResultT,Arg1T,Arg2T>
+                  typename Argument1T,
+                  typename Argument2T>
+        struct Helper<true,4,ResultT,Argument1T,Argument2T>
         {
             /**
              * Construct and bind a result-type to return with
             */
-            static ResultT construct( const FunctorT& func,
-                                      const Arg1T&    arg1,
-                                      const Arg2T&    arg2 )
+            static ResultT construct( const FunctorT&    func,
+                                      const Argument1T&  arg1,
+                                      const Argument2T&  arg2 )
             {
                 return ResultT( func( arg1[0], arg2[0] ),
                                 func( arg1[1], arg2[1] ),
@@ -185,6 +186,7 @@ class Binary_Compound_Functor
 
         /// Internal Functor
         FunctorT m_func;
-};
+
+}; // End of Binary_Compound_Functor Class
 
 } // End of tmns::image::cmp namespace

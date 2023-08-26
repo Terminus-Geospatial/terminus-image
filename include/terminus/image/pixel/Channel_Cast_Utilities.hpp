@@ -10,7 +10,9 @@
 #include "../types/Compound_Utilities.hpp"
 #include "../types/Functors.hpp"
 #include "../types/compounds/Binary_Compound_Functor.hpp"
+#include "../types/compounds/Binary_In_Place_Compound_Functor.hpp"
 #include "../types/compounds/Unary_Compound_Functor.hpp"
+#include "../types/compounds/Unary_In_Place_Compound_Functor.hpp"
 #include "Channel_Range.hpp"
 
 // C++ Libraries
