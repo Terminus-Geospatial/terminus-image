@@ -47,7 +47,6 @@ class Detector_Base
         */
         template <typename PixelT>
         ImageResult<Interest_Point_List> operator()( const image::Image_Memory<PixelT>&  image,
-                                                     size_t                              max_features,
                                                      bool                                cast_if_ptype_unsupported = true )
         {
             {
@@ -58,7 +57,6 @@ class Detector_Base
 
             // Rasterize
             return this->process_image( image.buffer(),
-                                        max_features,
                                         cast_if_ptype_unsupported );
         }
 
@@ -67,7 +65,6 @@ class Detector_Base
         */
         template <typename ImageT>
         ImageResult<Interest_Point_List> operator()( const image::Image_Base<ImageT>&  image,
-                                                     size_t                            max_features,
                                                      bool                              cast_if_ctype_unsupported = true )
         {
             {
@@ -81,7 +78,6 @@ class Detector_Base
             image::Image_Memory<typename ImageT::pixel_type> dest_image;
             auto res = image.impl().rasterize( image.full_bbox(), dest_image );
             return this->operator()( dest_image,
-                                     max_features,
                                      cast_if_ctype_unsupported );
         }
 
@@ -89,7 +85,6 @@ class Detector_Base
          * Process the image and detect keypoints
          */
         virtual ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image_data,
-                                                                size_t                     max_features,
                                                                 bool                       cast_if_ctype_unsupported ) = 0;
 
         /**

@@ -1,9 +1,9 @@
 /**
- * @file    Detector_OCV_GFTT.cpp
+ * @file    Detector_OCV_ORB.cpp
  * @author  Marvin Smith
- * @date    7/30/2023
+ * @date    8/27/2023
 */
-#include "Detector_OCV_GFTT.hpp"
+#include "Detector_OCV_ORB.hpp"
 
 // Terminus Libraries
 #include <terminus/core/error/ErrorCategory.hpp>
@@ -21,28 +21,28 @@ namespace tmns::feature::ocv {
 /************************************/
 /*      Default Constructor         */
 /************************************/
-Detector_OCV_GFTT::Detector_OCV_GFTT()
-    : Detector_OCV_Base( std::make_shared<Detector_Config_OCV_GFTT>() ),
-      m_config( std::dynamic_pointer_cast<Detector_Config_OCV_GFTT>( this->get_ocv_detector_config() ) )
+Detector_OCV_ORB::Detector_OCV_ORB()
+    : Detector_OCV_Base( std::make_shared<Detector_Config_OCV_ORB>() ),
+      m_config( std::dynamic_pointer_cast<Detector_Config_OCV_ORB>( this->get_ocv_detector_config() ) )
 {
 }
 
 /****************************************/
 /*      Parameterized Constructor       */
 /****************************************/
-Detector_OCV_GFTT::Detector_OCV_GFTT( const Detector_Config_Base::ptr_t config )
+Detector_OCV_ORB::Detector_OCV_ORB( const Detector_Config_Base::ptr_t config )
     : Detector_OCV_Base( config ),
-      m_config( std::dynamic_pointer_cast<Detector_Config_OCV_GFTT>( config ) )
+      m_config( std::dynamic_pointer_cast<Detector_Config_OCV_ORB>( config ) )
 {
 }
 
 /**********************************/
 /*    Run tracker on image data   */
 /**********************************/
-ImageResult<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::Image_Buffer& buffer,
-                                                                   bool                       cast_if_ctype_unsupported )
+ImageResult<Interest_Point_List> Detector_OCV_ORB::process_image( const image::Image_Buffer& buffer,
+                                                                  bool                       cast_if_ctype_unsupported )
 {
-    // From testing, we know that GFTT only likes integer images
+    // From testing, we know that ORB only likes integer images
     if( !cast_if_ctype_unsupported && buffer.channel_type() != image::Channel_Type_Enum::UINT8 )
     {
         return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE,
@@ -128,13 +128,32 @@ ImageResult<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::
                    detect_buffer.data() );
     tmns::log::info( ADD_CURRENT_LOC(), image::utility::ocv::opencv_type_to_string( type_code.value() ) );
 
+    auto score_type = cv::ORB::HARRIS_SCORE;
+    if( m_config->score_type() == "FAST" )
+    {
+        score_type = cv::ORB::FAST_SCORE;
+    }
+    else if( m_config->score_type() == "HARRIS" )
+    {
+        // do nothing
+    }
+    else
+    {
+        tmns::log::warn( ADD_CURRENT_LOC(),
+                         "Unable to determine desired score type (actual: ",
+                         m_config->score_type(), ", reverting to HARRIS instead." );
+    }
+
     // Build the feature detector
-    auto detector = cv::GFTTDetector::create( m_config->max_corners(),
-                                              m_config->quality_level(),
-                                              m_config->min_distance(),
-                                              m_config->block_size(),
-                                              m_config->use_harris_detector(),
-                                              m_config->k() );
+    auto detector = cv::ORB::create( m_config->max_features(),
+                                     m_config->scale_factor(),
+                                     m_config->num_pyr_levels(),
+                                     m_config->edge_threshold(),
+                                     m_config->base_pyramid_level(),
+                                     m_config->wta_k(),
+                                     score_type,
+                                     m_config->patch_size(),
+                                     m_config->fast_threshold() );
 
     
     // Run detect
@@ -154,9 +173,9 @@ ImageResult<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::
 /****************************/
 /*    Get the class name    */
 /****************************/
-std::string Detector_OCV_GFTT::class_name() const
+std::string Detector_OCV_ORB::class_name() const
 {
-    return "Detector_OCV_GFTT";
+    return "Detector_OCV_ORB";
 }
 
 } // End of tmns::feature::ocv namespace

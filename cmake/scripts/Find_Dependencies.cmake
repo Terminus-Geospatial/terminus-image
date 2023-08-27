@@ -5,6 +5,14 @@
 
 #
 
+#----------------------------#
+#-      TomlPlusPlus        -#
+#----------------------------#
+find_package( tomlplusplus REQUIRED )
+message( STATUS "tomplplusplus_FOUND: ${tomplplusplus_FOUND}")
+message( STATUS "tomlplusplus_INCLUDE_DIRS: ${tomlplusplus_INCLUDE_DIRS}")
+include_directories( ${tomlplusplus_INCLUDE_DIRS} )
+
 #-------------------------#
 #-      GoogleTest       -#
 #-------------------------#

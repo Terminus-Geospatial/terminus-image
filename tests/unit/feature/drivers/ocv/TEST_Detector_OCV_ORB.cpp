@@ -1,18 +1,18 @@
 /**
- * @file    TEST_Detector_OCV_GFTT.cpp
+ * @file    TEST_Detector_OCV_ORB.cpp
  * @author  Marvin Smith
- * @date    8/6/2023
+ * @date    8/27/2023
 */
 #include <gtest/gtest.h>
 
 // Terminus Libraries
-#include <terminus/feature/drivers/ocv/Detector_OCV_GFTT.hpp>
+#include <terminus/feature/drivers/ocv/Detector_OCV_ORB.hpp>
 #include <terminus/image/io/read_image_disk.hpp>
 
 namespace tf = tmns::feature;
 namespace tx = tmns::image;
 
-TEST( Detector_OCV_GFTT, image_test_01 )
+TEST( Detector_OCV_ORB, image_test_01 )
 {
     // Image to process
     std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };
@@ -26,7 +26,7 @@ TEST( Detector_OCV_GFTT, image_test_01 )
     tx::Image_Memory<tx::PixelRGB_u8>   img_rgb_u8 = tx::io::read_image_disk<tx::PixelRGB_u8>( image_to_load ).value();
 
     // Create feature point detector
-    auto detector = std::make_shared<tf::ocv::Detector_OCV_GFTT>();
+    auto detector = std::make_shared<tf::ocv::Detector_OCV_ORB>();
 
     // Run the detector on each image
     {
@@ -37,13 +37,13 @@ TEST( Detector_OCV_GFTT, image_test_01 )
     }
     {
         tmns::log::debug( ADD_CURRENT_LOC(), "testing detector on u16 image" );
-        auto kp_u16 = detector->operator()( img_u16 );
+        auto kp_u16 = detector->operator()( img_u16, 1000 );
         ASSERT_FALSE( kp_u16.has_error() );
         ASSERT_GT( kp_u16.assume_value().size(), 500 );
     }
     {
         tmns::log::debug( ADD_CURRENT_LOC(), "testing detector on f32 image" );
-        auto kp_f32 = detector->operator()( img_f32 );
+        auto kp_f32 = detector->operator()( img_f32, 1000 );
         ASSERT_FALSE( kp_f32.has_error() );
         ASSERT_GT( kp_f32.assume_value().size(), 500 );
     }

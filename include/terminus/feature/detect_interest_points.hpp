@@ -8,6 +8,9 @@
 // Terminus Libraries
 #include <terminus/core/Session_Context.hpp>
 
+// Terminus Feature Libraries
+#include "Detector_Factory.hpp"
+
 // C++ Libraries
 
 namespace tmns::feature {
@@ -20,14 +23,10 @@ ImageResult<std::vector<Interest_Point>> detect_interest_points( const Image_Bas
                                                                  const Detector_Base::ptr_t    detector,
                                                                  const core::Session_Context&  session_context )
 {
-    // Create a Feature Extraction Service
-    auto feature_detector = FeatureDetectorFactory::create( fd_config );
-
     // Build work queue for dispatching work
     auto thread_pool = std::make_unique<core::Ordered_Work_Queue>( session_context );
 
     // Subdivide work by tile size
-    auto tile_size =
     if( fd_config->enforce_tile_size() )
     {
 
@@ -38,10 +37,13 @@ ImageResult<std::vector<Interest_Point>> detect_interest_points( const Image_Bas
  * Run the detector, but store the keypoints within the image
 */
 template <typename ImageT>
-ImageResult<void> detect_interest_points( Image_Base<ImageT>& image,
-                                          std::string         detector_driver,
-                                          const core::Session_Context& session_context = core::Session_Context::GREEDY() )
+ImageResult<void> detect_interest_points( Image_Base<ImageT>&           image,
+                                          Detector_Config_Base::ptr_t   detector_config,
+                                          const core::Session_Context&  session_context,
+                                          Detector_Factory::ptr_t       detector_factory = Detector_Factory::create_instance() )
 {
+    // Create interest point detector
+
 
 } // End of detect_interest_points method
 

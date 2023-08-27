@@ -1,0 +1,6 @@
+#  Test for the ini-formatted file
+
+[collection.images]
+
+image_list = [ "/Users/marvinsmith/OneDrive/Imagery/PDS_Imagery/mro/hirise/edr/ESP/ORB_072100_072199/ESP_072111_2645/ESP_072111_2645_RED0_0.cal.cub",
+               "/Users/marvinsmith/OneDrive/Imagery/PDS_Imagery/mro/hirise/edr/ESP/ORB_072100_072199/ESP_072111_2645/ESP_072111_2645_RED0_1.cal.cub" ]

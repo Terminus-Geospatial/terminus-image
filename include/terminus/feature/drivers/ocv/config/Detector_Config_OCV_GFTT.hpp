@@ -25,12 +25,25 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
          * These parameters are lifted from the OpenCV documentation.
          * @see https://docs.opencv.org/4.x/df/d21/classcv_1_1GFTTDetector.html
         */
-        Detector_Config_OCV_GFTT( int    max_corners         = 1000,
-                                  double quality_level       = 0.01,
-                                  double min_distance        = 1,
-                                  int    block_size          = 3,
-                                  bool   use_harris_detector = false,
-                                  double k                   = 0.04 );
+        Detector_Config_OCV_GFTT( const math::Size2i&  tile_size_pixels    = math::Size2i( { 2048, 2048 } ),
+                                  int                  max_corners         = 1000,
+                                  double               quality_level       = 0.01,
+                                  double               min_distance        = 1,
+                                  int                  block_size          = 3,
+                                  bool                 use_harris_detector = false,
+                                  double               k                   = 0.04 );
+
+        /**
+         * @brief Check if we allow custom tile sizes.(Yes this does)
+         * 
+         * This always returns TRUE
+         */
+        bool allow_custom_tile_size() const override; 
+
+        /**
+         * @brief Get the custom tile size in pixels
+         */
+        math::Size2i tile_size_pixels() const override;
 
         /**
          * Get the max corners.
@@ -74,6 +87,9 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
 
     private:
 
+        /// Tile Size in Pixels
+        math::Size2i m_tile_size_pixels { math::Size2i( { 2048, 2048 } ) };
+        
         /// Max corners to create
         int m_max_corners { 1000 };
 

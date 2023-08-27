@@ -15,7 +15,10 @@ add_executable( ${TEST}
     TEST_scratch.cpp
     #feature/TEST_detect_interest_points.cpp
     feature/drivers/ocv/TEST_Detector_OCV_GFTT.cpp
+    feature/drivers/ocv/TEST_Detector_OCV_ORB.cpp
     feature/drivers/ocv/TEST_ocv_gftt.cpp
+    feature/drivers/ocv/TEST_ocv_orb.cpp
+    image/collection/TEST_Collection_Resource_File.cpp
     image/io/TEST_read_image_disk.cpp
 #    image/io/TEST_read_image.cpp
     image/io/TEST_read_write_battery.cpp
@@ -49,6 +52,9 @@ target_link_libraries( ${TEST} PRIVATE
 #gtest_discover_tests( ${TEST} )
 
 #  Copy Unit-Test Data
+file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/collection
+      DESTINATION ${CMAKE_BINARY_DIR}/data )
+
 file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/images
       DESTINATION ${CMAKE_BINARY_DIR}/data )
 

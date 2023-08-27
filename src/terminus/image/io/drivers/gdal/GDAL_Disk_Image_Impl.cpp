@@ -127,6 +127,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
     {
         std::stringstream sout;
         sout << "Unable to determine pixel-type from color-codes.  Check the lookup table.\n";
+        sout << " - Image: " << pathname.native() << std::endl;
         sout << " - Actual Values:" << std::endl;
         for( size_t i=0; i<channel_codes.size(); i++ )
         {
@@ -134,7 +135,7 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
         }
         sout << "Will attempt to determine by simple channel counts.";
 
-        logger.debug( sout.str() );
+        logger.trace( sout.str() );
 
         // Check next set of rules
         if( channel_codes.size() == 1 )

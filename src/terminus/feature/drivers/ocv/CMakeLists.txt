@@ -9,4 +9,5 @@ include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/feature/drivers/ocv )
 
 add_library( TERMINUS_FEATURE_DRV_OCV OBJECT
                 Detector_OCV_Base.cpp
-                Detector_OCV_GFTT.cpp )
+                Detector_OCV_GFTT.cpp
+                Detector_OCV_ORB.cpp )

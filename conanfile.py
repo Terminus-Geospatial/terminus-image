@@ -23,7 +23,8 @@ class CMakeConan(ConanFile):
                         "with_tests": True,
                         "with_docs": True,
                         "with_coverage": False,
-                        "boost/*:shared": True }
+                        "boost/*:shared": True,
+                        "terminus_log/*:shared": True }
 
     settings = "os", "compiler", "build_type", "arch"
 
@@ -34,6 +35,7 @@ class CMakeConan(ConanFile):
     def requirements(self):
         self.requires("boost/1.82.0")
         #self.requires("gdal/3.4.3")
+        self.requires("tomlplusplus/3.3.0")
         self.requires("terminus_core/0.0.1")
         self.requires("terminus_log/0.0.1")
         self.requires("terminus_math/0.0.1")
@@ -75,5 +77,5 @@ class CMakeConan(ConanFile):
 
     def export_sources(self):
 
-        for p in [ "CMakeLists.txt", "include/*", "test/*", "README.md" ]:
+        for p in [ "CMakeLists.txt", "include/*", "test/*", "src/*", "README.md" ]:
             copy( self, p, self.recipe_folder, self.export_sources_folder )
