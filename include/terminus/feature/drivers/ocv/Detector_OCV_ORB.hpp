@@ -6,6 +6,7 @@
 #pragma once
 
 // Terminus Feature Libraries
+#include "../../Detector_Generator_Base.hpp"
 #include "config/Detector_Config_OCV_ORB.hpp"
 #include "Detector_OCV_Base.hpp"
 
@@ -54,5 +55,17 @@ class Detector_OCV_ORB : public Detector_OCV_Base
         Detector_Config_OCV_ORB::ptr_t m_config { nullptr };
 
 }; // End of Detector_OCV_ORB class
+
+
+class Detector_Generator_OCV_ORB : public Detector_Generator_Base
+{
+    public:
+
+        /**
+         * Build a new instance of the feature detector
+        */
+        ImageResult<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) override;
+
+}; // End of Detector_Generator_OCV_ORB
 
 } // End of tmns::feature::ocv namespace

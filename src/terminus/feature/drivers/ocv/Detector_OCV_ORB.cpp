@@ -178,4 +178,22 @@ std::string Detector_OCV_ORB::class_name() const
     return "Detector_OCV_ORB";
 }
 
+/************************************/
+/*      Generate New Instance       */
+/************************************/
+ImageResult<Detector_Base::ptr_t> Detector_Generator_OCV_ORB::generate( Detector_Config_Base::ptr_t config )
+{
+    // Check if the detector config ORB
+    bool same = typeid(Detector_Config_OCV_ORB) == typeid(*config.get());
+    if( same )
+    {
+        return outcome::ok<Detector_Base::ptr_t>( std::make_shared<Detector_OCV_ORB>( config ) );
+    }
+    else
+    {
+        return outcome::fail( core::error::ErrorCode::NOT_FOUND,
+                              "Config doesn't match" );
+    }
+}
+
 } // End of tmns::feature::ocv namespace

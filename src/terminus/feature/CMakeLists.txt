@@ -9,4 +9,5 @@ include_directories( ${CMAKE_SOURCE_DIR}/include/terminus/feature )
 
 add_library( TERMINUS_FEATURE_BASE OBJECT
                 Detector_Base.cpp
+                Detector_Factory.cpp
                 Interest_Point.cpp )

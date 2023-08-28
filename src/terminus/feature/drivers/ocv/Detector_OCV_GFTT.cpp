@@ -159,4 +159,22 @@ std::string Detector_OCV_GFTT::class_name() const
     return "Detector_OCV_GFTT";
 }
 
+/************************************/
+/*      Generate New Instance       */
+/************************************/
+ImageResult<Detector_Base::ptr_t> Detector_Generator_OCV_GFTT::generate( Detector_Config_Base::ptr_t config )
+{
+    // Check if the detector config GFTT
+    bool same = typeid(Detector_Config_OCV_GFTT) == typeid(*config.get());
+    if( same )
+    {
+        return outcome::ok<Detector_Base::ptr_t>( std::make_shared<Detector_OCV_GFTT>( config ) );
+    }
+    else
+    {
+        return outcome::fail( core::error::ErrorCode::NOT_FOUND,
+                              "Config doesn't match" );
+    }
+}
+
 } // End of tmns::feature::ocv namespace
