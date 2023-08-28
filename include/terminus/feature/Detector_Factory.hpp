@@ -5,6 +5,10 @@
 */
 #pragma once
 
+// C++ Libraries
+#include <map>
+#include <memory>
+
 namespace tmns::feature {
 
 class Detector_Factory
