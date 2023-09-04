@@ -8,6 +8,7 @@
 // Terminus Image Libraries
 #include "../../pixel/Pixel_Accessor_Loose.hpp"
 #include "../../types/Image_Base.hpp"
+#include "../rasterize.hpp"
 #include "Base_Blob.hpp"
 
 // C++ Libraries

@@ -42,12 +42,10 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
 
     // Construct list of coordinates
     auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
-    Line_Overlap_Mode overlap_mode = Line_Overlap_Mode::BOTH;
     auto res = drawing::compute_line_points( p1,
                                              p2,
                                              color,
                                              thickness,
-                                             overlap_mode,
                                              uniform_blob );
 
     // Build the Sparse Image View
@@ -83,12 +81,10 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
 
     // Construct list of coordinates
     auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
-    Line_Overlap_Mode overlap_mode = Line_Overlap_Mode::BOTH;
     auto res = drawing::compute_circle_points( center,
                                                radius,
                                                color,
                                                thickness,
-                                               overlap_mode,
                                                max_circle_segment_length,
                                                uniform_blob );
 
@@ -123,7 +119,6 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
 
     // Construct list of coordinates
     auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
-    Line_Overlap_Mode overlap_mode = Line_Overlap_Mode::BOTH;
 
     // If the thickness is < 0, then it's a simple fill
     if( thickness < 0 )
@@ -145,7 +140,6 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
                                                      bbox.tr(),
                                                      color,
                                                      thickness,
-                                                     overlap_mode,
                                                      uniform_blob );
         }
 
@@ -155,7 +149,6 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
                                                      bbox.br(),
                                                      color,
                                                      thickness,
-                                                     overlap_mode,
                                                      uniform_blob );
         }
 
@@ -165,7 +158,6 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
                                                      bbox.bl(),
                                                      color,
                                                      thickness,
-                                                     overlap_mode,
                                                      uniform_blob );
         }
 
@@ -175,7 +167,6 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
                                                      bbox.tl(),
                                                      color,
                                                      thickness,
-                                                     overlap_mode,
                                                      uniform_blob );
         }
     }

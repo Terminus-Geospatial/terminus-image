@@ -87,6 +87,36 @@ class Pixel_RGB : public Pixel_Base<Pixel_RGB<ChannelT>>
             return "Pixel_RGB<" + Data_Type_Name<ChannelT>::name() + ">";
         }
 
+        /**
+         * Return a "red" pixel where R is max
+         */
+        static Pixel_RGB<ChannelT> red()
+        {
+            return Pixel_RGB<ChannelT>( Channel_Range<ChannelT>::max(),
+                                        Channel_Range<ChannelT>::min(),
+                                        Channel_Range<ChannelT>::min() );
+        }
+
+        /**
+         * Return a "green" pixel where 2nd channel is max
+         */
+        static Pixel_RGB<ChannelT> green()
+        {
+            return Pixel_RGB<ChannelT>( Channel_Range<ChannelT>::min(),
+                                        Channel_Range<ChannelT>::max(),
+                                        Channel_Range<ChannelT>::min() );
+        }
+
+        /**
+         * Return a "blue" pixel where 3rd channel is max
+         */
+        static Pixel_RGB<ChannelT> blue()
+        {
+            return Pixel_RGB<ChannelT>( Channel_Range<ChannelT>::min(),
+                                        Channel_Range<ChannelT>::min(),
+                                        Channel_Range<ChannelT>::max() );
+        }
+
         std::string to_string() const
         {
             std::stringstream sout;

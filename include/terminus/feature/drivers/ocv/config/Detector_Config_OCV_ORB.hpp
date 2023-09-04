@@ -42,6 +42,11 @@ class Detector_Config_OCV_ORB : public Detector_Config_OCV_Base
         ~Detector_Config_OCV_ORB() = default;
 
         /**
+         * @brief Support Feature Descriptors
+         */
+        bool supports_feature_descriptors() const override;
+
+        /**
          * @brief Check if we allow custom tile sizes.(Yes this does)
          * 
          * This always returns TRUE
@@ -56,7 +61,7 @@ class Detector_Config_OCV_ORB : public Detector_Config_OCV_Base
         /**
          * @brief Get the max number of features.
          */
-        int max_features() const;
+        int max_features() const override;
 
         /**
          * @brief Get the scale factor. 

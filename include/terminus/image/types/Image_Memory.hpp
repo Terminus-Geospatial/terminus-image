@@ -144,6 +144,9 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
             input_image.impl().rasterize( *this,
                                           input_image.full_bbox() );
 
+            // Transfer other components
+            this->copy_payload_data( input_image.impl() );
+
             return *this;
         }
 
@@ -155,6 +158,10 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
         {
             input_image.impl().rasterize( *this,
                                           input_image.full_bbox() );
+
+            // Transfer other components
+            this->m_interest_points = input_image.m_interest_point;
+            
             return *this;
         }
 

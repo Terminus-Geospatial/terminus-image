@@ -108,7 +108,8 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         void rasterize( const DestT&        dest,
                         const math::Rect2i& bbox ) const
         {
-            tmns::log::trace( LOG_IMAGE_TAG(), "start of rasterize" );
+            tmns::log::trace( LOG_IMAGE_TAG(), "start of rasterize. bbox: ", 
+                                               bbox.to_string()  );
             m_impl.rasterize( dest, bbox );
             tmns::log::trace( LOG_IMAGE_TAG(), "end of rasterize" );
         }

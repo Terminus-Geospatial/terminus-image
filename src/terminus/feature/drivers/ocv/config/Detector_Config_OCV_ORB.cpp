@@ -37,6 +37,14 @@ Detector_Config_OCV_ORB::Detector_Config_OCV_ORB( const math::Size2i&  tile_size
 {
 }
 
+/**********************************************************/
+/*          Check if Descriptors are supported            */
+/**********************************************************/
+bool Detector_Config_OCV_ORB::supports_feature_descriptors() const
+{
+    return true;
+}
+
 /************************************/
 /*      Allow Custom Tile Size      */
 /************************************/

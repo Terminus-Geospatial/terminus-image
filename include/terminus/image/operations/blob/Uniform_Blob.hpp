@@ -89,7 +89,7 @@ class Uniform_Blob : public Base_Blob<Uniform_Blob<PixelT>>
                 return outcome::fail( core::error::ErrorCode::OUT_OF_BOUNDS,
                                       "Pixel is not registered in the blob." );
             }
-            return m_color;
+            return outcome::ok<PixelT>( m_color );
         }
 
         /**
@@ -152,6 +152,22 @@ class Uniform_Blob : public Base_Blob<Uniform_Blob<PixelT>>
                     0,
                     color,
                     override_color );
+        }
+
+        /**
+         * Get list of pixels
+        */
+        std::vector<math::Point2i> get_pixel_list() const
+        {
+            std::vector<math::Point2i> pixels;
+            for( const auto& row : m_pixels )
+            {
+                for( const auto& col : row.second )
+                {
+                    pixels.push_back( math::Point2i( { col, row.first } ) );
+                }
+            }
+            return pixels;
         }
 
     private:

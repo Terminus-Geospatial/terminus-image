@@ -56,7 +56,7 @@ class Image_Resource_Disk : public Image_Resource_Base,
         /**
          * Print to log-friendly string
         */
-        virtual std::string To_Log_String( size_t offset ) const = 0;
+        virtual std::string to_log_string( size_t offset ) const = 0;
 
     protected:
 

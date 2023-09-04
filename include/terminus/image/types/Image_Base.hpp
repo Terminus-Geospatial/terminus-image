@@ -6,6 +6,7 @@
 #pragma once
 
 // Terminus Image Libraries
+#include "../../feature/Interest_Point.hpp"
 #include "../pixel/Channel_Type_ID.hpp"
 #include "../pixel/Pixel_Format_ID.hpp"
 #include "Image_Format.hpp"
@@ -131,6 +132,32 @@ class Image_Base
         }
 
         /**
+         * Get the list of interest points
+         */
+        feature::Interest_Point_List const& interest_points() const
+        {
+            return m_interest_points;
+        }
+
+        /**
+         * Get the list of interest points
+         */
+        feature::Interest_Point_List& interest_points()
+        {
+            return m_interest_points;
+        }
+
+        /**
+         * Copy all non-pixel data.  As this capability grows, just put it all
+         * here so the dozen or so View-Types don't have to overthink it.
+        */
+       template <typename ImageT>
+        void copy_payload_data( const ImageT& rhs )
+        {
+            interest_points() = rhs.interest_points();
+        }
+
+        /**
          * Get this class name
         */
         static std::string class_name()
@@ -154,6 +181,9 @@ class Image_Base
         {
             return (*this);
         }
+
+        /// List of feature points
+        feature::Interest_Point_List m_interest_points;
 
 }; // End of ImageBase Class
 

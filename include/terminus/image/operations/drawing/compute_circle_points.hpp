@@ -11,7 +11,6 @@
 #include <terminus/math/Size.hpp>
 
 // Terminus Image Libraries
-#include "Drawing_Enums.hpp"
 #include "compute_line_points.hpp"
 
 namespace tmns::image::ops::drawing {
@@ -24,7 +23,6 @@ ImageResult<void> compute_circle_points( const tmns::math::Point2i&             
                                          double                                      radius,
                                          const PixelT&                               color,
                                          int                                         thickness,
-                                         Line_Overlap_Mode                           overlap_mode,
                                          int                                         max_circle_segment_length,
                                          std::shared_ptr<blob::Uniform_Blob<PixelT>> output )
 {
@@ -51,7 +49,7 @@ ImageResult<void> compute_circle_points( const tmns::math::Point2i&             
                                (int) std::round( std::sin( angle ) * radius + center.y() ) } );
     math::Point2i end_pos;
 
-    while( angle < ( 0.5 * M_PI ) )
+    while( angle < ( 2 * M_PI ) )
     {
         angle += angle_step + 0.1;
 
@@ -71,7 +69,6 @@ ImageResult<void> compute_circle_points( const tmns::math::Point2i&             
                                            end_pos,
                                            color,
                                            thickness,
-                                           overlap_mode,
                                            output );
 
         // Update start pos

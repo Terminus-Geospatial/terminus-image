@@ -7,10 +7,12 @@
 
 // Terminus Feature Libraries
 #include "../../Detector_Generator_Base.hpp"
+#include "../../Detector_Traits.hpp"
 #include "config/Detector_Config_OCV_ORB.hpp"
 #include "Detector_OCV_Base.hpp"
 
-namespace tmns::feature::ocv {
+namespace tmns::feature {
+namespace ocv {
 
 /**
  * OpenCV implementation of the Oriented Brief Keypoint Detector
@@ -42,7 +44,15 @@ class Detector_OCV_ORB : public Detector_OCV_Base
          * @param cast_if_ctype_unsupported Cast to baseline channel type if input is not supported.
          */
         ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image,
-                                                        bool                        cast_if_ctype_unsupported ) override;
+                                                        bool                        cast_if_ctype_unsupported,
+                                                        int                         max_points_override ) override;
+        
+        /**
+         * Process the image to extract feature descriptors
+         */
+        ImageResult<void> perform_feature_extraction( const image::Image_Buffer&    image_data,
+                                                      std::vector<Interest_Point>&  interest_point,
+                                                      bool                          cast_if_ctype_unsupported ) override;
 
         /**
          * Get the class name
@@ -68,4 +78,13 @@ class Detector_Generator_OCV_ORB : public Detector_Generator_Base
 
 }; // End of Detector_Generator_OCV_ORB
 
-} // End of tmns::feature::ocv namespace
+} // End of ocv namespace
+
+namespace trait {
+
+// Create trait enabling feature-extractor
+template<>
+struct Has_Feature_Extractor<ocv::Detector_OCV_ORB> : std::true_type {};
+
+} // End of trait namespace
+} // End of tmns::feature namespace

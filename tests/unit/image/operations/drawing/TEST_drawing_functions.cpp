@@ -16,7 +16,7 @@ namespace tx = tmns::image;
 /************************************************/
 /*          Test the Draw Line Function         */
 /************************************************/
-TEST( drawing_functions, draw_line )
+TEST( ops_drawing_drawing_functions, draw_line )
 {
     // Image to process
     std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };
@@ -60,10 +60,55 @@ TEST( drawing_functions, draw_line )
     tx::utility::view_image( "Rendered Image", result );
 }
 
+
+/************************************************/
+/*          Test the Draw Line Function         */
+/************************************************/
+TEST( ops_drawing_drawing_functions, draw_line2 )
+{
+    // Image to process
+    std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };
+    ASSERT_TRUE( std::filesystem::exists( image_to_load ) );
+    
+    // Read Image
+    typedef tx::PixelRGB_u8 PixelT;
+    tx::Image_Memory<PixelT> img_rgb_u8 = tx::io::read_image_disk<PixelT>( image_to_load ).value();
+    
+    tx::Image_Memory<PixelT> result = img_rgb_u8;
+    
+    // Draw the line
+    tmns::math::Point2i center( { (int)img_rgb_u8.cols() / 2,
+                                  (int)img_rgb_u8.rows() / 2 } );
+
+    double radius = std::min( img_rgb_u8.cols() / 3.0,
+                              img_rgb_u8.rows() / 3.0 );
+    
+
+    double angle = 89 * M_PI / 180.0;
+
+    auto p1 = center;
+    auto p2 = center;
+
+    p1.x() -= std::round( std::cos( angle ) * radius );
+    p1.y() -= std::round( std::sin( angle ) * radius );
+        
+    p2.x() += std::round( std::cos( angle ) * radius );
+    p2.y() += std::round( std::sin( angle ) * radius );
+
+    result = tx::ops::draw_line( result,
+                                 p1,
+                                 p2,
+                                 PixelT::green(),
+                                 10 );
+
+    // Visualize
+    tx::utility::view_image( "Rendered Image", result );
+}
+
 /********************************************/
 /*      Test the Draw Circle Function       */
 /********************************************/
-TEST( drawing_functions, draw_circle )
+TEST( ops_drawing_drawing_functions, draw_circle )
 {
     // Image to process
     std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };
@@ -78,7 +123,7 @@ TEST( drawing_functions, draw_circle )
                                         tmns::math::Point2i( { 200, 200 } ),
                                         100.0,
                                         PixelT( 0, 255, 0 ),
-                                        1 );
+                                        5 );
 
     // Visualize
     tx::utility::view_image( "Rendered Image", result );
@@ -87,7 +132,7 @@ TEST( drawing_functions, draw_circle )
 /***********************************************/
 /*      Test the Draw Rectangle Function       */
 /***********************************************/
-TEST( drawing_functions, draw_rectangle )
+TEST( ops_drawing_drawing_functions, draw_rectangle )
 {
     // Image to process
     std::filesystem::path image_to_load { "./data/images/jpeg/lena.jpg" };

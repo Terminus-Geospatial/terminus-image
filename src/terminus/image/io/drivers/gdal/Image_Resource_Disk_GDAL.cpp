@@ -206,7 +206,7 @@ void Image_Resource_Disk_GDAL::flush()
 /************************************************/
 /*          Print to log-friendly string        */
 /************************************************/
-std::string Image_Resource_Disk_GDAL::To_Log_String( size_t offset ) const
+std::string Image_Resource_Disk_GDAL::to_log_string( size_t offset ) const
 {
     std::string gap( offset, ' ' );
     std::stringstream sout;

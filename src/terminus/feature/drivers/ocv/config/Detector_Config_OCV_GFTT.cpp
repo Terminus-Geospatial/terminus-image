@@ -14,7 +14,7 @@ namespace tmns::feature::ocv {
 /*          Constructor          */
 /*********************************/
 Detector_Config_OCV_GFTT::Detector_Config_OCV_GFTT( const math::Size2i&  tile_size_pixels,
-                                                    int                  max_corners,
+                                                    int                  max_features,
                                                     double               quality_level,
                                                     double               min_distance,
                                                     int                  block_size,
@@ -22,7 +22,7 @@ Detector_Config_OCV_GFTT::Detector_Config_OCV_GFTT( const math::Size2i&  tile_si
                                                     double               k )
   : Detector_Config_OCV_Base(),
     m_tile_size_pixels( tile_size_pixels ),
-    m_max_corners( max_corners ),
+    m_max_features( max_features ),
     m_quality_level( quality_level ),
     m_min_distance( min_distance ),
     m_block_size( block_size ),
@@ -50,9 +50,9 @@ math::Size2i  Detector_Config_OCV_GFTT::tile_size_pixels() const
 /****************************/
 /*      Get Max Corners     */
 /****************************/
-double Detector_Config_OCV_GFTT::max_corners() const
+int Detector_Config_OCV_GFTT::max_features() const
 {
-    return m_max_corners;
+    return m_max_features;
 }
 
 /*******************************/
@@ -113,7 +113,7 @@ std::string Detector_Config_OCV_GFTT::to_string( size_t offset ) const
     sout << gap << " - " << logger_name() << std::endl;
     sout << gap << "    - allow custom tile size: " << std::boolalpha << allow_custom_tile_size() << std::endl;
     sout << gap << "    - tile size : " << tile_size_pixels().to_string() << std::endl;
-    sout << gap << "    - max_corners: " << max_corners() << std::endl;
+    sout << gap << "    - max_features: " << max_features() << std::endl;
     sout << gap << "    - quality_level: " << quality_level() << std::endl;
     sout << gap << "    - min_distance: " << min_distance() << std::endl;
     sout << gap << "    - block_size: " << block_size() << std::endl;

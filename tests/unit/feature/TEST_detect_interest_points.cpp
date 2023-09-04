@@ -9,26 +9,95 @@
 #include <filesystem>
 
 // Terminus Libraries
+#include <terminus/feature/drivers/ocv/config/Detector_Config_OCV_ORB.hpp>
+#include <terminus/feature/detect_interest_points.hpp>
 #include <terminus/image/io/read_image_disk.hpp>
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
-#include <terminus/feature/find_keypoints.hpp>
+#include <terminus/image/utility/View_Utilities.hpp>
 
 namespace tx=tmns::image;
+namespace tf=tmns::feature;
 
 /************************************************************/
 /*          Test the Find Keypoints on a test image         */
 /*          - Disk Image Example                            */
 /************************************************************/
-TEST( detect_feature_points, image_disk_example_01 )
+TEST( detect_feature_points, image_disk_example_01_ocv_orb )
 {
     // Using a NITF, load the image, then perform feature detection on it
-    std::filesystem::path image_to_load( "data/tif/test_image_01.tif" );
+    std::filesystem::path image_to_load( "data/images/jpeg/lena.jpg" );
 
-    auto view = tx::io::read_image_disk<tx::PixelRGBA_f64>( image_to_load );
-    ASSERT_FALSE( view.has_error() );
+    auto image = tx::io::read_image_disk<tx::PixelRGB_u8>( image_to_load );
+    if( image.has_error() )
+    {
+        tmns::log::error( "Test about to fail: ",
+                          image.error().message() );
+    }
+    ASSERT_FALSE( image.has_error() );
 
-    auto disk_image = view.assume_value();
+    // Get the components
+    auto& disk_image      = image.value();
+    tx::utility::view_image( "Image", disk_image );
 
-    // Run Good Features to Track
+    auto detector_config = std::make_shared<tf::ocv::Detector_Config_OCV_ORB>();
+    auto session_context = tmns::core::create_default_session();
 
+    // Run ORB detector
+    auto result = tf::detect_interest_points( disk_image,
+                                              detector_config,
+                                              session_context );
+    
+    if( result.has_error() )
+    {
+        tmns::log::error( "Test about to fail: ",
+                          result.error().message() );
+    }
+
+    // Verify the operation was successful
+    ASSERT_FALSE( result.has_error() );
+
+    // Verify the image has interest points
+    ASSERT_TRUE( disk_image.interest_points().size() > 50 );
+}
+
+/************************************************************/
+/*          Test the Find Keypoints on a test image         */
+/*          - Disk Image Example                            */
+/************************************************************/
+TEST( detect_feature_points, image_disk_example_02_ocv_gftt )
+{
+    // Using a NITF, load the image, then perform feature detection on it
+    std::filesystem::path image_to_load( "data/images/jpeg/lena.jpg" );
+
+    auto image = tx::io::read_image_disk<tx::PixelRGB_u8>( image_to_load );
+    if( image.has_error() )
+    {
+        tmns::log::error( "Test about to fail: ",
+                          image.error().message() );
+    }
+    ASSERT_FALSE( image.has_error() );
+
+    // Get the components
+    auto& disk_image      = image.value();
+    tx::utility::view_image( "Image", disk_image );
+
+    auto detector_config = std::make_shared<tf::ocv::Detector_Config_OCV_GFTT>();
+    auto session_context = tmns::core::create_default_session();
+
+    // Run ORB detector
+    auto result = tf::detect_interest_points( disk_image,
+                                              detector_config,
+                                              session_context );
+    
+    if( result.has_error() )
+    {
+        tmns::log::error( "Test about to fail: ",
+                          result.error().message() );
+    }
+
+    // Verify the operation was successful
+    ASSERT_FALSE( result.has_error() );
+
+    // Verify the image has interest points
+    ASSERT_TRUE( disk_image.interest_points().size() > 50 );
 }

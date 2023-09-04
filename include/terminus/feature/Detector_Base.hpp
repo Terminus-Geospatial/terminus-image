@@ -47,7 +47,8 @@ class Detector_Base
         */
         template <typename PixelT>
         ImageResult<Interest_Point_List> operator()( const image::Image_Memory<PixelT>&  image,
-                                                     bool                                cast_if_ptype_unsupported = true )
+                                                     bool                                cast_if_ptype_unsupported = true,
+                                                     int                                 max_points_override = 0)
         {
             {
                 std::unique_lock<std::mutex> lck( m_log_mtx );
@@ -57,15 +58,17 @@ class Detector_Base
 
             // Rasterize
             return this->process_image( image.buffer(),
-                                        cast_if_ptype_unsupported );
+                                        cast_if_ptype_unsupported,
+                                        max_points_override );
         }
 
         /**
          * Function / Call Operator
-        */
+         */
         template <typename ImageT>
         ImageResult<Interest_Point_List> operator()( const image::Image_Base<ImageT>&  image,
-                                                     bool                              cast_if_ctype_unsupported = true )
+                                                     bool                              cast_if_ctype_unsupported = true,
+                                                     int                               max_points_override = 0 )
         {
             {
                 std::unique_lock<std::mutex> lck( m_log_mtx );
@@ -75,17 +78,69 @@ class Detector_Base
             }
 
             // Rasterize to a memory image
-            image::Image_Memory<typename ImageT::pixel_type> dest_image;
-            auto res = image.impl().rasterize( image.full_bbox(), dest_image );
+            image::Image_Memory<typename ImageT::pixel_type> dest_image = image.impl(); 
             return this->operator()( dest_image,
-                                     cast_if_ctype_unsupported );
+                                     cast_if_ctype_unsupported,
+                                     max_points_override );
         }
 
         /**
          * Process the image and detect keypoints
          */
         virtual ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image_data,
-                                                                bool                       cast_if_ctype_unsupported ) = 0;
+                                                                bool                       cast_if_ctype_unsupported,
+                                                                int                        max_points_override ) = 0;
+
+        /**
+         * Process the image to extract feature descriptors
+         */
+        virtual ImageResult<void> perform_feature_extraction( const image::Image_Buffer&    image_data,
+                                                              std::vector<Interest_Point>&  interest_point,
+                                                              bool                          cast_if_ctype_unsupported );
+
+
+        /**
+         * Method to perfrom feature extraction
+        */
+        template <typename PixelT>
+        ImageResult<void> extract_descriptors( const image::Image_Memory<PixelT>&  image,
+                                               std::vector<Interest_Point>&        interest_points,
+                                               bool                                cast_if_ctype_unsupported = true )
+        {
+            {
+                std::unique_lock<std::mutex> lck( m_log_mtx );
+                std::stringstream sout;
+                sout << "Extracting feature descriptors for region " << image.cols() << " x " << image.rows();
+            }
+
+            // Rasterize
+            return this->perform_feature_extraction( image.buffer(),
+                                                     interest_points,
+                                                     cast_if_ctype_unsupported );
+        }
+
+        /**
+         * Method to perfrom feature extraction
+         */
+        template <typename ImageT>
+        ImageResult<void> extract_descriptors( const image::Image_Base<ImageT>&  image,
+                                               std::vector<Interest_Point>&      interest_points,
+                                               bool                              cast_if_ctype_unsupported = true )
+        {
+            image::Image_Memory<typename ImageT::pixel_type> dest_image = image.impl(); 
+            return this->extract_descriptors( dest_image,
+                                              interest_points,
+                                              cast_if_ctype_unsupported );
+        }
+
+
+        /**
+         * Get the configuration
+         */
+        Detector_Config_Base::ptr_t config() const
+        {
+            return m_config;
+        }
 
         /**
          * Get the class name

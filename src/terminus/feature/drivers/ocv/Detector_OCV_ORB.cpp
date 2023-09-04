@@ -9,10 +9,11 @@
 #include <terminus/core/error/ErrorCategory.hpp>
 
 // Terminus Image Libraries
-#include "../../../image/pixel/convert.hpp"
+#include "../../utility/Detector_Image_Utilities.hpp"
 #include "../../../image/utility/OpenCV_Utilities.hpp"
 
 // OpenCV Libraries
+#include <opencv2/core/types.hpp>
 #include <opencv2/features2d.hpp>
 #include <opencv2/highgui.hpp>
 
@@ -40,77 +41,24 @@ Detector_OCV_ORB::Detector_OCV_ORB( const Detector_Config_Base::ptr_t config )
 /*    Run tracker on image data   */
 /**********************************/
 ImageResult<Interest_Point_List> Detector_OCV_ORB::process_image( const image::Image_Buffer& buffer,
-                                                                  bool                       cast_if_ctype_unsupported )
+                                                                  bool                       cast_if_ctype_unsupported,
+                                                                  int                        max_points_override = 0 )
 {
-    // From testing, we know that ORB only likes integer images
-    if( !cast_if_ctype_unsupported && buffer.channel_type() != image::Channel_Type_Enum::UINT8 )
-    {
-        return outcome::fail( core::error::ErrorCode::INVALID_CHANNEL_TYPE,
-                              class_name(),
-                              " module only support uint8 imagery.  You must enable casting.",
-                              ", Detected Channel-Type: ", image::enum_to_string( buffer.channel_type() ) );
-    }
+    // Process the image
+    auto proc_res = utility::prepare_image_buffer( buffer,
+                                                   cast_if_ctype_unsupported,
+                                                   image::Pixel_Format_Enum::GRAY,
+                                                   image::Channel_Type_Enum::UINT8,
+                                                   class_name(),
+                                                   m_logger,
+                                                   m_log_mtx );
 
-    // Check the number of channels, cast to single-channel if needed
-    auto num_channels = image::num_channels( buffer.pixel_type() );
-    if( num_channels.has_error() )
+    // Check for errors
+    if( proc_res.has_error() )
     {
-        return outcome::fail( core::error::ErrorCode::INVALID_PIXEL_TYPE,
-                              "Unable to determine input pixel type from buffer.",
-                              " Detected Type: ", image::enum_to_string( buffer.pixel_type() ) );
+        return proc_res.error();
     }
-
-    // Temporary structure for casting data
-    image::Image_Buffer detect_buffer = buffer;
-    const bool DO_RESCALE { true };
-    std::vector<uint8_t> temp_image_data;
-    bool perform_cast = false;
-    image::Image_Format new_format = buffer.format();
-
-    // Update dest pixel type if not grayscal
-    if( num_channels.value() != 1 )
-    {
-        new_format.set_pixel_type( image::Pixel_Format_Enum::GRAY );
-        perform_cast = true;
-    }
-
-    // Update channel type if not uint8
-    if( buffer.channel_type() != image::Channel_Type_Enum::UINT8 )
-    {
-        new_format.set_channel_type( image::Channel_Type_Enum::UINT8 );
-        perform_cast = true;
-    }
-
-    // Execute the conversion
-    if( perform_cast )
-    {
-        // Create temporary storage for pixel data
-        temp_image_data.resize( new_format.raster_size_bytes() );
-        detect_buffer = image::Image_Buffer( new_format,
-                                             temp_image_data.data() );
-
-        {
-            std::unique_lock<std::mutex> lck( m_log_mtx );
-            m_logger.trace( "Casting image buffer data. \nInput: ", 
-                            buffer.to_string(), 
-                            "\nOutput: ", 
-                            detect_buffer.to_string() );
-        }
-        auto cast_result = image::convert( detect_buffer,
-                                           buffer,
-                                           DO_RESCALE );
-        if( cast_result.has_error() )
-        {
-            return outcome::fail( core::error::ErrorCode::CONVERSION_ERROR,
-                                  "Unable to convert image-buffer to grayscale for processing." );
-        }
-    }
-    else
-    {
-        std::unique_lock<std::mutex> lck( m_log_mtx );
-        m_logger.trace( "No need to cast buffer data. ", 
-                        detect_buffer.to_string() );
-    }
+    auto detect_buffer = proc_res.value();
 
     // Create the opencv image to run detection on
     auto type_code = image::utility::ocv::get_pixel_type_code( detect_buffer.pixel_type(),
@@ -145,7 +93,8 @@ ImageResult<Interest_Point_List> Detector_OCV_ORB::process_image( const image::I
     }
 
     // Build the feature detector
-    auto detector = cv::ORB::create( m_config->max_features(),
+    int max_points = ( max_points_override > 0 ) ? max_points_override : m_config->max_features();
+    auto detector = cv::ORB::create( max_points,
                                      m_config->scale_factor(),
                                      m_config->num_pyr_levels(),
                                      m_config->edge_threshold(),
@@ -165,9 +114,134 @@ ImageResult<Interest_Point_List> Detector_OCV_ORB::process_image( const image::I
     Interest_Point_List points( kps.size() );
     for( size_t i = 0; i < kps.size(); i++ )
     {
-        points.emplace_back( kps[i].pt.x, kps[i].pt.y );
+        points.emplace_back( math::Point2f( { kps[i].pt.x, kps[i].pt.y } ),
+                             kps[i].size,
+                             kps[i].angle,
+                             kps[i].response,
+                             kps[i].octave,
+                             kps[i].class_id );
     }
     return outcome::ok<Interest_Point_List>( points );
+}
+
+/****************************************/
+/*      Perform Feature Extraction      */
+/****************************************/
+ImageResult<void> Detector_OCV_ORB::perform_feature_extraction( const image::Image_Buffer&    image_buffer,
+                                                                std::vector<Interest_Point>&  interest_points,
+                                                                bool                          cast_if_ctype_unsupported )
+{
+    // Process the image
+    auto proc_res = utility::prepare_image_buffer( image_buffer,
+                                                   cast_if_ctype_unsupported,
+                                                   image::Pixel_Format_Enum::GRAY,
+                                                   image::Channel_Type_Enum::UINT8,
+                                                   class_name(),
+                                                   m_logger,
+                                                   m_log_mtx );
+
+    // Check for errors
+    if( proc_res.has_error() )
+    {
+        return proc_res.error();
+    }
+    auto detect_buffer = proc_res.value();
+
+    // Create the opencv image to run detection on
+    auto type_code = image::utility::ocv::get_pixel_type_code( detect_buffer.pixel_type(),
+                                                               detect_buffer.channel_type() );
+    if( type_code.has_error() )
+    {
+        return outcome::fail( core::error::ErrorCode::INVALID_CONFIGURATION,
+                              "Unsupported conversion. ",
+                              type_code.error().message() );
+    }
+
+    cv::Mat image( detect_buffer.rows(),
+                   detect_buffer.cols(),
+                   type_code.value(),
+                   detect_buffer.data() );
+    tmns::log::info( ADD_CURRENT_LOC(),
+                     image::utility::ocv::opencv_type_to_string( type_code.value() ) );
+
+    auto score_type = cv::ORB::HARRIS_SCORE;
+    if( m_config->score_type() == "FAST" )
+    {
+        score_type = cv::ORB::FAST_SCORE;
+    }
+    else if( m_config->score_type() == "HARRIS" )
+    {
+        // do nothing
+    }
+    else
+    {
+        tmns::log::warn( ADD_CURRENT_LOC(),
+                         "Unable to determine desired score type (actual: ",
+                         m_config->score_type(), ", reverting to HARRIS instead." );
+    }
+
+    // Build the feature detector
+    auto detector = cv::ORB::create( m_config->max_features(),
+                                     m_config->scale_factor(),
+                                     m_config->num_pyr_levels(),
+                                     m_config->edge_threshold(),
+                                     m_config->base_pyramid_level(),
+                                     m_config->wta_k(),
+                                     score_type,
+                                     m_config->patch_size(),
+                                     m_config->fast_threshold() );
+
+    
+    // Run opencv compute method
+    {
+        std::unique_lock<std::mutex> lck( m_log_mtx );
+        m_logger.trace( "Running Compute" );
+    }
+    std::vector<cv::KeyPoint> kps;
+    cv::Mat descriptors;
+    for( const auto& ip : interest_points )
+    {
+        kps.push_back( cv::KeyPoint( cv::Point2f( ip.pixel_loc().x(),
+                                                  ip.pixel_loc().y() ),
+                                      ip.scale(),
+                                      ip.angle_radians(),
+                                      ip.response(),
+                                      ip.octave(),
+                                      ip.class_id() ) );
+    }
+    detector->compute( image, kps, descriptors );
+
+    if( kps.size() != descriptors.rows )
+    {
+        return outcome::fail( core::error::ErrorCode::UNKNOWN,
+                              "Descriptors not the same size as keypoints" );
+    }
+
+    // Check keypoints
+    std::vector<Interest_Point> output_ips;
+    for( size_t x = 0; x < kps.size(); x++ )
+    {
+        output_ips.push_back( Interest_Point( math::Point2f( { kps[x].pt.x,
+                                                               kps[x].pt.y } ),
+                                              kps[x].size,
+                                              kps[x].angle,
+                                              kps[x].response,
+                                              kps[x].octave,
+                                              kps[x].class_id ) );
+
+        output_ips.back().descriptors().clear();
+        for( int c = 0; c < descriptors.cols; c++ )
+        {
+            output_ips.back().descriptors().push_back( descriptors.at<float>( x, c ) );
+        }
+    }
+
+    {
+        std::unique_lock<std::mutex> lck( m_log_mtx );
+        m_logger.trace( "Descriptor size. Cols: ", descriptors.cols,
+                        ", Rows: ", descriptors.rows );
+    }
+    return outcome::ok();
 }
 
 /****************************/

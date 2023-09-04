@@ -156,7 +156,7 @@ class Image_Resource_Disk_GDAL : public Image_Resource_Disk
         /**
          * Print to log-friendly string
         */
-        std::string To_Log_String( size_t offset ) const override;
+        std::string to_log_string( size_t offset ) const override;
 
         /**
          * Check if GDAL supports the filename.

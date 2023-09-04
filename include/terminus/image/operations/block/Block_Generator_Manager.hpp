@@ -46,13 +46,13 @@ class Block_Generator_Manager
             if( m_block_size.width() <= 0 || m_block_size.height() <= 0 )
             {
                 return outcome::fail( core::error::ErrorCode::INVALID_SIZE,
-                                      "BlockGeneratorManager: Illegal block size: ",
+                                      "Block_Generator_Manager: Illegal block size: ",
                                       m_block_size.to_string() );
             }
             if( !m_cache_ptr )
             {
                 return outcome::fail( core::error::ErrorCode::UNINITIALIZED,
-                                      "BlockGeneratorManager: No cache provided!" );
+                                      "Block_Generator_Manager: No cache provided!" );
             }
 
             // Compute Table Status

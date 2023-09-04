@@ -23,6 +23,11 @@ class Detector_Config_Base
         Detector_Config_Base() = default;
 
         /**
+         * @brief Support Feature Descriptors
+        */
+        virtual bool supports_feature_descriptors() const;
+
+        /**
          * Check if we must enforce a specific tile size.
          * 
          * If true, the detector will ignore the specified tile size.
@@ -35,6 +40,11 @@ class Detector_Config_Base
          * Get the tile size in pixels
          */
         virtual math::Size2i tile_size_pixels() const = 0;
+
+        /**
+         * Get the number of max features
+        */
+        virtual int max_features() const = 0;
 
         /**
          * Get the name to use for the detector's logger instance

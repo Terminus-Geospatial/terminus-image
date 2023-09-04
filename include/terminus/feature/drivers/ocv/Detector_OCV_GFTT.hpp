@@ -39,7 +39,8 @@ class Detector_OCV_GFTT : public Detector_OCV_Base
          * Process the image and detect keypoints
          */
         ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image,
-                                                        bool                        cast_if_ctype_unsupported ) override;
+                                                        bool                       cast_if_ctype_unsupported,
+                                                        int                        max_points_override ) override;
 
         /**
          * Get the class name

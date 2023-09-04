@@ -40,7 +40,8 @@ Detector_OCV_GFTT::Detector_OCV_GFTT( const Detector_Config_Base::ptr_t config )
 /*    Run tracker on image data   */
 /**********************************/
 ImageResult<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::Image_Buffer& buffer,
-                                                                   bool                       cast_if_ctype_unsupported )
+                                                                   bool                       cast_if_ctype_unsupported,
+                                                                   int                        max_points_override )
 {
     // From testing, we know that GFTT only likes integer images
     if( !cast_if_ctype_unsupported && buffer.channel_type() != image::Channel_Type_Enum::UINT8 )
@@ -129,7 +130,8 @@ ImageResult<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::
     tmns::log::info( ADD_CURRENT_LOC(), image::utility::ocv::opencv_type_to_string( type_code.value() ) );
 
     // Build the feature detector
-    auto detector = cv::GFTTDetector::create( m_config->max_corners(),
+    int max_points = ( max_points_override > 0 ) ? max_points_override : m_config->max_features();
+    auto detector = cv::GFTTDetector::create( max_points,
                                               m_config->quality_level(),
                                               m_config->min_distance(),
                                               m_config->block_size(),

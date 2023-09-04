@@ -34,6 +34,11 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
                                   double               k                   = 0.04 );
 
         /**
+         * @brief Support Feature Descriptors
+        */
+        bool support_feature_descriptors() const;
+
+        /**
          * @brief Check if we allow custom tile sizes.(Yes this does)
          * 
          * This always returns TRUE
@@ -48,7 +53,7 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
         /**
          * Get the max corners.
          */
-        double max_corners() const;
+        int max_features() const override;
 
         /**
          * Get the quality level
@@ -91,7 +96,7 @@ class Detector_Config_OCV_GFTT : public Detector_Config_OCV_Base
         math::Size2i m_tile_size_pixels { math::Size2i( { 2048, 2048 } ) };
         
         /// Max corners to create
-        int m_max_corners { 1000 };
+        int m_max_features { 1000 };
 
         /// Quality metric
         double m_quality_level { 0.01 };
