@@ -1,15 +1,18 @@
+#    File:    conanfile.py
+#    Author:  Marvin Smith
+#    Date:    7/8/2023
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from conan.tools.files import copy
 
-class CMakeConan(ConanFile):
+class ConanProject(ConanFile):
 
     name = "terminus_image"
     version = "0.0.1"
 
     license = "Terminus Proprietary"
-    author = "Marvin Smith <marvin_smith1@me.com>"
-    url = "https://bitbucket.org/msmith81886/terminus-cmake/src/main/"
+    author  = "Marvin Smith <marvin_smith1@me.com>"
+    url     = "https://bitbucket.org/msmith81886/terminus-cmake/src/main/"
     description = "High-Performance Image-Processing API"
     topics = ("terminus", "cmake", "build")
 
@@ -29,8 +32,8 @@ class CMakeConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     def build_requirements(self):
-        self.build_requires("gtest/1.13.0")
-        self.build_requires("terminus_cmake/1.0.0")
+        self.test_requires("gtest/1.13.0")
+        self.tool_requires("terminus_cmake/1.0.0")
 
     def requirements(self):
         self.requires("boost/1.82.0")
@@ -77,5 +80,5 @@ class CMakeConan(ConanFile):
 
     def export_sources(self):
 
-        for p in [ "CMakeLists.txt", "include/*", "test/*", "src/*", "README.md" ]:
+        for p in [ "CMakeLists.txt", "include/*", "src/*", "test/*", "README.md" ]:
             copy( self, p, self.recipe_folder, self.export_sources_folder )
