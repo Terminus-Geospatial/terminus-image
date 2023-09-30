@@ -46,6 +46,8 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
                     1,
                     cache )
         {
+            this->metadata()->insert( resource->metadata(),
+                                      true );
         }
 
         /**
@@ -117,7 +119,7 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
         /**
          * Get the image filename
         */
-        std::string pathname() const
+        std::filesystem::path pathname() const
         {
             return m_resource->pathname();
         }

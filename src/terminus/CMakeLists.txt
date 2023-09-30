@@ -13,4 +13,5 @@ include_directories( ${CMAKE_SOURCE_DIR}/include
 )
 
 add_subdirectory( feature )
+add_subdirectory( geography )
 add_subdirectory( image )

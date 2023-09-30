@@ -32,7 +32,8 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         typedef std::unique_ptr<Collection_Resource_File> ptr_t;
 
         /// Iterator Type
-        typedef typename std::deque<Image_Disk<PixelT>>::iterator iter_type;
+        using iter_type  = typename std::deque<Image_Disk<PixelT>>::iterator;
+        using citer_type = typename std::deque<Image_Disk<PixelT>>::const_iterator;
 
         /**
          * Constructor
@@ -82,24 +83,24 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
             return m_images.size();
         }
 
-        iter_type& begin()
+        iter_type begin()
         {
             return m_images.begin(); 
         }
 
-        iter_type const& begin() const
+        citer_type cbegin() const
         {
-            return m_images.begin(); 
+            return m_images.cbegin(); 
         }
 
-        iter_type& end()
+        iter_type end()
         {
             return m_images.end();
         }
 
-        iter_type const& end() const
+        citer_type cend() const
         {
-            return m_images.end();
+            return m_images.cend();
         }
 
     private:

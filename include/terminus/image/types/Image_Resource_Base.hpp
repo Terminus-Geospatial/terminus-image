@@ -11,6 +11,7 @@
 #include <terminus/math/Size.hpp>
 
 /// Terminus Libraries
+#include "../metadata/Metadata_Container_Base.hpp"
 #include "../pixel/Channel_Type_Enum.hpp"
 #include "../pixel/Pixel_Format_Enum.hpp"
 #include "Image_Buffer.hpp"
@@ -165,6 +166,19 @@ class Image_Resource_Base : public Read_Image_Resource_Base,
 
         /// Pointer Type
         typedef std::shared_ptr<Image_Resource_Base> ptr_t;
+
+        /**
+         * @brief Get the internal metadata container
+         */
+        meta::Metadata_Container_Base::ptr_t metadata() const
+        {
+            return m_metadata;
+        }
+
+    protected:
+
+        /// Internal Metadata
+        meta::Metadata_Container_Base::ptr_t m_metadata { std::make_shared<meta::Metadata_Container_Base>()  };
 };
 
 } // end of tmns::image namespace

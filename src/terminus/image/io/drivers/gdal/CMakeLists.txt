@@ -13,4 +13,5 @@ add_library( TERMINUS_IMAGE_IO_DRIVERS_GDAL OBJECT
              GDAL_Utilities.hpp
              Image_Resource_Disk_GDAL.cpp
              Image_Resource_Disk_GDAL_Factory.cpp
+             ISIS_JSON_Parser.cpp
 )

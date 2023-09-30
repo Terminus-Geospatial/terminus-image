@@ -7,6 +7,7 @@
 
 // Terminus Image Libraries
 #include "../../feature/Interest_Point.hpp"
+#include "../metadata/Metadata_Container_Base.hpp"
 #include "../pixel/Channel_Type_ID.hpp"
 #include "../pixel/Pixel_Format_ID.hpp"
 #include "Image_Format.hpp"
@@ -148,13 +149,22 @@ class Image_Base
         }
 
         /**
+         * Get the internal metadata
+         */
+        meta::Metadata_Container_Base::ptr_t metadata() const
+        {
+            return m_metadata;
+        }
+
+        /**
          * Copy all non-pixel data.  As this capability grows, just put it all
          * here so the dozen or so View-Types don't have to overthink it.
-        */
-       template <typename ImageT>
+         */
+        template <typename ImageT>
         void copy_payload_data( const ImageT& rhs )
         {
             interest_points() = rhs.interest_points();
+            metadata()        = rhs.metadata();
         }
 
         /**
@@ -184,6 +194,9 @@ class Image_Base
 
         /// List of feature points
         feature::Interest_Point_List m_interest_points;
+
+        /// Image Metadata
+        meta::Metadata_Container_Base::ptr_t m_metadata { std::make_shared<meta::Metadata_Container_Base>() };
 
 }; // End of ImageBase Class
 

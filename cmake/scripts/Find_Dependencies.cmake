@@ -13,6 +13,14 @@ message( STATUS "tomplplusplus_FOUND: ${tomplplusplus_FOUND}")
 message( STATUS "tomlplusplus_INCLUDE_DIRS: ${tomlplusplus_INCLUDE_DIRS}")
 include_directories( ${tomlplusplus_INCLUDE_DIRS} )
 
+#--------------------------#
+#-        JSON++          -#
+#--------------------------#
+find_package( nlohmann_json REQUIRED )
+message( STATUS "nnlohmann_json_FOUND: ${nlohmann_json_FOUND}" )
+message( STATUS "nlohmann_json_INCLUDE_DIRS: ${nlohmann_json_INCLUDE_DIRS}" )
+include_directories( ${nlohmann_json_INCLUDE_DIRS} )
+
 #-------------------------#
 #-      GoogleTest       -#
 #-------------------------#
@@ -50,6 +58,15 @@ message( STATUS "OpenCV_FOUND: ${OpenCV_FOUND}")
 message( STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 message( STATUS "OpenCV_LIBS: ${OpenCV_LIBS}")
 include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+#------------------------#
+#-      USGS ISIS       -#
+#------------------------#
+find_package( ISIS REQUIRED )
+message( STATUS "ISIS_FOUND       : ${ISIS_FOUND}" )
+message( STATUS "ISIS_INCLUDE_DIRS: ${ISIS_INCLUDE_DIRS}" )
+message( STATUS "ISIS_LIBRARIES   : ${ISIS_LIBRARIES}" )
+include_directories( "${ISIS_INCLUDE_DIRS}" )
 
 #--------------------------------#
 #-      Terminus Libraries      -#

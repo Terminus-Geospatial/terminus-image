@@ -17,11 +17,13 @@
 
 // External Terminus Libraries
 #include <terminus/core/error/ErrorCategory.hpp>
+#include <terminus/log/Logger.hpp>
 #include <terminus/math/Rectangle.hpp>
 #include <terminus/math/Size.hpp>
 #include <terminus/outcome/Result.hpp>
 
 // Terminus Libraries
+#include "../../../metadata/Metadata_Container_Base.hpp"
 #include "../../../pixel/Pixel_Format_Enum.hpp"
 #include "../../../pixel/Pixel_RGBA.hpp"
 #include "../../../types/Image_Buffer.hpp"
@@ -129,6 +131,11 @@ class GDAL_Disk_Image_Impl
         void flush();
 
         /**
+         * Get the internal metadata container
+         */
+        meta::Metadata_Container_Base::ptr_t metadata() const;
+
+        /**
          * Check if driver type is trusted to report valid single-line block sizes
         */
         static bool blocksize_whitelist( const GDALDriver* driver );
@@ -156,6 +163,12 @@ class GDAL_Disk_Image_Impl
                                     const std::map<std::string,std::string>& write_options,
                                     const math::Size2i&                      block_size );
 
+        /**
+         * Process Dataset Metadata
+         */
+        void process_metadata( log::Logger&                 logger, 
+                               std::shared_ptr<GDALDataset> dataset );
+
         /// Pathname to image
         std::filesystem::path m_pathname;
 
@@ -177,6 +190,9 @@ class GDAL_Disk_Image_Impl
 
         // Base Driver Options
         Options  m_driver_options;
+
+        /// Metadata Container
+        meta::Metadata_Container_Base::ptr_t m_metadata { std::make_shared<meta::Metadata_Container_Base>() };
 
 }; // End of GDAL_Disk_Image_Impl class
 

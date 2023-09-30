@@ -151,9 +151,6 @@ class Block_Processor
         */
         void operator()( math::Rect2i bbox ) const
         {
-            tmns::log::trace( LOG_IMAGE_TAG(), "start of operator(). bbox: ", bbox.to_string(),
-                              ", num_threads: ", m_num_threads,
-                              ", block size: ", m_block_size.to_string() );
             typename Block_Thread::Info info( m_func, bbox, m_block_size );
 
             // Avoid threads altogether in the single-threaded case.
@@ -179,7 +176,6 @@ class Block_Processor
             {
                 threads[i]->join();
             }
-            tmns::log::trace( LOG_IMAGE_TAG(), "end of operator(). bbox: ", bbox.to_string() );
         }
 
         /**

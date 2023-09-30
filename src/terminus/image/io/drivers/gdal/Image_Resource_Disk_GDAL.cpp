@@ -65,6 +65,10 @@ ImageResult<Image_Resource_Disk_GDAL::ParentPtrT>
 {
     auto driver = std::make_shared<Image_Resource_Disk_GDAL>( pathname );
 
+    // Update Metadata
+    driver->metadata()->insert( driver->m_impl->metadata(),
+                                        true );
+
     return outcome::ok<ParentPtrT>( driver );
 }
 
@@ -83,6 +87,10 @@ ImageResult<Image_Resource_Disk_GDAL::ParentPtrT>
                                                               write_options,
                                                               block_size,
                                                               color_reference_lut );
+    
+    // Update Metadata
+    driver->metadata()->insert( driver->m_impl->metadata(),
+                                        true );
 
     return outcome::ok<ParentPtrT>( driver );
 }
@@ -101,7 +109,13 @@ ImageResult<void> Image_Resource_Disk_GDAL::open( const std::filesystem::path& p
 ImageResult<void> Image_Resource_Disk_GDAL::read( const Image_Buffer& dest,
                                                   const math::Rect2i& bbox ) const
 {
-    return m_impl->read( dest, bbox, m_rescale );
+    auto result = m_impl->read( dest, bbox, m_rescale );
+
+    // Process metadata
+    metadata()->insert( m_impl->metadata(),
+                        true );
+
+    return result;
 }
 
 /****************************************************/

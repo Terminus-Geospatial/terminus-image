@@ -91,6 +91,10 @@ TEST( io_read_image_disk, read_disk_isis_cube )
     ASSERT_FALSE( result.has_error() );
     auto image = result.assume_value();
 
+    // Print metadata
+    tmns::log::debug( "Image Metadata:\n", image.metadata()->to_log_string() );
+    
+
     ASSERT_FALSE( result.has_error() );
 
     // View the image

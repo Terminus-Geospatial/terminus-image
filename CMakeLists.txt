@@ -4,7 +4,7 @@
 #
 
 #  Set CMake Version
-cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.16 FATAL_ERROR )
 
 #  Configure Conan Search Paths
 include( "${CMAKE_BINARY_DIR}/conan_toolchain.cmake" )
@@ -25,6 +25,11 @@ set( CMAKE_CXX_STANDARD_REQUIRED ON )
 #  Give Vscode a fighting chance
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+#-------------------------------------#
+#-     Add Manual CMake Scripts      -#
+#-------------------------------------#
+LIST( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
+
 # Bring in CMake helpers for TERMINUS projects
 include( terminus_cmake )
 
@@ -38,26 +43,30 @@ add_subdirectory( src/terminus )
 #  Create Library
 add_library( ${PROJECT_NAME} SHARED
     ${TERMINUS_IMAGE_INCLUDE_HEADERS}
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_COLLECT_FILE>
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO>
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS>
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS_GDAL>
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_PIXEL>
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_TYPES>
-    $<TARGET_OBJECTS:TERMINUS_IMAGE_UTIL>
+    $<TARGET_OBJECTS:TERMINUS_GEOGRAPHY_CAMERA>
+    $<TARGET_OBJECTS:TERMINUS_GEOGRAPHY_COORDINATE>
     $<TARGET_OBJECTS:TERMINUS_FEATURE_BASE>
     $<TARGET_OBJECTS:TERMINUS_FEATURE_DRV_OCV>
     $<TARGET_OBJECTS:TERMINUS_FEATURE_DRV_OCV_CFG>
     $<TARGET_OBJECTS:TERMINUS_FEATURE_UTIL>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_COLLECT_FILE>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_IO_DRIVERS_GDAL>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_METADATA>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_PIXEL>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_TYPES>
+    $<TARGET_OBJECTS:TERMINUS_IMAGE_UTIL>
 )
 
 #  Link in dependencies
-target_link_libraries( ${PROJECT_NAME}
+target_link_libraries( ${PROJECT_NAME} PUBLIC
      Boost::headers
      Boost::log
      Boost::log_setup
      Boost::system
      GDAL::GDAL
+     nlohmann_json::nlohmann_json
      ${OpenCV_LIBS}
      terminus_core::terminus_core
      terminus_log::terminus_log

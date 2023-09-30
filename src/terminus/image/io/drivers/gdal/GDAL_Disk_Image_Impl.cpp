@@ -9,6 +9,7 @@
 #include "../../../pixel/convert.hpp"
 #include "../../../pixel/Channel_Type_Enum.hpp"
 #include "GDAL_Utilities.hpp"
+#include "ISIS_JSON_Parser.hpp"
 
 /// External Terminus Libraries
 #include <terminus/log/utility.hpp>
@@ -73,6 +74,9 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
                                sout.str() );
     }
 
+    m_metadata->insert( "pathname", m_pathname.native() );
+    m_metadata->insert( "image_read_driver", "GDAL" );
+
     // Given dataset, get some information
     std::shared_ptr<GDALDataset> dataset( get_dataset_ptr().value() );
 
@@ -82,28 +86,8 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
 
     // Log the metadata information
     {
-        logger.trace( "Metadata Description: ", dataset->GetDescription() );
-
-        char** metadata = dataset->GetMetadata();
-        logger.trace( "Count: ", CSLCount(metadata) );
-
-        if( CSLCount(metadata) > 0 )
-        {
-            std::stringstream sout;
-            for( int i=0; i<CSLCount( metadata ); i++ )
-            {
-                sout << "\t\t" << CSLGetField( metadata, i ) << std::endl;
-            }
-            logger.trace( sout.str() );
-        }
-
-        logger.trace( "Driver: ", dataset->GetDriver()->GetDescription(),
-                      ", ", dataset->GetDriver()->GetMetadataItem( GDAL_DMD_LONGNAME ) );
-
-        logger.trace( "Image Size: ", dataset->GetRasterXSize(), " cols, ",
-                      dataset->GetRasterYSize(), " rows, ", dataset->GetRasterCount(),
-                      " channels" );
-
+        process_metadata( logger,
+                          dataset );
     }
 
     /**
@@ -507,6 +491,14 @@ void GDAL_Disk_Image_Impl::flush()
     }
 }
 
+/************************************/
+/*          Get Metadata            */
+/************************************/
+meta::Metadata_Container_Base::ptr_t GDAL_Disk_Image_Impl::metadata() const
+{
+    return m_metadata;
+}
+
 /************************************************************************************/
 /*          Get the list of supported/trusted drivers that rely on blocksizes       */
 /************************************************************************************/
@@ -721,5 +713,87 @@ void GDAL_Disk_Image_Impl::configure_for_writing( const Image_Format&           
     initialize_write_resource_locked();
 }
 
+/****************************************/
+/*          Process Metadata            */
+/****************************************/
+void GDAL_Disk_Image_Impl::process_metadata( log::Logger&                 logger, 
+                                             std::shared_ptr<GDALDataset> dataset )
+{
+    const bool DO_NOT_OVERWRITE { false };
+    
+    logger.trace( "Metadata Description: ", dataset->GetDescription() );
+    m_metadata->insert( "gdal.description", dataset->GetDescription() );
+
+    // Get a list of metadata domains
+    auto metadata_domains = dataset->GetMetadataDomainList();
+    logger.trace( "Domains: ", CSLCount( metadata_domains ) );
+    std::vector<std::string> domain_list;
+    if( CSLCount( metadata_domains ) > 0 )
+    {
+        std::stringstream sout;
+        sout << "Domain Items, Count: " << CSLCount( metadata_domains ) << std::endl;
+        for( int i = 0; i < CSLCount( metadata_domains ); i++ )
+        {
+            domain_list.push_back( CSLGetField( metadata_domains, i ) );
+            sout << "\t\t[" << domain_list.back() << "]" << std::endl;
+        }
+        logger.trace( sout.str() );
+    }
+
+    char** metadata = dataset->GetMetadata();
+    logger.trace( "Count: ", CSLCount(metadata) );
+
+    if( CSLCount(metadata) > 0 )
+    {
+        std::stringstream sout;
+        sout << "Metadata Items, Count: " << CSLCount( metadata ) << std::endl;
+        for( int i = 0; i < CSLCount( metadata ); i++ )
+        {
+            sout << "\t\t" << CSLGetField( metadata, i ) << std::endl;
+        }
+        logger.trace( sout.str() );
+    }
+
+    for( const auto& domain : domain_list )
+    {
+        char** dmetadata = dataset->GetMetadata( domain.c_str() );
+        logger.trace( "Count: ", CSLCount( dmetadata ) );
+
+        if( CSLCount( dmetadata ) > 0 && domain != "json:ISIS3" )
+        {
+            std::stringstream sout;
+            sout << "Domain [" << domain << "] Metadata Items, Count: " << CSLCount( dmetadata ) << std::endl;
+            for( int i = 0; i < CSLCount( dmetadata ); i++ )
+            {
+                sout << "\t\t" << CSLGetField( dmetadata, i ) << std::endl;
+            }
+            logger.trace( sout.str() );
+        }
+        else if( domain == "json:ISIS3" )
+        {
+            logger.debug( "Parsing ISIS3 JSON Node" );
+            for( int i = 0; i < CSLCount( dmetadata ); i++ )
+            {
+                auto result = ISIS_JSON_Parser::parse( CSLGetField( dmetadata, i ) );
+                if( result.has_error() )
+                {
+                    logger.error( "Trouble parsing ISIS JSON data.",
+                                  result.error().message() );
+                }
+                m_metadata->insert( result.value(), DO_NOT_OVERWRITE );
+            }
+        }
+    }
+
+    logger.trace( "Driver: ", dataset->GetDriver()->GetDescription(),
+                  ", ", dataset->GetDriver()->GetMetadataItem( GDAL_DMD_LONGNAME ) );
+    m_metadata->insert( "gdal.driver.name_short", dataset->GetDriver()->GetDescription() );
+    m_metadata->insert( "file_driver", dataset->GetDriver()->GetDescription() );
+    m_metadata->insert( "gdal.driver.name_long",  dataset->GetDriver()->GetMetadataItem( GDAL_DMD_LONGNAME ) );
+
+    logger.trace( "Image Size: ", dataset->GetRasterXSize(), " cols, ",
+                  dataset->GetRasterYSize(), " rows, ", dataset->GetRasterCount(),
+                  " channels" );
+}
 
 } // End of tmns::image::io::gdal namespace

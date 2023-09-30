@@ -32,4 +32,10 @@ TEST( cx_Collection_Resource_File, functional_test )
 
     // Check the image list
     ASSERT_EQ( resource.value()->size(), 2 );
+
+    // Verify iteration works
+    for( const auto& image : *resource.value() )
+    {
+        tmns::log::debug( image.pathname().native() );
+    }
 }

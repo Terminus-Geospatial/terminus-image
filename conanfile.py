@@ -38,6 +38,7 @@ class ConanProject(ConanFile):
     def requirements(self):
         self.requires("boost/1.82.0")
         #self.requires("gdal/3.4.3")
+        self.requires("nlohmann_json/3.11.2")
         self.requires("tomlplusplus/3.3.0")
         self.requires("terminus_core/0.0.1")
         self.requires("terminus_log/0.0.1")

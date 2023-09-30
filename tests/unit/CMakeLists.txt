@@ -19,6 +19,7 @@ add_executable( ${TEST}
     feature/drivers/ocv/TEST_Detector_OCV_ORB.cpp
     feature/drivers/ocv/TEST_ocv_gftt.cpp
     feature/drivers/ocv/TEST_ocv_orb.cpp
+    geography/camera/TEST_Camera_Model_Factory.cpp
     image/collection/TEST_Collection_Resource_File.cpp
     image/io/TEST_read_image_disk.cpp
 #    image/io/TEST_read_image.cpp
