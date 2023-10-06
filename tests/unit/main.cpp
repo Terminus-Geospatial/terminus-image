@@ -37,7 +37,8 @@ int main(int argc, char* argv[], char* envp[] )
     }
     
     // Create test environment
-    Test_Environment::initialize( image_datastore ); 
+    Test_Environment::initialize( image_datastore,
+                                  options.use_gui() ); 
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

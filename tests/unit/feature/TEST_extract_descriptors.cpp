@@ -16,6 +16,9 @@
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
 #include <terminus/image/utility/View_Utilities.hpp>
 
+// Unit-Test Libraries
+#include "../UNIT_TEST_ONLY/Test_Environment.hpp"
+
 namespace tx=tmns::image;
 namespace tf=tmns::feature;
 
@@ -66,5 +69,12 @@ TEST( extract_features, image_disk_example_01_ocv_orb )
                                               session_context );
     
     ASSERT_FALSE( result_dr.has_error() );
-    tx::utility::view_image( "Image", disk_image, 0, true, tx::PixelRGB_u8::green() );
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Image", 
+                                 disk_image,
+                                 0,
+                                 true,
+                                 tx::PixelRGB_u8::green() );
+    }
 }

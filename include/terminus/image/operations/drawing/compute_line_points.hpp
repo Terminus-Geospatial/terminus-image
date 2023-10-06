@@ -177,8 +177,10 @@ ImageResult<void> compute_line_points( const tmns::math::Point2i&               
         for( int c = point_rect.bl().x(); c <= point_rect.tr().x(); c++ )
         for( int r = point_rect.bl().y(); r <= point_rect.tr().y(); r++ )
         {
+            tmns::log::trace( ADD_CURRENT_LOC(), "Adding (", c, ", ", r, ") of (", point_rect.tr().to_string(), ")" );
             output->insert( c, r, 0, color );
         }
+        tmns::log::trace( ADD_CURRENT_LOC(), "All Done" );
         return outcome::ok();
     }
 
@@ -215,7 +217,6 @@ ImageResult<void> compute_line_points( const tmns::math::Point2i&               
 
         math::Point2i p2_render( { (int)p2_int.x(),
                                    (int)p2_int.y() } );
-        tmns::log::info( "P1 Render: ", p1_render.to_string() );
 
         compute_line_points_thin<PixelT>( p1_render,
                                           p2_render,

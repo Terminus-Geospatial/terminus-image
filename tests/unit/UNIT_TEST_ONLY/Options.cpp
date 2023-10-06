@@ -51,6 +51,12 @@ Options Options::parse_command_line( int argc,
         {
             options.m_log_severity = "trace";
         }
+
+        // Use GUI
+        if( arg == "-use-gui" )
+        {
+            options.m_use_gui = true;
+        }
     }
 
 
@@ -87,6 +93,14 @@ std::filesystem::path Options::get_test_image_config_path() const
     return m_test_image_config_path;
 }
 
+/****************************/
+/*          Use GUI         */
+/****************************/
+bool Options::use_gui() const
+{
+    return m_use_gui;
+}
+
 /********************************************/
 /*          Print Usage Instructions        */
 /********************************************/
@@ -100,6 +114,9 @@ std::string Options::usage() const
     sout << std::endl;
     sout << " -i <image-data-cache> : Path to terminus_test_data repo where some bigger images are." << std::endl;
     sout << "         This is not required to perform all tests.  It will only allow for some beefier cases." << std::endl;
+    sout << std::endl;
+    sout << " -use-gui : Allow use of the OpenCV view API." << std::endl;
+    sout << std::endl;
 
     return sout.str();
 }

@@ -15,6 +15,9 @@
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
 #include <terminus/image/utility/View_Utilities.hpp>
 
+// Unit-Test APIs
+#include "../UNIT_TEST_ONLY/Test_Environment.hpp"
+
 namespace tx=tmns::image;
 namespace tf=tmns::feature;
 
@@ -22,7 +25,7 @@ namespace tf=tmns::feature;
 /*          Test the Find Keypoints on a test image         */
 /*          - Disk Image Example                            */
 /************************************************************/
-TEST( detect_feature_points, image_disk_example_01_ocv_orb )
+TEST( detect_interest_points, image_disk_example_01_ocv_orb )
 {
     // Using a NITF, load the image, then perform feature detection on it
     std::filesystem::path image_to_load( "data/images/jpeg/lena.jpg" );
@@ -37,8 +40,10 @@ TEST( detect_feature_points, image_disk_example_01_ocv_orb )
 
     // Get the components
     auto& disk_image      = image.value();
-    tx::utility::view_image( "Image", disk_image );
-
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Image", disk_image );
+    }
     auto detector_config = std::make_shared<tf::ocv::Detector_Config_OCV_ORB>();
     auto session_context = tmns::core::create_default_session();
 
@@ -64,7 +69,7 @@ TEST( detect_feature_points, image_disk_example_01_ocv_orb )
 /*          Test the Find Keypoints on a test image         */
 /*          - Disk Image Example                            */
 /************************************************************/
-TEST( detect_feature_points, image_disk_example_02_ocv_gftt )
+TEST( detect_interest_points, image_disk_example_02_ocv_gftt )
 {
     // Using a NITF, load the image, then perform feature detection on it
     std::filesystem::path image_to_load( "data/images/jpeg/lena.jpg" );
@@ -79,7 +84,10 @@ TEST( detect_feature_points, image_disk_example_02_ocv_gftt )
 
     // Get the components
     auto& disk_image      = image.value();
-    tx::utility::view_image( "Image", disk_image );
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Image", disk_image );
+    }
 
     auto detector_config = std::make_shared<tf::ocv::Detector_Config_OCV_GFTT>();
     auto session_context = tmns::core::create_default_session();

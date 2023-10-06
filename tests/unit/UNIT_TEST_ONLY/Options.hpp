@@ -34,6 +34,11 @@ class Options
         std::filesystem::path get_test_image_config_path() const;
 
         /**
+         * Flag if we should use the GUI options
+         */
+        bool use_gui() const;
+
+        /**
          * Print Usage Instructions
         */
         std::string usage() const;
@@ -51,5 +56,8 @@ class Options
 
         /// Path pointing to test images
         std::filesystem::path m_test_image_config_path { "data/test_images.ini" };
+
+        /// Flag if we should use a GUI
+        bool m_use_gui { false };
 
 }; // End of options class

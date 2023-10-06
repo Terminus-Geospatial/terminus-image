@@ -60,10 +60,6 @@ ImageResult<void> compute_circle_points( const tmns::math::Point2i&             
         auto dist = math::Point2i::distance( start_pos,
                                              end_pos );
         
-        tmns::log::info( "Angle: ", ( angle * M_PI / 180.0 ), ", Step: ",
-                         angle_step, ", Start-Pos: ", start_pos.to_string(),
-                         ", End-Pos: ", end_pos.to_string(), ", Dist: ", dist );
-        
         // Set the new line segment
         auto result = compute_line_points( start_pos,
                                            end_pos,

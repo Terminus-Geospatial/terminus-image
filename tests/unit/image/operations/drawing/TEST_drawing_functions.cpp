@@ -11,6 +11,9 @@
 #include <terminus/image/operations/drawing/drawing_functions.hpp>
 #include <terminus/image/utility/View_Utilities.hpp>
 
+// Unit-Test APIs
+#include "../../../UNIT_TEST_ONLY/Test_Environment.hpp"
+
 namespace tx = tmns::image;
 
 /************************************************/
@@ -57,7 +60,10 @@ TEST( ops_drawing_drawing_functions, draw_line )
     }
 
     // Visualize
-    tx::utility::view_image( "Rendered Image", result );
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Rendered Image", result );
+    }
 }
 
 
@@ -102,7 +108,10 @@ TEST( ops_drawing_drawing_functions, draw_line2 )
                                  10 );
 
     // Visualize
-    tx::utility::view_image( "Rendered Image", result );
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Rendered Image", result );
+    }
 }
 
 /********************************************/
@@ -126,7 +135,10 @@ TEST( ops_drawing_drawing_functions, draw_circle )
                                         5 );
 
     // Visualize
-    tx::utility::view_image( "Rendered Image", result );
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Rendered Image", result );
+    }
 }
 
 /***********************************************/
@@ -150,5 +162,8 @@ TEST( ops_drawing_drawing_functions, draw_rectangle )
                                            10 );
 
     // Visualize
-    tx::utility::view_image( "Rendered Image", result );
+    if( Test_Environment::use_gui() )
+    {
+        tx::utility::view_image( "Rendered Image", result );
+    }
 }

@@ -33,7 +33,9 @@ TEST( io_read_image_disk, read_disk_jpg )
 
     if( result.has_error() )
     {
-        tmns::log::error( ADD_CURRENT_LOC(), "error reading image: ", result.error().message() );
+        tmns::log::error( ADD_CURRENT_LOC(),
+                          "error reading image: ",
+                          result.error().message() );
     }
     ASSERT_FALSE( result.has_error() );
     auto image = result.assume_value();
@@ -41,7 +43,7 @@ TEST( io_read_image_disk, read_disk_jpg )
     ASSERT_FALSE( result.has_error() );
 
     // View the image
-    if( false )
+    if( Test_Environment::use_gui() )
     {
         auto res = tx::utility::view_image( "Dummy Window", image );
     }

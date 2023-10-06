@@ -117,6 +117,8 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
 {
     typedef typename ImageT::pixel_type PixelT;
 
+    tmns::log::info( "Drawing Rectangle. Bbox: ", bbox.to_string() );
+
     // Construct list of coordinates
     auto uniform_blob = std::make_shared<blob::Uniform_Blob<PixelT>>( color );
 
@@ -136,6 +138,8 @@ blob::Sparse_Image_View<ImageT,blob::Uniform_Blob<typename ImageT::pixel_type>>
     {
         // TL -> TR
         {
+            tmns::log::info( "TL: ", bbox.tl().to_string() );
+            tmns::log::info( "TR: ", bbox.tr().to_string() );
             auto res = drawing::compute_line_points( bbox.tl(),
                                                      bbox.tr(),
                                                      color,
