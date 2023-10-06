@@ -115,7 +115,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         */
         const Image_Resource_Base* resource() const
         {
-            return m_resource.get();
+            return dynamic_cast<const Image_Resource_Base*>( m_resource.get() );
         }
 
         /**

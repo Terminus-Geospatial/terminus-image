@@ -6,6 +6,7 @@
 #pragma once
 
 // C++ Libraries
+#include <memory>
 #include <string>
 
 // Terminus Libraries

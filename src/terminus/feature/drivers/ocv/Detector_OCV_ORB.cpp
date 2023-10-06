@@ -258,7 +258,7 @@ std::string Detector_OCV_ORB::class_name() const
 ImageResult<Detector_Base::ptr_t> Detector_Generator_OCV_ORB::generate( Detector_Config_Base::ptr_t config )
 {
     // Check if the detector config ORB
-    bool same = typeid(Detector_Config_OCV_ORB) == typeid(*config.get());
+    bool same = ( dynamic_cast<Detector_Config_OCV_ORB*>( config.get() ) != nullptr );
     if( same )
     {
         return outcome::ok<Detector_Base::ptr_t>( std::make_shared<Detector_OCV_ORB>( config ) );

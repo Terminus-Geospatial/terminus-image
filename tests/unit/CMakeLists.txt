@@ -32,6 +32,7 @@ add_executable( ${TEST}
     image/operations/drawing/TEST_drawing_functions.cpp
     image/operations/TEST_crop_image.cpp
     image/operations/TEST_select_plane.cpp
+    image/pixel/TEST_convert.cpp
     image/pixel/TEST_Pixel_Cast_Utilities.cpp
     image/types/TEST_Compound_Types.cpp
     image/types/TEST_Image_Disk.cpp

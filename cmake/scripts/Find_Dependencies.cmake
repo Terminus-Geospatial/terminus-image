@@ -45,8 +45,14 @@ message( STATUS "${COLOR_BOLD}Boost_LIBRARIES: ${COLOR_RESET}${Boost_LIBRARIES}"
 find_package( GDAL CONFIG REQUIRED )
 message( STATUS  "${COLOR_BOLD}GDAL_FOUND: ${COLOR_RESET} ${GDAL_FOUND}")
 
-if( NOT DEFINED GDAL_INCLUDE_DIRS )
-    set( GDAL_INCLUDE_DIRS "/usr/local/include" )
+if( NOT GDAL_INCLUDE_DIRS )
+    set( GDAL_INCLUDE_DIRS "/usr/local/include/gdal" )
+endif()
+
+if( GDAL_VERSION_MINOR STRGREATER 6 )
+    #  Do Nothing
+else()
+    set( GDAL_INCLUDE_DIRS "/usr/include/gdal" )
 endif()
 message( STATUS  "${COLOR_BOLD}GDAL_INCLUDE_DIRS:${COLOR_RESET}${GDAL_INCLUDE_DIRS}" )
 
@@ -62,11 +68,11 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 #------------------------#
 #-      USGS ISIS       -#
 #------------------------#
-find_package( ISIS REQUIRED )
-message( STATUS "ISIS_FOUND       : ${ISIS_FOUND}" )
-message( STATUS "ISIS_INCLUDE_DIRS: ${ISIS_INCLUDE_DIRS}" )
-message( STATUS "ISIS_LIBRARIES   : ${ISIS_LIBRARIES}" )
-include_directories( "${ISIS_INCLUDE_DIRS}" )
+#find_package( ISIS REQUIRED )
+#message( STATUS "ISIS_FOUND       : ${ISIS_FOUND}" )
+#message( STATUS "ISIS_INCLUDE_DIRS: ${ISIS_INCLUDE_DIRS}" )
+#message( STATUS "ISIS_LIBRARIES   : ${ISIS_LIBRARIES}" )
+#include_directories( "${ISIS_INCLUDE_DIRS}" )
 
 #--------------------------------#
 #-      Terminus Libraries      -#

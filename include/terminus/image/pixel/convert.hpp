@@ -13,6 +13,13 @@
 
 namespace tmns::image {
 
+/// Convert any integer into a float in the -1 to +1 range.
+template <class SrcT, class DestT>
+void channel_convert_int_to_float( SrcT* src, DestT* dest )
+{
+  *dest = DestT(*src) * ( DestT( 1.0 ) / static_cast<DestT>( std::numeric_limits<SrcT>::max() ) );
+}
+
 /**
  * Convert pixel data from input buffer-type to output type
  *

@@ -44,13 +44,6 @@ void channel_convert_uint8_to_uint16( uint8_t* src, uint16_t* dest )
   *dest = uint16_t( *src ) * (65535/255);
 }
 
-/// Convert any integer into a float in the -1 to +1 range.
-template <class SrcT, class DestT>
-void channel_convert_int_to_float( SrcT* src, DestT* dest )
-{
-  *dest = DestT(*src) * (DestT(1.0)/boost::integer_traits<SrcT>::const_max);
-}
-
 /// Convert a float in the range -1 to +1 to an integer type.
 template <class SrcT, class DestT>
 void channel_convert_float_to_int( SrcT* src, DestT* dest )

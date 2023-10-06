@@ -282,7 +282,7 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
             else
             {
                 // I like this catch because we can wrap the result and not throw
-                std::shared_ptr<PixelT> data( new (std::nothrow) PixelT[num_pixels] );
+                std::shared_ptr<PixelT[]> data( new (std::nothrow) PixelT[num_pixels] );
 
                 if( !data )
                 {

@@ -8,6 +8,7 @@
 // C++ Libraries
 #include <filesystem>
 #include <map>
+#include <optional>
 #include <string>
 
 class Image_Datastore

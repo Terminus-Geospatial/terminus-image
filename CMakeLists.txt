@@ -15,8 +15,9 @@ project( ${CONAN_PKG_NAME}
             VERSION ${CONAN_PKG_VERSION}
             HOMEPAGE_URL ${CONAN_PKG_URL}
             DESCRIPTION ${CONAN_PKG_DESCRIPTION}
-            LANGUAGES CXX
-     )
+            LANGUAGES CXX )
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 #  Set C++ 20 Support
 set( CMAKE_CXX_STANDARD 20 )

@@ -167,7 +167,7 @@ std::string Detector_OCV_GFTT::class_name() const
 ImageResult<Detector_Base::ptr_t> Detector_Generator_OCV_GFTT::generate( Detector_Config_Base::ptr_t config )
 {
     // Check if the detector config GFTT
-    bool same = typeid(Detector_Config_OCV_GFTT) == typeid(*config.get());
+    bool same = ( dynamic_cast<Detector_Config_OCV_GFTT*>( config.get() ) != nullptr );
     if( same )
     {
         return outcome::ok<Detector_Base::ptr_t>( std::make_shared<Detector_OCV_GFTT>( config ) );
