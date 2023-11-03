@@ -7,7 +7,7 @@
 
 // Terminus Libraries
 #include <terminus/math/Point.hpp>
-#include <terminus/math/VectorN.hpp>
+#include <terminus/math/vector.hpp>
 
 // C++ Libraries
 #include <vector>

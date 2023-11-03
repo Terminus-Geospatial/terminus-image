@@ -6,11 +6,11 @@
 #pragma once
 
 // Terminus Libraries
-#include "compounds/Binary_Compound_Functor.hpp"
-#include "compounds/Binary_In_Place_Compound_Functor.hpp"
-#include "compounds/Unary_Compound_Functor.hpp"
-#include "compounds/Unary_In_Place_Compound_Functor.hpp"
-#include "Compound_Types.hpp"
+#include <terminus/image/types/compounds/Binary_Compound_Functor.hpp>
+#include <terminus/image/types/compounds/Binary_In_Place_Compound_Functor.hpp>
+#include <terminus/image/types/compounds/Unary_Compound_Functor.hpp>
+#include <terminus/image/types/compounds/Unary_In_Place_Compound_Functor.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
 
 namespace tmns::image {
 
@@ -30,7 +30,7 @@ namespace tmns::image {
 template <typename ResultT,
           typename PixelT>
 ResultT compound_select_channel( PixelT& pixel,
-                                 typename std::enable_if_t<std::conjunction<typename std::negation< typename Is_Compound<PixelT>::value >::value,
+                                 typename std::enable_if_t<std::conjunction<typename std::negation< typename math::Is_Compound<PixelT>::value >::value,
                                                                             typename std::is_reference<ResultT>::value>::value,
                                                            size_t> /*channel*/ )
 {
@@ -44,7 +44,7 @@ ResultT compound_select_channel( PixelT& pixel,
 template <typename ResultT,
           typename PixelT>
 ResultT compound_select_channel( const PixelT& pixel, 
-                                 typename std::enable_if_t<std::conjunction< typename std::negation< typename Is_Compound<PixelT>::value >::value,
+                                 typename std::enable_if_t<std::conjunction< typename std::negation< typename math::Is_Compound<PixelT>::value >::value,
                                                                              std::negation< typename std::is_reference<ResultT>::value> >::value, 
                                                            size_t> /*channel*/ )
 {
@@ -58,7 +58,7 @@ ResultT compound_select_channel( const PixelT& pixel,
 template <typename ResultT,
           typename PixelT>
 ResultT compound_select_channel( PixelT&                                 pixel, 
-                                 typename std::enable_if_t<std::conjunction<typename Is_Compound<PixelT>::value, 
+                                 typename std::enable_if_t<std::conjunction<typename math::Is_Compound<PixelT>::value, 
                                                                             typename std::is_reference<ResultT>::value>::value,
                                                            size_t>::type channel )
 {
@@ -71,7 +71,7 @@ ResultT compound_select_channel( PixelT&                                 pixel,
 template <typename ResultT,
           typename PixelT>
   ResultT compound_select_channel( const PixelT&                           pixel,
-                                   typename std::enable_if_t<std::conjunction<typename Is_Compound<PixelT>::value, 
+                                   typename std::enable_if_t<std::conjunction<typename math::Is_Compound<PixelT>::value, 
                                                                               std::negation<std::is_reference<ResultT>> >::value,
                                                              size_t>::type channel )
 {

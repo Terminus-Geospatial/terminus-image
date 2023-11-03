@@ -8,7 +8,7 @@ from conan.tools.files import copy
 class ConanProject(ConanFile):
 
     name = "terminus_image"
-    version = "0.0.2"
+    version = "0.0.3"
 
     license = "Terminus Proprietary"
     author  = "Marvin Smith <marvin_smith1@me.com>"
@@ -40,9 +40,9 @@ class ConanProject(ConanFile):
         #self.requires("gdal/3.4.3")
         self.requires("nlohmann_json/3.11.2")
         self.requires("tomlplusplus/3.3.0")
-        self.requires("terminus_core/0.0.2")
-        self.requires("terminus_log/0.0.2")
-        self.requires("terminus_math/0.0.3")
+        self.requires("terminus_core/0.0.3")
+        self.requires("terminus_log/0.0.3")
+        self.requires("terminus_math/0.0.9")
         self.requires("terminus_outcome/0.0.2")
 
     def _configure_cmake(self):

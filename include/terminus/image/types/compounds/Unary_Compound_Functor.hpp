@@ -44,9 +44,9 @@ class Unary_Compound_Functor
                   typename ArgT>
         struct result<F(ArgT)>
         {
-            typedef typename Compound_Channel_Type<ArgT>::type             arg_type;
-            typedef typename std::invoke_result_t<FunctorT,arg_type>       result_type;
-            typedef typename Compound_Channel_Cast<ArgT,result_type>::type type;
+            typedef typename math::Compound_Channel_Type<ArgT>::type             arg_type;
+            typedef typename std::invoke_result_t<FunctorT,arg_type>             result_type;
+            typedef typename math::Compound_Channel_Cast<ArgT,result_type>::type type;
         };
 
         /**
@@ -57,8 +57,8 @@ class Unary_Compound_Functor
             operator()( const ArgT& arg ) const
         {
             typedef typename result<Unary_Compound_Functor(ArgT)>::type result_type;
-            return Helper<Is_Compound<result_type>::value,
-                          Compound_Channel_Count<result_type>::value,
+            return Helper<math::Is_Compound<result_type>::value,
+                          math::Compound_Channel_Count<result_type>::value,
                           result_type,
                           ArgT>::construct( m_func, arg );
         }

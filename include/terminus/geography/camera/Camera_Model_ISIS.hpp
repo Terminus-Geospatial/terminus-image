@@ -6,7 +6,7 @@
 #pragma once
 
 // Terminus GEO Namespace
-#include "../coordinate/Datum.hpp"
+#include <terminus/coordinate/Datum.hpp>
 #include "Camera_Model_Base.hpp"
 
 // Terminus Libraries
@@ -102,7 +102,7 @@ class Camera_Model_ISIS : public Camera_Model_Base
         /**
          * The datum
          */
-        coord::Datum get_datum( bool use_sphere_for_non_earth ) const;
+        coordinate::Datum get_datum( bool use_sphere_for_non_earth ) const;
 
         /**
          * Print to string

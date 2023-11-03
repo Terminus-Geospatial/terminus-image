@@ -6,16 +6,14 @@
 #include <gtest/gtest.h>
 
 // Terminus Libraries
-#include <terminus/image/pixel/Pixel_Gray.hpp>
-#include <terminus/image/pixel/Pixel_RGB.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
-#include <terminus/image/types/Compound_Types.hpp>
 
 // C++ Libraries
 #include <type_traits>
 
-namespace tx = tmns::image;
-
+namespace tix = tmns::image;
+namespace tmx = tmns::math;
 
 /**
  * A simple compound type.  We only test with this one type here, and thus
@@ -48,20 +46,20 @@ class Test_Compound
 };
 
 template<class ChannelT>
-struct tx::Compound_Channel_Type<Test_Compound<ChannelT> >
+struct tmns::math::Compound_Channel_Type<Test_Compound<ChannelT> >
 {
     typedef ChannelT type;
 };
 
 template<class ChannelT>
-struct tx::Compound_Channel_Count<Test_Compound<ChannelT> >
+struct tmns::math::Compound_Channel_Count<Test_Compound<ChannelT> >
 {
     static constexpr size_t value() { return 2; };
 };
 
 
 template<class InT, class OutT>
-struct tx::Compound_Channel_Cast<Test_Compound<InT>, OutT>
+struct tmns::math::Compound_Channel_Cast<Test_Compound<InT>, OutT>
 {
     typedef Test_Compound<OutT> type;
 };
@@ -69,117 +67,16 @@ struct tx::Compound_Channel_Cast<Test_Compound<InT>, OutT>
 // A dummy type that is neither a scalar nor a compound type.
 class Dummy_Type {};
 
-
-/***********************************************************/
-/*      Perform basic type-trait tests using dummy types   */
-/***********************************************************/
-TEST( Compound_Types, Basic_Tests )
-{
-    // Verify we can extract the underlying type from this compound type.
-    ASSERT_TRUE( ( std::is_same<tx::Compound_Channel_Type<Test_Compound<float> >::type, float>::value ));
-
-    // Verify we can get the number of channels from this test compound type
-    ASSERT_EQ( tx::Compound_Channel_Count<Test_Compound<float> >::value(), 2 );
-
-    // Verify we can build cast functors which bind properly given our new test compound type
-    auto value = std::is_same<tx::Compound_Channel_Cast<Test_Compound<float>,int>::type,Test_Compound<int>>::value;
-    ASSERT_TRUE( value );
-}
-
-/************************/
-/*      Test Traits     */
-/************************/
-TEST( Compound_Types, Traits )
-{
-    ASSERT_TRUE( !tx::Is_Compound<uint8_t>::value );
-    ASSERT_TRUE( !tx::Is_Compound<double>::value );
-    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<uint8_t> >::value );
-    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<double> >::value );
-    ASSERT_TRUE( !tx::Is_Compound<Dummy_Type>::value );
-    ASSERT_TRUE( !tx::Is_Compound<const uint8_t>::value );
-    ASSERT_TRUE( !tx::Is_Compound<const double>::value );
-    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<const uint8_t> >::value );
-    ASSERT_TRUE(  tx::Is_Compound<Test_Compound<const double> >::value );
-    ASSERT_TRUE( !tx::Is_Compound<const Dummy_Type>::value );
-
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<double,double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<uint8_t,double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<double>,Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<uint8_t>,Test_Compound<double> >::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<Test_Compound<double>,double>::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<double,Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const double,double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const uint8_t,double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<double>,Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<uint8_t>,Test_Compound<double> >::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const Test_Compound<double>,double>::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const double,Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<double,const double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<uint8_t,const double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<double>,const Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<Test_Compound<uint8_t>,const Test_Compound<double> >::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<Test_Compound<double>,const double>::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<double,const Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const double,const double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const uint8_t,const double>::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<double>,const Test_Compound<double> >::value ));
-    ASSERT_TRUE((  tx::Compound_Is_Compatible<const Test_Compound<uint8_t>,const Test_Compound<double> >::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const Test_Compound<double>,const double>::value ));
-    ASSERT_TRUE(( !tx::Compound_Is_Compatible<const double,const Test_Compound<double> >::value ));
-}
-
-/**************************************/
-/*    Test Is_Scalar_Or_Compound      */
-/**************************************/
-TEST( Compound_Types, Is_Scalar_Or_Compound )
-{
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<uint8_t>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<double>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<uint8_t> >::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<Test_Compound<double> >::value );
-    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<Dummy_Type>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const uint8_t>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const double>::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<uint8_t> >::value );
-    ASSERT_TRUE(  tx::Is_Scalar_Or_Compound<const Test_Compound<double> >::value );
-    ASSERT_TRUE( !tx::Is_Scalar_Or_Compound<const Dummy_Type>::value );
-
-    // Do actual tests
-    ASSERT_TRUE( tx::Is_Scalar_Or_Compound<tx::PixelGray_u16>::value );
-    ASSERT_TRUE( tx::Is_Scalar_Or_Compound<tx::PixelGray_u16>::value );
-}
-
 /******************************************/
 /*      Test the Compound Name Method     */
 /******************************************/
 TEST( Compound_Types, Compound_Name )
 {
     // Check Compound Names
-    ASSERT_EQ( tx::Compound_Name<uint8_t>::name(),           "uint8_t" );
-    ASSERT_EQ( tx::Compound_Name<tx::PixelRGBA_u8>::name(),  "uint8_t" );
-    ASSERT_EQ( tx::Compound_Name<uint16_t>::name(),          "uint16_t" );
-    ASSERT_EQ( tx::Compound_Name<uint32_t>::name(),          "uint32_t" );
-    ASSERT_EQ( tx::Compound_Name<float>::name(),             "float" );
-    ASSERT_EQ( tx::Compound_Name<double>::name(),            "double" );
+    ASSERT_EQ( tmx::Compound_Name<tmns::image::PixelRGBA_u8>::name(),  "uint8_t" );
+    
 }
 
-/****************************************************/
-/*      Test the Channel Conversion Cast Method     */
-/****************************************************/
-TEST( Compound_Types, Compound_Channel_Cast )
-{
-    // Convert from RGB_F32 to RGB_U8
-    typedef typename tx::Compound_Channel_Cast<tx::PixelRGB_f32,uint8_t>::type rgb_u8_tp;
-    auto pix01 = rgb_u8_tp::max();
-    ASSERT_EQ( pix01[0], 255 );
-    ASSERT_EQ( pix01[1], 255 );
-    ASSERT_EQ( pix01[2], 255 );
-
-    // Convert from uint16 to uint8
-    typedef typename tx::Compound_Channel_Cast<uint16_t,uint8_t>::type plain_u8_tp;
-    plain_u8_tp pix02 = std::numeric_limits<plain_u8_tp>::max();
-    ASSERT_EQ( pix02, 255 );
-}
 
 /*
 // Simple functions to test the compound_apply logic.

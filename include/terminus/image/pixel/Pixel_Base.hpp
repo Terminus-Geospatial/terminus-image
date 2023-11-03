@@ -6,9 +6,9 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../types/Compound_Utilities.hpp"
-#include "../types/Functors.hpp"
-#include "Channel_Cast_Utilities.hpp"
+#include <terminus/image/pixel/Channel_Cast_Utilities.hpp>
+#include <terminus/image/types/Compound_Utilities.hpp>
+#include <terminus/math/types/Functors.hpp>
 
 namespace tmns::image {
 
@@ -27,10 +27,10 @@ class Pixel_Base
  * Unary Negation Operator of a Pixel
 */
 template <typename PixelT>
-typename Compound_Result<Arg_Negation_Functor,PixelT>::type          \
+typename Compound_Result<math::Arg_Negation_Functor,PixelT>::type          \
   operator - ( const Pixel_Base<PixelT>& pixel )
 {
-    return pix::compound_apply( Arg_Negation_Functor(),
+    return pix::compound_apply( math::Arg_Negation_Functor(),
                                 pixel.impl() );
 }
 
@@ -39,14 +39,14 @@ typename Compound_Result<Arg_Negation_Functor,PixelT>::type          \
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t<Compound_Is_Compatible<Pixel1T,Pixel2T>::value, 
-                          Compound_Result<Arg_Arg_Sum_Functor,
+typename std::enable_if_t<math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value, 
+                          Compound_Result<math::Arg_Arg_Sum_Functor,
                                           Pixel1T,
                                           Pixel2T> >::type
    operator + ( const Pixel_Base<Pixel1T>& pixel1, 
                 const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return pix::compound_apply( Arg_Arg_Sum_Functor(),
+    return pix::compound_apply( math::Arg_Arg_Sum_Functor(),
                                 pixel1.impl(),
                                 pixel2.impl() );
 }
@@ -56,13 +56,13 @@ typename std::enable_if_t<Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Arg_Val_Sum_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Arg_Val_Sum_Functor<ScalarT>,
                            PixelT>::type >
   operator + ( const Pixel_Base<PixelT>& pixel,
                ScalarT                   scalar )
 {
-    return pix::compound_apply( Arg_Val_Sum_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Arg_Val_Sum_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -71,13 +71,13 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Val_Arg_Sum_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Val_Arg_Sum_Functor<ScalarT>,
                            PixelT>::type >::type
     operator + ( ScalarT                   scalar,
                  const Pixel_Base<PixelT>& pixel )
 {
-    return pix::compound_apply( Val_Arg_Sum_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Val_Arg_Sum_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -86,11 +86,11 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>
+typename std::enable_if_t< math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>
     operator += ( Pixel_Base<Pixel1T>&       pixel1,
                   const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return cmp::compound_apply_in_place( Arg_Arg_In_Place_Sum_Functor(),
+    return cmp::compound_apply_in_place( math::Arg_Arg_In_Place_Sum_Functor(),
                                          pixel1.impl(),
                                          pixel2.impl() );
 }
@@ -100,11 +100,11 @@ typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value, PixelT&>::type
   operator += ( const Pixel_Base<PixelT>& pixel,
                 ScalarT                   scalar )
 {
-    return pix::compound_apply_in_place( Arg_Val_In_Place_Sum_Functor<ScalarT>( scalar),
+    return pix::compound_apply_in_place( math::Arg_Val_In_Place_Sum_Functor<ScalarT>( scalar),
                                          pixel.impl() );
 }
 
@@ -113,14 +113,14 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t<Compound_Is_Compatible<Pixel1T,Pixel2T>::value, 
-                          typename Compound_Result<Arg_Arg_Difference_Functor,
+typename std::enable_if_t<math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value, 
+                          typename Compound_Result<math::Arg_Arg_Difference_Functor,
                                                    Pixel1T,
                                                    Pixel2T>::type >::type
    operator - ( const Pixel_Base<Pixel1T>& pixel1, 
                 const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return pix::compound_apply( Arg_Arg_Difference_Functor(),
+    return pix::compound_apply( math::Arg_Arg_Difference_Functor(),
                                 pixel1.impl(),
                                 pixel2.impl() );
 }
@@ -130,13 +130,13 @@ typename std::enable_if_t<Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Arg_Val_Difference_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Arg_Val_Difference_Functor<ScalarT>,
                            PixelT>::type >
   operator - ( const Pixel_Base<PixelT>& pixel,
                ScalarT                   scalar )
 {
-    return pix::compound_apply( Arg_Val_Difference_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Arg_Val_Difference_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -145,13 +145,13 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Val_Arg_Difference_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Val_Arg_Difference_Functor<ScalarT>,
                            PixelT>::type >::type
     operator - ( ScalarT                   scalar,
                  const Pixel_Base<PixelT>& pixel )
 {
-    return pix::compound_apply( Val_Arg_Difference_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Val_Arg_Difference_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -160,11 +160,11 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>::type
+typename std::enable_if_t< math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>::type
     operator -= ( const Pixel_Base<Pixel1T>& pixel1,
                   const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return pix::compound_apply_in_place( Arg_Arg_In_Place_Difference_Functor(),
+    return pix::compound_apply_in_place( math::Arg_Arg_In_Place_Difference_Functor(),
                                          pixel1.impl(),
                                          pixel2.impl() );
 }
@@ -174,11 +174,11 @@ typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value, PixelT&>::type
   operator -= ( const Pixel_Base<PixelT>& pixel,
                 ScalarT                   scalar )
 {
-    return pix::compound_apply_in_place( Arg_Val_In_Place_Difference_Functor<ScalarT>( scalar),
+    return pix::compound_apply_in_place( math::Arg_Val_In_Place_Difference_Functor<ScalarT>( scalar),
                                          pixel.impl() );
 }
 
@@ -187,14 +187,14 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
-                           typename Compound_Result<Arg_Arg_Product_Functor,
+typename std::enable_if_t< math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
+                           typename Compound_Result<math::Arg_Arg_Product_Functor,
                                                     Pixel1T,
                                                     Pixel2T>::type >
   operator * ( const Pixel_Base<Pixel1T>& pixel1,
                const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return pix::compound_apply( Arg_Arg_Product_Functor(),
+    return pix::compound_apply( math::Arg_Arg_Product_Functor(),
                                 pixel1.impl(),
                                 pixel2.impl() );
 }
@@ -204,13 +204,13 @@ typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Arg_Val_Product_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Arg_Val_Product_Functor<ScalarT>,
                            PixelT>::type >
   operator * ( const Pixel_Base<PixelT>& pixel,
                ScalarT                   scalar )
 {
-    return pix::compound_apply( Arg_Val_Product_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Arg_Val_Product_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -219,13 +219,13 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Val_Arg_Product_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Val_Arg_Product_Functor<ScalarT>,
                            PixelT>::type >::type
     operator * ( ScalarT                   scalar,
                  const Pixel_Base<PixelT>& pixel )
 {
-    return pix::compound_apply( Val_Arg_Product_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Val_Arg_Product_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -234,11 +234,11 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>::type
+typename std::enable_if_t< math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel1T&>::type
     operator *= ( const Pixel_Base<Pixel1T>& pixel1,
                   const Pixel_Base<Pixel2T>& pixel2 )
 {
-    return pix::compound_apply_in_place( Arg_Arg_In_Place_Product_Functor(),
+    return pix::compound_apply_in_place( math::Arg_Arg_In_Place_Product_Functor(),
                                          pixel1.impl(),
                                          pixel2.impl() );
 }
@@ -248,11 +248,11 @@ typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value, Pixel
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value, PixelT&>::type
   operator *= ( const Pixel_Base<PixelT>& pixel,
                 ScalarT                   scalar )
 {
-    return pix::compound_apply_in_place( Arg_Val_In_Place_Product_Functor<ScalarT>( scalar ),
+    return pix::compound_apply_in_place( math::Arg_Val_In_Place_Product_Functor<ScalarT>( scalar ),
                                          pixel.impl() );
 }
 
@@ -265,13 +265,13 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value, PixelT&>::type
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t< Is_Scalar<ScalarT>::value,
-                           typename Compound_Result<Arg_Val_Quotient_Functor<ScalarT>,
+typename std::enable_if_t< math::Is_Scalar<ScalarT>::value,
+                           typename Compound_Result<math::Arg_Val_Quotient_Functor<ScalarT>,
                            PixelT>::type >
   operator / ( const Pixel_Base<PixelT>& pixel,
                ScalarT                   scalar )
 {
-    return pix::compound_apply( Arg_Val_Quotient_Functor<ScalarT>(scalar),
+    return pix::compound_apply( math::Arg_Val_Quotient_Functor<ScalarT>(scalar),
                                 pixel.impl() );
 }
 
@@ -293,14 +293,14 @@ typename std::enable_if_t< Is_Scalar<ScalarT>::value,
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
+typename std::enable_if_t< math::Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
                            bool >::type
    operator == ( const Pixel_Base<Pixel1T>& pixel1,
                  const Pixel_Base<Pixel2T>& pixel2 )
 {
-    for( size_t c = 0; c < Compound_Channel_Count<Pixel1T>::value; ++c )
-        if( compound_select_channel<typename Compound_Channel_Type<Pixel1T>::type>(pixel1.impl(),c) !=
-            compound_select_channel<typename Compound_Channel_Type<Pixel2T>::type>(pixel2.impl(),c) )
+    for( size_t c = 0; c < math::Compound_Channel_Count<Pixel1T>::value; ++c )
+        if( compound_select_channel<typename math::Compound_Channel_Type<Pixel1T>::type>(pixel1.impl(),c) !=
+            compound_select_channel<typename math::Compound_Channel_Type<Pixel2T>::type>(pixel2.impl(),c) )
             return false;
     return true;
 }
@@ -310,7 +310,7 @@ typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::value,
 */
 template <typename Pixel1T,
           typename Pixel2T>
-typename std::enable_if_t< Compound_Is_Compatible<Pixel1T,Pixel2T>::ptr_t, bool >
+typename std::enable_if_t< math::Compound_Is_Compatible<Pixel1T,Pixel2T>::ptr_t, bool >
    operator != ( const Pixel_Base<Pixel1T>& pixel1,
                  const Pixel_Base<Pixel2T>& pixel2 )
 {

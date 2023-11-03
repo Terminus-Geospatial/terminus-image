@@ -36,16 +36,16 @@ class Unary_In_Place_Compound_Functor
         template <typename ArgumentT>
         ArgumentT& operator()( ArgumentT& arg ) const
         {
-            return Helper<Is_Compound<ArgumentT>::value,
-                          Compound_Channel_Count<ArgumentT>::value,
+            return Helper<math::Is_Compound<ArgumentT>::value,
+                          math::Compound_Channel_Count<ArgumentT>::value,
                           ArgumentT>::apply( func, arg );
         }
 
         template <typename ArgumentT>
         const ArgumentT& operator()( const ArgumentT& arg ) const
         {
-            return Helper<Is_Compound<ArgumentT>::value,
-                          Compound_Channel_Count<ArgumentT>::value,
+            return Helper<math::Is_Compound<ArgumentT>::value,
+                          math::Compound_Channel_Count<ArgumentT>::value,
                           const ArgumentT>::apply(func,arg);
         }
 

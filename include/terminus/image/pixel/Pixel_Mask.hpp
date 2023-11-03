@@ -6,12 +6,12 @@
 #pragma once
 
 // Terminus Libraries
-#include "../types/Compound_Utilities.hpp"
-#include "../types/Fundamental_Types.hpp"
-#include "Channel_Range.hpp"
+#include <terminus/image/pixel/Channel_Range.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
+#include <terminus/math/types/Fundamental_Types.hpp>
 
-namespace tmns::image {
-
+namespace tmns {
+namespace image {
 /**
  * Wraps any pixel-type with a "valid" channel.  Math operations applied to 
  * invalid pixels will themselves return invalid.
@@ -22,7 +22,7 @@ class Pixel_Mask : public Pixel_Base<Pixel_Mask<PixelT> >
     public:
 
         /// Underlying Channel-Type
-        typedef typename Compound_Channel_Type<PixelT>::type channel_type;
+        typedef typename math::Compound_Channel_Type<PixelT>::type channel_type;
 
         /**
          * Default Constructor (Invalid by default)
@@ -160,7 +160,7 @@ class Pixel_Mask : public Pixel_Base<Pixel_Mask<PixelT> >
          */
         operator channel_type() const
         {
-            static_assert( Compound_Channel_Count<PixelT>::value == 1 );
+            static_assert( math::Compound_Channel_Count<PixelT>::value == 1 );
             return compound_select_channel<const channel_type&>( m_child, 0 );
         }
 
@@ -171,7 +171,7 @@ class Pixel_Mask : public Pixel_Base<Pixel_Mask<PixelT> >
          */
         channel_type& operator[] ( size_t i )
         {
-            if( i == Compound_Channel_Count<PixelT>::value )
+            if( i == math::Compound_Channel_Count<PixelT>::value )
             {
                 return m_valid;
             }
@@ -188,7 +188,7 @@ class Pixel_Mask : public Pixel_Base<Pixel_Mask<PixelT> >
          */
         channel_type const& operator[] ( size_t i ) const
         {
-            if( i == Compound_Channel_Count<PixelT>::value )
+            if( i == math::Compound_Channel_Count<PixelT>::value )
             {
                 return m_valid;
             }
@@ -205,7 +205,7 @@ class Pixel_Mask : public Pixel_Base<Pixel_Mask<PixelT> >
          */
         channel_type& operator() ( size_t i )
         {
-            if( i == Compound_Channel_Count<PixelT>::value )
+            if( i == math::Compound_Channel_Count<PixelT>::value )
             {
                 return m_valid;
             }
@@ -222,7 +222,7 @@ class Pixel_Mask : public Pixel_Base<Pixel_Mask<PixelT> >
          */
         channel_type const& operator() ( size_t i ) const
         {
-            if( i == Compound_Channel_Count<PixelT>::value )
+            if( i == math::Compound_Channel_Count<PixelT>::value )
             {
                 return m_valid;
             }
@@ -384,6 +384,10 @@ std::ostream& operator << ( std::ostream&             os,
     return os << "Pixel_Mask( " << pix.child() << " : " << numeric(pix.valid()) << " )";
 }
 
+} // End of namespace image
+
+namespace math {
+
 /************************************************/
 /*          Standard Compound Traits            */
 /************************************************/
@@ -392,7 +396,7 @@ std::ostream& operator << ( std::ostream&             os,
  * Get the underlying Channel-Type
 */
 template <typename PixelT>
-struct Compound_Channel_Type<Pixel_Mask<PixelT> >
+struct Compound_Channel_Type<image::Pixel_Mask<PixelT> >
 {
     typedef typename Compound_Channel_Type<PixelT>::type type;
 };
@@ -401,7 +405,7 @@ struct Compound_Channel_Type<Pixel_Mask<PixelT> >
  * Get the number of channels
 */
 template <typename PixelT>
-struct Compound_Channel_Count<Pixel_Mask<PixelT> >
+struct Compound_Channel_Count<image::Pixel_Mask<PixelT> >
 {
     static const size_t value = Compound_Channel_Count<PixelT>::value + 1;
 };
@@ -411,9 +415,9 @@ struct Compound_Channel_Count<Pixel_Mask<PixelT> >
 */
 template <typename OldPixelT,
           typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_Mask<OldPixelT>, NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_Mask<OldPixelT>, NewChannelT>
 {
-    typedef Pixel_Mask<typename Compound_Channel_Cast<OldPixelT,NewChannelT>::type> type;
+    typedef image::Pixel_Mask<typename Compound_Channel_Cast<OldPixelT,NewChannelT>::type> type;
 };
 
 /**
@@ -421,10 +425,14 @@ struct Compound_Channel_Cast<Pixel_Mask<OldPixelT>, NewChannelT>
 */
 template <typename OldPixelT,
           typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_Mask<OldPixelT>, const NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_Mask<OldPixelT>, const NewChannelT>
 {
-    typedef Pixel_Mask<typename Compound_Channel_Cast<OldPixelT,NewChannelT>::type> type;
+    typedef image::Pixel_Mask<typename Compound_Channel_Cast<OldPixelT,NewChannelT>::type> type;
 };
+
+} // End of namespace math
+
+namespace image {
 
 /**
  * Mark pixel as being masked
@@ -439,13 +447,13 @@ struct Is_Masked<Pixel_Mask<PixelT>> : public std::true_type{};
  * Compute the mean channel value of a compound Pixel_Mask type.
 */
 template <typename PixelT>
-std::enable_if_t<Is_Scalar_Or_Compound<PixelT>::value,double>
+std::enable_if_t<math::Is_Scalar_Or_Compound<PixelT>::value,double>
     mean_channel_value( const Pixel_Mask<PixelT>& arg )
 {
-    typedef typename Compound_Channel_Type<PixelT>::type channel_type;
+    typedef typename math::Compound_Channel_Type<PixelT>::type channel_type;
     if( arg.valid() )
     {
-        size_t num_channels = Compound_Channel_Count<PixelT>::value;
+        size_t num_channels = math::Compound_Channel_Count<PixelT>::value;
         double accum = 0;
         for( size_t i=0; i<num_channels-1; ++i )
         {
@@ -561,10 +569,10 @@ class Binary_Compound_Functor<FunctorT,
                   typename Argument2T>
         struct result<F(Argument1T,Argument2T)>
         {
-            typedef typename Compound_Channel_Type<Argument1T>::type arg1_type;
-            typedef typename Compound_Channel_Type<Argument2T>::type arg2_type;
+            typedef typename math::Compound_Channel_Type<Argument1T>::type arg1_type;
+            typedef typename math::Compound_Channel_Type<Argument2T>::type arg2_type;
             typedef typename std::invoke_result<FunctorT,arg1_type,arg2_type>::type result_type;
-            typedef typename Compound_Channel_Cast<Argument1T,result_type>::type type;
+            typedef typename math::Compound_Channel_Cast<Argument1T,result_type>::type type;
         };
 
         /**
@@ -577,8 +585,8 @@ class Binary_Compound_Functor<FunctorT,
                         const Argument2T& arg2 ) const
         {
             typedef typename result<Binary_Compound_Functor(Argument1T,Argument2T)>::type result_type;
-            return Helper<Is_Compound<result_type>::value,
-                          Compound_Channel_Count<result_type>::value,
+            return Helper<math::Is_Compound<result_type>::value,
+                          math::Compound_Channel_Count<result_type>::value,
                           result_type,
                           Argument1T,
                           Argument2T>::construct(func,arg1,arg2);
@@ -735,8 +743,8 @@ class Binary_In_Place_Compound_Functor<FunctorT,
             operator()( Argument1T&       arg1, 
                         const Argument2T& arg2 ) const
         {
-            return Helper<Is_Compound<Argument1T>::value,
-                          Compound_Channel_Count<Argument1T>::value,
+            return Helper<math::Is_Compound<Argument1T>::value,
+                          math::Compound_Channel_Count<Argument1T>::value,
                           Argument1T,
                           Argument2T>::apply(func,arg1,arg2);
         }
@@ -872,9 +880,9 @@ class Unary_Compound_Functor<FunctorT, Pixel_Mask<ChildPixelT> >
                   typename ArgumentT>
         struct result<F(ArgumentT)>
         {
-            typedef typename Compound_Channel_Type<ArgumentT>::type             arg_type;
+            typedef typename math::Compound_Channel_Type<ArgumentT>::type             arg_type;
             typedef typename std::invoke_result<FunctorT(arg_type)>::type       result_type;
-            typedef typename Compound_Channel_Cast<ArgumentT,result_type>::type type;
+            typedef typename math::Compound_Channel_Cast<ArgumentT,result_type>::type type;
         };
 
         /**
@@ -885,8 +893,8 @@ class Unary_Compound_Functor<FunctorT, Pixel_Mask<ChildPixelT> >
             operator()( const ArgumentT& arg ) const
         {
             typedef typename result<Unary_Compound_Functor(ArgumentT)>::type result_type;
-            return Helper<Is_Compound<result_type>::value,
-                          Compound_Channel_Count<result_type>::value,
+            return Helper<math::Is_Compound<result_type>::value,
+                          math::Compound_Channel_Count<result_type>::value,
                           result_type,
                           ArgumentT>::construct(func,arg);
         }
@@ -1039,8 +1047,8 @@ class Unary_In_Place_Compound_Functor<FunctorT, Pixel_Mask<ChildPixelT> >
         template <typename ArgumentT>
         ArgumentT& operator()( ArgumentT& arg ) const
         {
-            return Helper<Is_Compound<ArgumentT>::value,
-                          Compound_Channel_Count<ArgumentT>::value,ArgumentT>::apply(func,arg);
+            return Helper<math::Is_Compound<ArgumentT>::value,
+                          math::Compound_Channel_Count<ArgumentT>::value,ArgumentT>::apply(func,arg);
         }
 
         /**
@@ -1049,8 +1057,8 @@ class Unary_In_Place_Compound_Functor<FunctorT, Pixel_Mask<ChildPixelT> >
         template <typename ArgumentT>
         const ArgumentT& operator()( const ArgumentT& arg ) const
         {
-            return Helper<Is_Compound<ArgumentT>::value,
-                          Compound_Channel_Count<ArgumentT>::value,
+            return Helper<math::Is_Compound<ArgumentT>::value,
+                          math::Compound_Channel_Count<ArgumentT>::value,
                           const ArgumentT>::apply(func,arg);
         }
 
@@ -1126,11 +1134,11 @@ class Unary_In_Place_Compound_Functor<FunctorT, Pixel_Mask<ChildPixelT> >
  * Special Quotient Safe Functors for Pixel Mask types
  * result = arg1 / arg2, if arg2==0 then result = 0.
  */
-struct Arg_Arg_Masked_Safe_Quotient_Functor : Binary_Return_Template_Type<Quotient_Type>
+struct Arg_Arg_Masked_Safe_Quotient_Functor : math::Binary_Return_Template_Type<math::Quotient_Type>
 {
     template <typename Argument1T,
               typename Argument2T>
-    typename Quotient_Type<Pixel_Mask<Argument1T>, Pixel_Mask<Argument2T> >::type
+    typename math::Quotient_Type<Pixel_Mask<Argument1T>, Pixel_Mask<Argument2T> >::type
         operator()( const Pixel_Mask<Argument1T>& arg1,
                     const Pixel_Mask<Argument2T>& arg2 ) const
     {
@@ -1138,15 +1146,15 @@ struct Arg_Arg_Masked_Safe_Quotient_Functor : Binary_Return_Template_Type<Quotie
         { 
             if ( is_valid(arg1) && is_valid( arg2 ) ) // If both inputs are valid
             {
-                typename Quotient_Type<Pixel_Mask<Argument1T>,
-                                       Pixel_Mask<Argument2T> >::type temp;
+                typename math::Quotient_Type<Pixel_Mask<Argument1T>,
+                                             Pixel_Mask<Argument2T> >::type temp;
                 temp.validate();
                 return temp; // Valid
             }
             else
             {
-                return typename Quotient_Type<Pixel_Mask<Argument1T>,
-                                              Pixel_Mask<Argument2T> >::type(); // Invalid
+                return typename math::Quotient_Type<Pixel_Mask<Argument1T>,
+                                                    Pixel_Mask<Argument2T> >::type(); // Invalid
             }
         }
         else
@@ -1158,7 +1166,7 @@ struct Arg_Arg_Masked_Safe_Quotient_Functor : Binary_Return_Template_Type<Quotie
 
 /// result = val / arg, if arg==0 then result = 0.
 template <typename ValueT>
-struct Val_Arg_Masked_Safe_Quotient_Functor : Unary_Return_Binary_Template_Bind_1st<Quotient_Type,ValueT>
+struct Val_Arg_Masked_Safe_Quotient_Functor : math::Unary_Return_Binary_Template_Bind_1st<math::Quotient_Type,ValueT>
 {
     public:
 
@@ -1168,7 +1176,7 @@ struct Val_Arg_Masked_Safe_Quotient_Functor : Unary_Return_Binary_Template_Bind_
       Val_Arg_Masked_Safe_Quotient_Functor( const ValueT& value ) : m_value( value ){}
 
       template <typename ArgumentT>
-      typename Quotient_Type<ValueT, Pixel_Mask<ArgumentT> >::type
+      typename math::Quotient_Type<ValueT, Pixel_Mask<ArgumentT> >::type
           operator()( const Pixel_Mask<ArgumentT>& arg ) const
       {
           if( arg.child() == ArgumentT() )
@@ -1176,14 +1184,14 @@ struct Val_Arg_Masked_Safe_Quotient_Functor : Unary_Return_Binary_Template_Bind_
               // If both inputs are valid
               if( is_valid( arg ) && is_valid( m_value ) )
               { 
-                  typename Quotient_Type<ValueT,Pixel_Mask<ArgumentT> >::type temp;
+                  typename math::Quotient_Type<ValueT,Pixel_Mask<ArgumentT> >::type temp;
                   validate( temp );
                   return temp;
               }
               else
               {
                   //Invalid
-                  return typename Quotient_Type<ValueT,Pixel_Mask<ArgumentT> >::type();
+                  return typename math::Quotient_Type<ValueT,Pixel_Mask<ArgumentT> >::type();
               }
           }
           else
@@ -1198,7 +1206,7 @@ struct Val_Arg_Masked_Safe_Quotient_Functor : Unary_Return_Binary_Template_Bind_
 };
 
 /// arg1 = arg1 / arg2, if arg2==0 then arg1 = 0.
-struct Arg_Arg_In_Place_Masked_Safe_Quotient_Functor : Binary_Return_1st_Type
+struct Arg_Arg_In_Place_Masked_Safe_Quotient_Functor : math::Binary_Return_1st_Type
 {
     template <typename Argument1T,
               typename Argument2T>
@@ -1231,10 +1239,10 @@ struct Arg_Arg_In_Place_Masked_Safe_Quotient_Functor : Binary_Return_1st_Type
  */
 template <typename PixelT,
           typename ScalarT>
-    typename std::enable_if_t<std::conjunction_v<std::conjunction<typename Is_Scalar<ScalarT>::value,
+    typename std::enable_if_t<std::conjunction_v<std::conjunction<typename math::Is_Scalar<ScalarT>::value,
                                                                     Is_Masked<PixelT>>,
                                                  typename std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT>>>::value>,
-                              typename Compound_Result<Arg_Val_Sum_Functor<ScalarT>,PixelT>::type>
+                              typename Compound_Result<math::Arg_Val_Sum_Functor<ScalarT>,PixelT>::type>
     operator + ( const Pixel_Base<PixelT>& pixel,
                  Pixel_Mask<ScalarT>       masked_scalar )
 {
@@ -1242,12 +1250,12 @@ template <typename PixelT,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply( Arg_Val_Sum_Functor<ScalarT>( masked_scalar.child() ),
+        return compound_apply( math::Arg_Val_Sum_Functor<ScalarT>( masked_scalar.child() ),
                                px );
     }
     else
     {
-        return compound_apply( Arg_Val_Sum_Functor<ScalarT>( masked_scalar.child()),
+        return compound_apply( math::Arg_Val_Sum_Functor<ScalarT>( masked_scalar.child()),
                                                              pixel.impl() );
     }
 }
@@ -1257,10 +1265,10 @@ template <typename PixelT,
 */
 template <typename PixelT,
           typename ScalarT>
-    typename std::enable_if_t<std::conjunction_v<std::conjunction<Is_Scalar<ScalarT>,
+    typename std::enable_if_t<std::conjunction_v<std::conjunction<math::Is_Scalar<ScalarT>,
                                                                   Is_Masked<PixelT>>,
                                                std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT>>>>,
-                              typename Compound_Result<Val_Arg_Sum_Functor<ScalarT>,PixelT>::type >
+                              typename Compound_Result<math::Val_Arg_Sum_Functor<ScalarT>,PixelT>::type >
   operator + ( Pixel_Mask<ScalarT>       masked_scalar,
                const Pixel_Base<PixelT>& pixel )
 {
@@ -1268,7 +1276,7 @@ template <typename PixelT,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply( Val_Arg_Sum_Functor<ScalarT>( masked_scalar.child() ), px );
+        return compound_apply( math::Val_Arg_Sum_Functor<ScalarT>( masked_scalar.child() ), px );
     }
     else
     { 
@@ -1282,7 +1290,7 @@ template <typename PixelT,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
+typename std::enable_if_t<std::conjunction_v<typename math::Is_Scalar<ScalarT>::value,
                                              Is_Masked<PixelT> >,
                  PixelT&>::type
     operator += ( Pixel_Base<PixelT>& pixel,
@@ -1292,17 +1300,17 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
     {
         pixel.impl().invalidate();
     }
-    return compound_apply_in_place( Arg_Val_In_Place_Sum_Functor<ScalarT>( masked_scalar.child()),
-                                                                           pixel.impl() );
+    return compound_apply_in_place( math::Arg_Val_In_Place_Sum_Functor<ScalarT>( masked_scalar.child()),
+                                                                                 pixel.impl() );
 }
 /**
  * Argument Value Subtraction
 */
  template <typename PixelT,
            typename ScalarT>
-    typename std::enable_if<std::conjunction_v<std::conjunction<typename Is_Scalar<ScalarT>::value,Is_Masked<PixelT> >,
+    typename std::enable_if<std::conjunction_v<std::conjunction<typename math::Is_Scalar<ScalarT>::value,Is_Masked<PixelT> >,
                                std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT> > > >,
-                               typename Compound_Result<Arg_Val_Difference_Functor<ScalarT>,PixelT>::type >
+                               typename Compound_Result<math::Arg_Val_Difference_Functor<ScalarT>,PixelT>::type >
   operator * ( const Pixel_Base<PixelT>& pixel,
                Pixel_Mask<ScalarT>       masked_scalar )
 {
@@ -1310,12 +1318,12 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply( Arg_Val_Difference_Functor<ScalarT>( masked_scalar.child() ), px );
+        return compound_apply( math::Arg_Val_Difference_Functor<ScalarT>( masked_scalar.child() ), px );
     }
     else
     {
-        return compound_apply( Arg_Val_Difference_Functor<ScalarT>( masked_scalar.child()),
-                                                                    pixel.impl() );
+        return compound_apply( math::Arg_Val_Difference_Functor<ScalarT>( masked_scalar.child()),
+                                                                          pixel.impl() );
     }
 }
 
@@ -1324,10 +1332,10 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-    typename std::enable_if_t<std::conjunction_v<std::conjunction<typename Is_Scalar<ScalarT>::value,
+    typename std::enable_if_t<std::conjunction_v<std::conjunction<typename math::Is_Scalar<ScalarT>::value,
                                                                   Is_Masked<PixelT>>,
                               std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT> > > >,
-                              typename Compound_Result<Val_Arg_Difference_Functor<ScalarT>,PixelT>::type >
+                              typename Compound_Result<math::Val_Arg_Difference_Functor<ScalarT>,PixelT>::type >
   operator - ( Pixel_Mask<ScalarT>       masked_scalar,
                const Pixel_Base<PixelT>& pixel )
 {
@@ -1335,12 +1343,12 @@ template <typename PixelT,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply( Val_Arg_Difference_Functor<ScalarT>( masked_scalar.child() ), px );
+        return compound_apply( math::Val_Arg_Difference_Functor<ScalarT>( masked_scalar.child() ), px );
     }
     else
     { 
-        return compound_apply( Val_Arg_Difference_Functor<ScalarT>( masked_scalar.child() ),
-                                                                    pixel.impl() );
+        return compound_apply( math::Val_Arg_Difference_Functor<ScalarT>( masked_scalar.child() ),
+                                                                          pixel.impl() );
     }
 }
 
@@ -1349,7 +1357,7 @@ template <typename PixelT,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
+typename std::enable_if_t<std::conjunction_v<typename math::Is_Scalar<ScalarT>::value,
                                              Is_Masked<PixelT> >,
                  PixelT&>
     operator -= ( Pixel_Base<PixelT>& pixel,
@@ -1359,8 +1367,8 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
     {
         pixel.impl().invalidate();
     }
-    return compound_apply_in_place( Arg_Val_In_Place_Difference_Functor<ScalarT>( masked_scalar.child()),
-                                                                                  pixel.impl() );
+    return compound_apply_in_place( math::Arg_Val_In_Place_Difference_Functor<ScalarT>( masked_scalar.child()),
+                                                                                        pixel.impl() );
 }
 
 /**
@@ -1368,10 +1376,10 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
 */
  template <typename PixelT,
            typename ScalarT>
-    typename std::enable_if<std::conjunction_v<std::conjunction<typename Is_Scalar<ScalarT>::value,
+    typename std::enable_if<std::conjunction_v<std::conjunction<typename math::Is_Scalar<ScalarT>::value,
                                                                 Is_Masked<PixelT> >,
                                                std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT>>>>,
-                            typename Compound_Result<Arg_Val_Product_Functor<ScalarT>,PixelT>::type >
+                            typename Compound_Result<math::Arg_Val_Product_Functor<ScalarT>,PixelT>::type >
   operator * ( const Pixel_Base<PixelT>& pixel,
                Pixel_Mask<ScalarT>       masked_scalar )
 {
@@ -1379,12 +1387,12 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply( Arg_Val_Product_Functor<ScalarT>( masked_scalar.child() ), px );
+        return compound_apply( math::Arg_Val_Product_Functor<ScalarT>( masked_scalar.child() ), px );
     }
     else
     {
-        return compound_apply( Arg_Val_Product_Functor<ScalarT>( masked_scalar.child()),
-                                                                 pixel.impl() );
+        return compound_apply( math::Arg_Val_Product_Functor<ScalarT>( masked_scalar.child()),
+                                                                       pixel.impl() );
     }
 }
 
@@ -1393,11 +1401,11 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-    typename std::enable_if_t< std::conjunction_v<std::conjunction<Is_Scalar<ScalarT>,
+    typename std::enable_if_t< std::conjunction_v<std::conjunction<math::Is_Scalar<ScalarT>,
                                                                    Is_Masked<PixelT> >,
                                std::negation<std::is_same<PixelT,
                                                           Pixel_Mask<ScalarT> > > >,
-                               typename Compound_Result<Val_Arg_Product_Functor<ScalarT>,PixelT>::type >
+                               typename Compound_Result<math::Val_Arg_Product_Functor<ScalarT>,PixelT>::type >
   operator * ( Pixel_Mask<ScalarT>       masked_scalar,
                const Pixel_Base<PixelT>& pixel )
 {
@@ -1405,12 +1413,12 @@ template <typename PixelT,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply(Val_Arg_Product_Functor<ScalarT>( masked_scalar.child()), px );
+        return compound_apply( math::Val_Arg_Product_Functor<ScalarT>( masked_scalar.child()), px );
     }
     else
     { 
-        return compound_apply( Val_Arg_Product_Functor<ScalarT>( masked_scalar.child() ),
-                                                                 pixel.impl() );
+        return compound_apply( math::Val_Arg_Product_Functor<ScalarT>( masked_scalar.child() ),
+                                                                       pixel.impl() );
     }
 }
 
@@ -1420,7 +1428,7 @@ template <typename PixelT,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
+typename std::enable_if_t<std::conjunction_v<typename math::Is_Scalar<ScalarT>::value,
                                              Is_Masked<PixelT> >,
                           PixelT&>
     operator *= ( Pixel_Base<PixelT>& pixel,
@@ -1430,8 +1438,8 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
     {
         pixel.impl().invalidate();
     }
-    return compound_apply_in_place( Arg_Val_In_Place_Product_Functor<ScalarT>( masked_scalar.child()),
-                                                                               pixel.impl() );
+    return compound_apply_in_place( math::Arg_Val_In_Place_Product_Functor<ScalarT>( masked_scalar.child()),
+                                                                                     pixel.impl() );
 }
 
 /**
@@ -1439,10 +1447,10 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
 */
 template <typename PixelT,
           typename ScalarT>
-    typename std::enable_if<std::conjunction_v<std::conjunction<typename Is_Scalar<ScalarT>::value,
+    typename std::enable_if<std::conjunction_v<std::conjunction<typename math::Is_Scalar<ScalarT>::value,
                                                                 Is_Masked<PixelT> >,
                                              std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT> > > >,
-                               typename Compound_Result<Arg_Val_Quotient_Functor<ScalarT>,PixelT>::type >
+                               typename Compound_Result<math::Arg_Val_Quotient_Functor<ScalarT>,PixelT>::type >
     operator / ( const Pixel_Base<PixelT>& pixel,
                  Pixel_Mask<ScalarT>       masked_scalar )
 {
@@ -1450,7 +1458,7 @@ template <typename PixelT,
     {
         PixelT px = pixel.impl();
         px.invalidate();
-        return compound_apply(Arg_Val_Quotient_Functor<ScalarT>(masked_scalar.child()), px );
+        return compound_apply( math::Arg_Val_Quotient_Functor<ScalarT>(masked_scalar.child()), px );
     }
     else
     {
@@ -1464,10 +1472,10 @@ template <typename PixelT,
 */
 template <typename PixelT,
           typename ScalarT>
-    typename std::enable_if_t<std::conjunction_v<std::conjunction<typename Is_Scalar<ScalarT>::value,
+    typename std::enable_if_t<std::conjunction_v<std::conjunction<typename math::Is_Scalar<ScalarT>::value,
                                                                   Is_Masked<PixelT>>,
                                std::negation<std::is_same<PixelT,Pixel_Mask<ScalarT>> > >,
-                               typename Compound_Result<Val_Arg_Quotient_Functor<ScalarT>,PixelT>::type >
+                               typename Compound_Result<math::Val_Arg_Quotient_Functor<ScalarT>,PixelT>::type >
   operator / ( Pixel_Mask<ScalarT>       masked_scalar,
                const Pixel_Base<PixelT>& pixel )
 {
@@ -1490,7 +1498,7 @@ template <typename PixelT,
 */
 template <typename PixelT,
           typename ScalarT>
-typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
+typename std::enable_if_t<std::conjunction_v<typename math::Is_Scalar<ScalarT>::value,
                                              Is_Masked<PixelT> >,
                           PixelT&>
     operator /=( Pixel_Base<PixelT>& pixel,
@@ -1504,4 +1512,5 @@ typename std::enable_if_t<std::conjunction_v<typename Is_Scalar<ScalarT>::value,
                                                                                 pixel.impl() );
 }
 
-} // End of tmns::image namespace
+} // End of image namespace
+} // End of tmns namespace

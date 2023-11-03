@@ -24,7 +24,7 @@ ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( c
             {
                 return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND,
                                       "Failed to find new write driver: ",
-                                      ADD_CURRENT_LOC(), "MSG: ", new_driver.error().message() );
+                                      "MSG: ", new_driver.error().message() );
             }
             auto driver_ptr = std::dynamic_pointer_cast<Image_Resource_Disk>( new_driver.assume_value() );
             return outcome::ok<Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );
@@ -55,7 +55,7 @@ ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_write_driver( 
             {
                 return outcome::fail( core::error::ErrorCode::DRIVER_NOT_FOUND,
                                       "Failed to find new write driver: ",
-                                      ADD_CURRENT_LOC(), "MSG: ", new_driver.error().message() );
+                                      "MSG: ", new_driver.error().message() );
             }
             auto driver_ptr = std::dynamic_pointer_cast<Image_Resource_Disk>( new_driver.assume_value() );
             return outcome::ok<Image_Resource_Disk::ptr_t>( std::move( driver_ptr ) );

@@ -32,10 +32,10 @@ ImageResult<void> view_image( const std::string&          window_name,
                               const Image_Memory<PixelT>& image,
                               int                         window_sleep = 0,
                               bool                        draw_interest_points = false,
-                              typename Compound_Channel_Cast<PixelT,uint8_t>::type  draw_color = Channel_Range<typename Compound_Channel_Type<typename Compound_Channel_Cast<PixelT,uint8_t>::type>::type>::max() )
+                              typename math::Compound_Channel_Cast<PixelT,uint8_t>::type  draw_color = Channel_Range<typename math::Compound_Channel_Type<typename math::Compound_Channel_Cast<PixelT,uint8_t>::type>::type>::max() )
 {
     // We need all images to be uint8
-    typedef typename Compound_Channel_Cast<PixelT,uint8_t>::type DestPixelT;
+    typedef typename math::Compound_Channel_Cast<PixelT,uint8_t>::type DestPixelT;
     Image_Memory<DestPixelT> temp = ops::pixel_cast_rescale<DestPixelT>( image );
 
     // If we are drawing interest points, do it here
@@ -81,12 +81,12 @@ ImageResult<void> view_image( const std::string&  window_name,
                               const ImageT&       image,
                               int                 window_sleep = 0,
                               bool                draw_interest_points = false,
-                              typename Compound_Channel_Cast<typename ImageT::pixel_type,
-                                                             uint8_t>::type  draw_color = Channel_Range<typename Compound_Channel_Type<typename Compound_Channel_Cast<typename ImageT::pixel_type,uint8_t>::type>::type>::max() )
+                              typename math::Compound_Channel_Cast<typename ImageT::pixel_type,
+                                                                   uint8_t>::type  draw_color = Channel_Range<typename math::Compound_Channel_Type<typename math::Compound_Channel_Cast<typename ImageT::pixel_type,uint8_t>::type>::type>::max() )
 {
     tmns::log::info( ADD_CURRENT_LOC(), "Input Image Traits: ", image.format().to_string() );
     // Convert to Image_Memory
-    Image_Memory<typename Compound_Channel_Cast<typename ImageT::pixel_type,uint8_t>::type> temp;
+    Image_Memory<typename math::Compound_Channel_Cast<typename ImageT::pixel_type,uint8_t>::type> temp;
     temp = image;
     return view_image( window_name, 
                        temp,

@@ -6,11 +6,12 @@
 #pragma once
 
 // Terminus Libraries
-#include "../types/Functors.hpp"
-#include "Pixel_Gray.hpp"
-#include "Pixel_RGB.hpp"
-#include "Pixel_RGBA.hpp"
-#include "Channel_Cast_Utilities.hpp"
+#include <terminus/image/pixel/Pixel_Gray.hpp>
+#include <terminus/image/pixel/Pixel_GrayA.hpp>
+#include <terminus/image/pixel/Pixel_RGB.hpp>
+#include <terminus/image/pixel/Pixel_RGBA.hpp>
+#include <terminus/image/pixel/Channel_Cast_Utilities.hpp>
+#include <terminus/math/types/Functors.hpp>
 
 namespace tmns::image::pix {
 
@@ -18,20 +19,20 @@ namespace tmns::image::pix {
  * Method to fetch the underlying channel type from a pixel
 */
 template <typename PixelT>
-struct Pixel_Channel_Type : Compound_Channel_Type<PixelT>{};
+struct Pixel_Channel_Type : math::Compound_Channel_Type<PixelT>{};
 
 /**
  * Method to get the number of channels
 */
 template <typename PixelT>
-struct Pixel_Channel_Count : Compound_Channel_Count<PixelT>{};
+struct Pixel_Channel_Count : math::Compound_Channel_Count<PixelT>{};
 
 /**
  * Method to cast the Channel-Type
 */
 template <typename PixelT,
           typename ChannelT>
-struct Pixel_Channel_Cast : Compound_Channel_Cast<PixelT,ChannelT> {};
+struct Pixel_Channel_Cast : math::Compound_Channel_Cast<PixelT,ChannelT> {};
 
 /**
  * Check if Pixel-Type has an alpha channel
@@ -109,14 +110,14 @@ struct Pixel_Cast_Helper
 */
 template <typename DestT,
           typename SourceT>
-typename std::enable_if_t<Is_Scalar_Or_Compound<SourceT>::value, DestT>
+typename std::enable_if_t<math::Is_Scalar_Or_Compound<SourceT>::value, DestT>
     pixel_cast( SourceT src )
 {
     // Get the source channel type
-    typedef typename Compound_Channel_Type<SourceT>::type SourceChannelT;
+    typedef typename math::Compound_Channel_Type<SourceT>::type SourceChannelT;
 
     // Destination channel type
-    typedef typename Compound_Channel_Type<DestT>::type   DestChannelT;
+    typedef typename math::Compound_Channel_Type<DestT>::type   DestChannelT;
 
     // Check if they are the same
     typedef typename std::is_same<SourceChannelT,DestChannelT>::type IsSameT;
@@ -133,12 +134,12 @@ typename std::enable_if_t<Is_Scalar_Or_Compound<SourceT>::value, DestT>
 */
 template <typename DestT,
           typename SourceT>
-typename std::enable_if_t< Is_Scalar_Or_Compound<SourceT>::value, DestT >
+typename std::enable_if_t< math::Is_Scalar_Or_Compound<SourceT>::value, DestT >
    pixel_cast_rescale( SourceT src )
 {
     // Get source and destination channel types
-    typedef typename Compound_Channel_Type<SourceT>::type SourceChannelT;
-    typedef typename Compound_Channel_Type<DestT>::type   DestChannelT;
+    typedef typename math::Compound_Channel_Type<SourceT>::type SourceChannelT;
+    typedef typename math::Compound_Channel_Type<DestT>::type   DestChannelT;
 
     // Check if pixel types are the same
     typedef typename std::is_same<SourceChannelT,DestChannelT>::type IsSameT;
@@ -159,7 +160,7 @@ struct Pixel_Cast_Helper<false, false, false>
     template <class DestT, class SrcT>
     static DestT convert( SrcT src )
     {
-        typedef typename Compound_Channel_Type<DestT>::type DestChannelT;
+        typedef typename math::Compound_Channel_Type<DestT>::type DestChannelT;
         return pixel_cast<DestT>( channel_cast<DestChannelT>( src ) );
     }
 };
@@ -174,11 +175,11 @@ struct Pixel_Cast_Helper<false, true, false>
     static DestT convert( SrcT src )
     {
         // Get the source and destination types
-        typedef typename Compound_Channel_Type<SrcT>::type  SourceChannelT;
-        typedef typename Compound_Channel_Type<DestT>::type DestChannelT;
+        typedef typename math::Compound_Channel_Type<SrcT>::type  SourceChannelT;
+        typedef typename math::Compound_Channel_Type<DestT>::type DestChannelT;
 
         // Setup destination pixel-type
-        typedef typename Compound_Channel_Cast<DestT,SourceChannelT>::type DestPixelT;
+        typedef typename math::Compound_Channel_Cast<DestT,SourceChannelT>::type DestPixelT;
 
         // Execute a channel cast
         return channel_cast<DestChannelT>( pixel_cast<DestPixelT>( src ) );
@@ -195,7 +196,7 @@ struct Pixel_Cast_Helper<false, false, true>
     static DestT convert( SrcT src )
     {
         // Determine destination channel-type
-        typedef typename Compound_Channel_Type<DestT>::type DestChannelT;
+        typedef typename math::Compound_Channel_Type<DestT>::type DestChannelT;
 
         // Cast the pixel after a channel-cast (with-rescale)
         return pixel_cast<DestT>( channel_cast_rescale<DestChannelT>( src ) );
@@ -212,11 +213,11 @@ struct Pixel_Cast_Helper<false, true, true>
     static DestT convert( SrcT src )
     {
         // Figure out source and destination channel-types
-        typedef typename Compound_Channel_Type<SrcT>::type SourceChannelT;
-        typedef typename Compound_Channel_Type<DestT>::type DestChannelT;
+        typedef typename math::Compound_Channel_Type<SrcT>::type SourceChannelT;
+        typedef typename math::Compound_Channel_Type<DestT>::type DestChannelT;
 
         // Solve destination pixel-type
-        typedef typename Compound_Channel_Cast<DestT,SourceChannelT>::type DestPixelT;
+        typedef typename math::Compound_Channel_Cast<DestT,SourceChannelT>::type DestPixelT;
 
         // Perform pixel cast, followed by channel-cast
         return channel_cast_rescale<DestChannelT>( pixel_cast<DestPixelT>( src ) );
@@ -232,7 +233,7 @@ struct Pixel_Cast_Helper<false, true, true>
  * Function object designed to convert pixel types
 */
 template <typename PixelT>
-struct Pixel_Cast_Functor : private Return_Fixed_Type<PixelT>
+struct Pixel_Cast_Functor : private math::Return_Fixed_Type<PixelT>
 {
     /**
      * Cast the pixel
@@ -250,7 +251,7 @@ struct Pixel_Cast_Functor : private Return_Fixed_Type<PixelT>
  * rescaling
 */
 template <typename PixelT>
-struct Pixel_Cast_Rescale_Functor : private Return_Fixed_Type<PixelT>
+struct Pixel_Cast_Rescale_Functor : private math::Return_Fixed_Type<PixelT>
 {
     public:
 

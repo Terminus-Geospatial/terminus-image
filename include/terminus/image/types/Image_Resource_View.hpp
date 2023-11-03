@@ -7,18 +7,16 @@
 
 // Terminus Libraries
 #include <terminus/core/concurrency/Mutex.hpp>
+#include <terminus/image/io/read_image.hpp>
+#include <terminus/image/operations/block/Block_Rasterize_View.hpp>
+#include <terminus/image/operations/crop_image.hpp>
+#include <terminus/image/pixel/Pixel_Accessor_Loose.hpp>
+#include <terminus/image/pixel/Pixel_Format_Enum.hpp>
+#include <terminus/image/pixel/Pixel_Format_ID.hpp>
+#include <terminus/image/types/Image_Memory.hpp>
+#include <terminus/image/types/Image_Resource_Base.hpp>
+#include <terminus/math/types/Fundamental_Types.hpp>
 #include <terminus/outcome/Result.hpp>
-
-// Terminus Image Libraries
-#include "../io/read_image.hpp"
-#include "../operations/block/Block_Rasterize_View.hpp"
-#include "../operations/crop_image.hpp"
-#include "../pixel/Pixel_Accessor_Loose.hpp"
-#include "../pixel/Pixel_Format_Enum.hpp"
-#include "../pixel/Pixel_Format_ID.hpp"
-#include "Fundamental_Types.hpp"
-#include "Image_Memory.hpp"
-#include "Image_Resource_Base.hpp"
 
 namespace tmns::image {
 
@@ -156,7 +154,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         {
             // If the user has requested a multi-channel pixel type, but the
             // file is a multi-plane, scalar-pixel file, we force a single-plane interpretation.
-            if( Compound_Channel_Count<PixelT>::value > 1 &&
+            if( math::Compound_Channel_Count<PixelT>::value > 1 &&
                 m_resource->pixel_type() == Pixel_Format_Enum::SCALAR )
             {
                 m_planes = 1;
@@ -165,7 +163,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
             // On the other hand, the user has requested a scalar pixel type
             // but the file has a multi-channel pixel type, then we force a
             // multi-plane interpretation.
-            if( Is_Scalar<PixelT>::value    &&
+            if( math::Is_Scalar<PixelT>::value    &&
                 m_resource->channels() >= 1 &&
                 m_resource->planes()   == 1 )
             {

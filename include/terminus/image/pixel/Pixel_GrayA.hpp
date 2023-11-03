@@ -6,10 +6,11 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../types/Compound_Types.hpp"
-#include "Pixel_Base.hpp"
+#include <terminus/image/pixel/Pixel_Base.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
 
-namespace tmns::image {
+namespace tmns {
+namespace image {
 
 /**
  * Grayscale w/ Alpha Pixeltype
@@ -57,34 +58,41 @@ class Pixel_GrayA : public Pixel_Base<Pixel_GrayA<ChannelT>>
 
 }; // End of Pixe_GrayA Class
 
+} // End of image namespace
+
+namespace math {
+
 /**
  * Per Fundamental_Types.hpp, we need to register our
  * compound types.  See header for details
 */
 template <typename ChannelT>
-struct Compound_Channel_Type<Pixel_GrayA<ChannelT> >
+struct Compound_Channel_Type<image::Pixel_GrayA<ChannelT> >
 {
     typedef ChannelT type;
 }; // End of Compound_Channel_Type<> Struct
 
 template <typename ChannelT>
-struct Compound_Channel_Count<Pixel_GrayA<ChannelT>>
+struct Compound_Channel_Count<image::Pixel_GrayA<ChannelT>>
 {
-    static const size_t value = Pixel_Gray<ChannelT>::NUM_CHANNELS;
+    static const size_t value = image::Pixel_Gray<ChannelT>::NUM_CHANNELS;
 }; // End of Compound_Channel_Count<> Struct
 
 template <typename OldChannelT, typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_GrayA<OldChannelT>, NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_GrayA<OldChannelT>, NewChannelT>
 {
-    typedef Pixel_Gray<NewChannelT> type;
+    typedef image::Pixel_Gray<NewChannelT> type;
 }; // End of Compound_Channel_Cast<> structure
 
 template <typename OldChannelT, typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_GrayA<OldChannelT>, const NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_GrayA<OldChannelT>, const NewChannelT>
 {
-    typedef const Pixel_Gray<NewChannelT> type;
+    typedef const image::Pixel_Gray<NewChannelT> type;
 }; // End of Compound_Channel_Cast<> structure
 
+} // End of math namespace
+
+namespace image {
 
 /// Aliases for easier typing
 using PixelGrayA_u8  = Pixel_GrayA<uint8_t>;
@@ -95,4 +103,5 @@ using PixelGrayA_u64 = Pixel_GrayA<uint64_t>;
 using PixelGrayA_f32  = Pixel_GrayA<float>;
 using PixelGrayA_f64  = Pixel_GrayA<double>;
 
-} // End of tmns::image namespace
+} // End of image namespace
+} // End of tmns namespace

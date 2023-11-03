@@ -37,8 +37,8 @@ class Binary_In_Place_Compound_Functor
             operator()( Argument1T&       arg1,
                         const Argument2T& arg2 ) const
         {
-            return Helper<Is_Compound<Argument1T>::value,
-                          Compound_Channel_Count<Argument1T>::value,
+            return Helper<math::Is_Compound<Argument1T>::value,
+                          math::Compound_Channel_Count<Argument1T>::value,
                           Argument1T,
                           Argument2T>::apply( func, arg1, arg2 );
         }

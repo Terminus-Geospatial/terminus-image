@@ -6,14 +6,14 @@
 #pragma once
 
 // Terminus Libraries
-#include "../types/Compound_Types.hpp"
-#include "../types/Compound_Utilities.hpp"
-#include "../types/Functors.hpp"
-#include "../types/compounds/Binary_Compound_Functor.hpp"
-#include "../types/compounds/Binary_In_Place_Compound_Functor.hpp"
-#include "../types/compounds/Unary_Compound_Functor.hpp"
-#include "../types/compounds/Unary_In_Place_Compound_Functor.hpp"
-#include "Channel_Range.hpp"
+#include <terminus/image/pixel/Channel_Range.hpp>
+#include <terminus/image/types/Compound_Utilities.hpp>
+#include <terminus/image/types/compounds/Binary_Compound_Functor.hpp>
+#include <terminus/image/types/compounds/Binary_In_Place_Compound_Functor.hpp>
+#include <terminus/image/types/compounds/Unary_Compound_Functor.hpp>
+#include <terminus/image/types/compounds/Unary_In_Place_Compound_Functor.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
+#include <terminus/math/types/Functors.hpp>
 
 // C++ Libraries
 #include <numeric>
@@ -30,7 +30,7 @@ namespace tmns::image::pix {
  * Base-type for Channel-Casting.  Does standard (type) casting operator
 */
 template <class DestT>
-class Channel_Cast_Functor : public Return_Fixed_Type<DestT>
+class Channel_Cast_Functor : public math::Return_Fixed_Type<DestT>
 {
     public:
 
@@ -45,7 +45,7 @@ class Channel_Cast_Functor : public Return_Fixed_Type<DestT>
  * Base-type Channel-Cast Functor (w/ rescaling)
 */
 template <class DestT>
-class Channel_Cast_Rescale_Functor : public Return_Fixed_Type<DestT>
+class Channel_Cast_Rescale_Functor : public math::Return_Fixed_Type<DestT>
 {
     public:
 
@@ -88,7 +88,7 @@ class Channel_Cast_Rescale_Functor : public Return_Fixed_Type<DestT>
  * Channel-Cast Functor which does additional Clamping
 */
 template <class DestT>
-class Channel_Cast_Clamp_Functor : public Return_Fixed_Type<DestT>
+class Channel_Cast_Clamp_Functor : public math::Return_Fixed_Type<DestT>
 {
     public:
 
@@ -128,7 +128,7 @@ class Channel_Cast_Clamp_Functor : public Return_Fixed_Type<DestT>
  * Channel-Cast functor which rounds
 */
 template <class DestT>
-class Channel_Cast_Round_Functor : public Return_Fixed_Type<DestT>
+class Channel_Cast_Round_Functor : public math::Return_Fixed_Type<DestT>
 {
     public:
 
@@ -148,7 +148,7 @@ class Channel_Cast_Round_Functor : public Return_Fixed_Type<DestT>
  * Channel-cast functor with rounding and clamping applied
 */
 template <class DestT>
-class Channel_Cast_Round_Clamp_Functor : public Return_Fixed_Type<DestT>
+class Channel_Cast_Round_Clamp_Functor : public math::Return_Fixed_Type<DestT>
 {
   public:
 
@@ -247,8 +247,8 @@ const ArgumentT& compound_apply_in_place( const FunctorT&  func,
  * Base instance of channel-cast w/out rescaling
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if_t< Is_Scalar_Or_Compound<PixelT>::value,
-                           typename Compound_Channel_Cast<PixelT, ChannelT>::type >
+typename std::enable_if_t< math::Is_Scalar_Or_Compound<PixelT>::value,
+                           typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >
   channel_cast( PixelT pixel )
 {
     return compound_apply( Channel_Cast_Functor<ChannelT>(), pixel );
@@ -258,8 +258,8 @@ typename std::enable_if_t< Is_Scalar_Or_Compound<PixelT>::value,
  * Base instance of channel-cast w/ rescaling
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if_t< Is_Scalar_Or_Compound<PixelT>::value,
-                         typename Compound_Channel_Cast<PixelT, ChannelT>::type >
+typename std::enable_if_t< math::Is_Scalar_Or_Compound<PixelT>::value,
+                         typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >
   channel_cast_rescale( PixelT pixel )
 {
     return compound_apply( Channel_Cast_Rescale_Functor<ChannelT>(), pixel );
@@ -269,8 +269,8 @@ typename std::enable_if_t< Is_Scalar_Or_Compound<PixelT>::value,
  * Channel-Cast operation, without rescaling, which does a clamp
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if_t< Is_Scalar_Or_Compound<PixelT>::value,
-                        typename Compound_Channel_Cast<PixelT, ChannelT>::type >
+typename std::enable_if_t< math::Is_Scalar_Or_Compound<PixelT>::value,
+                        typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >
    channel_cast_clamp( PixelT pixel )
 {
     return compound_apply( Channel_Cast_Clamp_Functor<ChannelT>(), pixel );
@@ -280,8 +280,8 @@ typename std::enable_if_t< Is_Scalar_Or_Compound<PixelT>::value,
  * Channel-Cast operation with clamping, if integer type
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
-                         typename Compound_Channel_Cast<PixelT, ChannelT>::type >::type
+typename std::enable_if< math::Is_Scalar_Or_Compound<PixelT>::value,
+                         typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >::type
   channel_cast_clamp_if_int( PixelT pixel )
 {
     // if floating point, use normal cast functor, otherwise, clamp
@@ -295,8 +295,8 @@ typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
  * Channel-Cast with rounding
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
-                         typename Compound_Channel_Cast<PixelT, ChannelT>::type >::type
+typename std::enable_if< math::Is_Scalar_Or_Compound<PixelT>::value,
+                         typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >::type
    channel_cast_round( PixelT pixel )
 {
     return compound_apply( Channel_Cast_Round_Functor<ChannelT>(), pixel );
@@ -306,8 +306,8 @@ typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
  * Channel cast with round for int types
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
-                         typename Compound_Channel_Cast<PixelT, ChannelT>::type >::type
+typename std::enable_if< math::Is_Scalar_Or_Compound<PixelT>::value,
+                         typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >::type
     channel_cast_round_if_int( PixelT pixel )
 {
     typedef typename std::conditional<std::is_floating_point<ChannelT>::value,
@@ -320,8 +320,8 @@ typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
  * General-Purpose Round and Clamp Functor
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
-                            typename Compound_Channel_Cast<PixelT, ChannelT>::type >::type
+typename std::enable_if< math::Is_Scalar_Or_Compound<PixelT>::value,
+                            typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >::type
    channel_cast_round_and_clamp( PixelT pixel )
 {
     return compound_apply( Channel_Cast_Round_Clamp_Functor<ChannelT>(), pixel );
@@ -331,8 +331,8 @@ typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
  * Cast the channel by rounding and clamping if input is float and dest is integer
 */
 template <class ChannelT, class PixelT>
-typename std::enable_if< Is_Scalar_Or_Compound<PixelT>::value,
-                                typename Compound_Channel_Cast<PixelT, ChannelT>::type >::type
+typename std::enable_if< math::Is_Scalar_Or_Compound<PixelT>::value,
+                                typename math::Compound_Channel_Cast<PixelT, ChannelT>::type >::type
   channel_cast_round_and_clamp_if_int( PixelT pixel )
 {
     // If destination is float, do normal casting, if integer, do the round and clamp functor

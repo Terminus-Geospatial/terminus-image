@@ -5,4 +5,3 @@
 #    Purpose:  Build geography APIs
 
 add_subdirectory( camera )
-add_subdirectory( coordinate )

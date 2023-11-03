@@ -6,11 +6,12 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../types/Compound_Types.hpp"
-#include "Channel_Range.hpp"
-#include "Pixel_Base.hpp"
+#include <terminus/image/pixel/Channel_Range.hpp>
+#include <terminus/image/pixel/Pixel_Base.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
 
-namespace tmns::image {
+namespace tmns {
+namespace image {
 
 /**
  * Grayscale Pixeltype
@@ -80,36 +81,42 @@ class Pixel_Gray : public Pixel_Base<Pixel_Gray<ChannelT>>
         /// Underlying Pixel Data
         channel_type m_data{ 0 };
 
-}; // End of Pixe_Gray Class
+}; // End of Pixel_Gray Class
 
+} // End of image namespace
+
+namespace math {
 /**
  * Per Fundamental_Types.hpp, we need to register our
  * compound types.  See header for details
 */
 template <typename ChannelT>
-struct Compound_Channel_Type<Pixel_Gray<ChannelT> >
+struct Compound_Channel_Type<image::Pixel_Gray<ChannelT> >
 {
     typedef ChannelT type;
 }; // End of Compound_Channel_Type<> Struct
 
 template <typename ChannelT>
-struct Compound_Channel_Count<Pixel_Gray<ChannelT>>
+struct Compound_Channel_Count<image::Pixel_Gray<ChannelT>>
 {
-    static const size_t value = Pixel_Gray<ChannelT>::NUM_CHANNELS;
+    static const size_t value = image::Pixel_Gray<ChannelT>::NUM_CHANNELS;
 }; // End of Compound_Channel_Count<> Struct
 
 template <typename OldChannelT, typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_Gray<OldChannelT>, NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_Gray<OldChannelT>, NewChannelT>
 {
-    typedef Pixel_Gray<NewChannelT> type;
+    typedef image::Pixel_Gray<NewChannelT> type;
 }; // End of Compound_Channel_Cast<> structure
 
 template <typename OldChannelT, typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_Gray<OldChannelT>, const NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_Gray<OldChannelT>, const NewChannelT>
 {
-    typedef const Pixel_Gray<NewChannelT> type;
+    typedef const image::Pixel_Gray<NewChannelT> type;
 }; // End of Compound_Channel_Cast<> structure
 
+} // End of math namespace
+
+namespace image {
 
 /// Aliases for easier typing
 using PixelGray_u8  = Pixel_Gray<uint8_t>;
@@ -118,4 +125,5 @@ using PixelGray_u16 = Pixel_Gray<uint16_t>;
 using PixelGray_f32  = Pixel_Gray<float>;
 using PixelGray_f64  = Pixel_Gray<double>;
 
-} // End of tmns::image namespace
+} // End of image namespace
+} // End of tmns  namespace

@@ -6,11 +6,12 @@
 #pragma once
 
 // Terminus Libraries
-#include "../types/Compound_Types.hpp"
-#include "Channel_Range.hpp"
-#include "Pixel_Base.hpp"
+#include <terminus/image/pixel/Channel_Range.hpp>
+#include <terminus/image/pixel/Pixel_Base.hpp>
+#include <terminus/math/types/Compound_Types.hpp>
 
-namespace tmns::image {
+namespace tmns {
+namespace image {
 
 /**
  * RGB PixelType
@@ -84,7 +85,7 @@ class Pixel_RGB : public Pixel_Base<Pixel_RGB<ChannelT>>
 
         static std::string class_name()
         {
-            return "Pixel_RGB<" + Data_Type_Name<ChannelT>::name() + ">";
+            return "Pixel_RGB<" + math::Data_Type_Name<ChannelT>::name() + ">";
         }
 
         /**
@@ -135,33 +136,41 @@ class Pixel_RGB : public Pixel_Base<Pixel_RGB<ChannelT>>
 
 }; // End of Pixel_RGB Class
 
+} // End of image namespace
+
+namespace math {
+
 /**
  * Per Fundamental_Types.hpp, we need to register our
  * compound types.  See header for details
 */
 template <typename ChannelT>
-struct Compound_Channel_Type<Pixel_RGB<ChannelT> >
+struct Compound_Channel_Type<image::Pixel_RGB<ChannelT> >
 {
     typedef ChannelT type;
 }; // End of Compound_Channel_Type<> Struct
 
 template <typename ChannelT>
-struct Compound_Channel_Count<Pixel_RGB<ChannelT>>
+struct Compound_Channel_Count<image::Pixel_RGB<ChannelT>>
 {
-    static const size_t value = Pixel_RGB<ChannelT>::NUM_CHANNELS;
+    static const size_t value = image::Pixel_RGB<ChannelT>::NUM_CHANNELS;
 }; // End of Compound_Channel_Count<> Struct
 
 template <typename OldChannelT, typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_RGB<OldChannelT>, NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_RGB<OldChannelT>, NewChannelT>
 {
-    typedef Pixel_RGB<NewChannelT> type;
+    typedef image::Pixel_RGB<NewChannelT> type;
 }; // End of Compound_Channel_Cast<> structure
 
 template <typename OldChannelT, typename NewChannelT>
-struct Compound_Channel_Cast<Pixel_RGB<OldChannelT>, const NewChannelT>
+struct Compound_Channel_Cast<image::Pixel_RGB<OldChannelT>, const NewChannelT>
 {
-    typedef const Pixel_RGB<NewChannelT> type;
+    typedef const image::Pixel_RGB<NewChannelT> type;
 }; // End of Compound_Channel_Cast<> structure
+
+} // End of math namespace
+
+namespace image {
 
 /// Aliases for easier typing
 using PixelRGB_u8  = Pixel_RGB<uint8_t>;
@@ -170,4 +179,5 @@ using PixelRGB_u16 = Pixel_RGB<uint16_t>;
 using PixelRGB_f32  = Pixel_RGB<float>;
 using PixelRGB_f64  = Pixel_RGB<double>;
 
-} // End of tmns::image namespace
+} // End of image namespace
+} // End of tmns namespace

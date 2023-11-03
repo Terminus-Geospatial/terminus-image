@@ -53,7 +53,7 @@ target_link_libraries( ${TEST} PRIVATE
     ${PROJECT_NAME}
 )
 
-#gtest_discover_tests( ${TEST} )
+gtest_discover_tests( ${TEST} )
 
 #  Copy Unit-Test Data
 file( COPY ${CMAKE_SOURCE_DIR}/data/unit-test-data/collection

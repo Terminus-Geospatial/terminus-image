@@ -6,13 +6,13 @@
 #pragma once
 
 // Terminus Image Libraries
-#include "../../pixel/Channel_Cast_Utilities.hpp"
-#include "../../pixel/Math_Functors.hpp"
-#include "../../pixel/Pixel_Cast_Utilities.hpp"
-#include "../../types/for_each_pixel.hpp"
+#include <terminus/image/pixel/Channel_Cast_Utilities.hpp>
+#include <terminus/image/pixel/Pixel_Cast_Utilities.hpp>
+#include <terminus/image/types/for_each_pixel.hpp>
+#include <terminus/math/types/Math_Functors.hpp>
 
-namespace tmns::image::ops {
-
+namespace tmns {
+namespace image::ops {
 /**
  * An adapter to help applying an accumulator to all channels of
  * all valid pixels in an image.
@@ -42,7 +42,7 @@ typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type
     min_channel_value( const Image_Base<ImageT>& image )
 {
     typedef typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type accum_type;
-    Channel_Accumulator<pix::math::Min_Max_Accumulator<accum_type> > accumulator;
+    Channel_Accumulator<math::Min_Max_Accumulator<accum_type> > accumulator;
     core::utility::Progress_Callback_Null junk_callback;
     for_each_pixel( image, accumulator, junk_callback );
     return accumulator.minimum();
@@ -56,7 +56,7 @@ typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type
     max_channel_value( const Image_Base<ImageT>& image )
 {
     typedef typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type accum_type;
-    Channel_Accumulator<pix::math::Min_Max_Accumulator<accum_type> > accumulator;
+    Channel_Accumulator<math::Min_Max_Accumulator<accum_type> > accumulator;
     core::utility::Progress_Callback_Null junk_callback;
     for_each_pixel( image, accumulator, junk_callback );
     return accumulator.maximum();
@@ -72,26 +72,32 @@ void min_max_channel_values( const Image_Base<ImageT>&                          
                              typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type& max )
 {
     typedef typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type accum_type;
-    Channel_Accumulator<pix::math::Min_Max_Accumulator<accum_type> > accumulator;
+    Channel_Accumulator<math::Min_Max_Accumulator<accum_type> > accumulator;
     core::utility::Progress_Callback_Null junk_callback;
     for_each_pixel( image, accumulator, junk_callback );
     min = accumulator.minimum();
     max = accumulator.maximum();
 }
 
+} // End of image::ops namespace
+
+namespace math {
 /**
  * Compute the sum of all the channels of all the valid pixels of the image.
  */
 template <typename ImageT>
-typename Accumulator_Type<typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type
-    sum_of_channel_values( const Image_Base<ImageT>& image )
+typename Accumulator_Type<typename image::pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type
+    sum_of_channel_values( const image::Image_Base<ImageT>& image )
 {
-    typedef typename Accumulator_Type<typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type accum_type;
-    Channel_Accumulator<pix::math::Accumulator<accum_type> > accumulator;
+    typedef typename math::Accumulator_Type<typename image::pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type accum_type;
+    image::ops::Channel_Accumulator<::tmns::math::Accumulator<accum_type> > accumulator;
     core::utility::Progress_Callback_Null junk_callback;
     for_each_pixel( image, accumulator, junk_callback );
     return accumulator.value();
 }
+} // End of math namespace
+
+namespace image::ops {
 
 /**
  * Computes the mean of the values of the channels of all of the
@@ -102,7 +108,7 @@ template <typename ImageT>
 double mean_channel_value( const Image_Base<ImageT>& image )
 {
     typedef typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type accum_type;
-    Channel_Accumulator<pix::math::Mean_Accumulator<accum_type> > accumulator;
+    Channel_Accumulator<math::Mean_Accumulator<accum_type> > accumulator;
     for_each_pixel( image, accumulator );
     return accumulator.value();
 }
@@ -124,7 +130,7 @@ template <typename ImageT>
 double stddev_channel_value( const Image_Base<ImageT>& image )
 {
     typedef typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type channel_type;
-    Channel_Accumulator<pix::math::Std_Dev_Accumulator<channel_type> > accumulator;
+    Channel_Accumulator<math::Std_Dev_Accumulator<channel_type> > accumulator;
     for_each_pixel( image, accumulator );
     return accumulator.value();
 }
@@ -140,9 +146,10 @@ typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type
     median_channel_value( const Image_Base<ImageT>& image )
 {
     typedef typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type accum_type;
-    Channel_Accumulator<pix::math::Median_Accumulator<accum_type> > accumulator;
+    Channel_Accumulator<math::Median_Accumulator<accum_type> > accumulator;
     for_each_pixel( image, accumulator );
     return accumulator.value();
 }
 
-} // End of tmns::image::ops namespace
+} // End of image::ops namespace
+} // End of tmns namespace

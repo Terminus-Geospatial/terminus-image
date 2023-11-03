@@ -134,7 +134,7 @@ class Image_Disk : public Image_Base<Image_Disk<PixelT>>
 
         static std::string full_name()
         {
-            return class_name() + "<" + Compound_Name<pixel_type>::name() + ">";
+            return class_name() + "<" + math::Compound_Name<pixel_type>::name() + ">";
         }
 
     private:

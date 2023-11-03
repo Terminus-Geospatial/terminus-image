@@ -16,11 +16,11 @@ namespace tmns::image::ops {
  * Normalizes pixel data to specified range.
 */
 template <typename PixelT>
-class Channel_Normalize_Functor: public Unary_Return_Same_Type
+class Channel_Normalize_Functor: public math::Unary_Return_Same_Type
 {
     public:
 
-        typedef typename Compound_Channel_Type<PixelT>::type channel_type;
+        typedef typename math::Compound_Channel_Type<PixelT>::type channel_type;
 
         Channel_Normalize_Functor( channel_type old_min,
                                    channel_type old_max,
@@ -56,11 +56,11 @@ class Channel_Normalize_Functor: public Unary_Return_Same_Type
  * channels
 */
 template <typename PixelT>
-class Channel_Normalize_Retain_Alpha_Functor: public Unary_Return_Same_Type
+class Channel_Normalize_Retain_Alpha_Functor: public math::Unary_Return_Same_Type
 {
     public:
 
-        typedef typename Compound_Channel_Type<PixelT>::type      channel_type;
+        typedef typename math::Compound_Channel_Type<PixelT>::type      channel_type;
         
         typedef typename pix::Pixel_Without_Alpha<PixelT>::type   non_alpha_type;
         

@@ -72,7 +72,7 @@ class Image_Base
         */
         size_t channels() const
         {
-            return Compound_Channel_Count<typename ImplT::pixel_type>::value;
+            return math::Compound_Channel_Count<typename ImplT::pixel_type>::value;
         };
 
         /**
@@ -112,7 +112,7 @@ class Image_Base
         Channel_Type_Enum channel_type() const
         {
             typedef typename ImplT::pixel_type ptype; // Get the underlying datatype
-            typedef typename Compound_Channel_Type<ptype>::type cp_type; // Resolve for if this is a compound or simple type
+            typedef typename math::Compound_Channel_Type<ptype>::type cp_type; // Resolve for if this is a compound or simple type
             return Channel_Type_ID<cp_type>::value;
 
             //return ChannelTypeID<typename CompoundChannelType<typename ImplT::pixel_type>::type>::value;

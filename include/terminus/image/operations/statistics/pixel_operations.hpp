@@ -6,11 +6,11 @@
 #pragma once
 
 // Terminus Libraries
-#include "../../pixel/Math_Functors.hpp"
-#include "../../pixel/Pixel_Cast_Utilities.hpp"
-#include "../../pixel/Pixel_Mask.hpp"
-#include "../../types/for_each_pixel.hpp"
-#include "../../types/Functors.hpp"
+#include <terminus/image/pixel/Pixel_Cast_Utilities.hpp>
+#include <terminus/image/pixel/Pixel_Mask.hpp>
+#include <terminus/image/types/for_each_pixel.hpp>
+#include <terminus/math/types/Math_Functors.hpp>
+#include <terminus/math/types/Functors.hpp>
 
 // C++ Libraries
 #include <vector>
@@ -21,7 +21,7 @@ namespace tmns::image::ops {
  * Element-Wise Min/Max Accumulator
 */
 template <typename ValueT>
-class EW_Min_Max_Accumulator : public Return_Fixed_Type<void>
+class EW_Min_Max_Accumulator : public math::Return_Fixed_Type<void>
 {
     public:
     
@@ -40,7 +40,7 @@ class EW_Min_Max_Accumulator : public Return_Fixed_Type<void>
             }
             else
             {
-                for( size_t i = 0; i < Compound_Channel_Count<ValueT>::value; i++ )
+                for( size_t i = 0; i < math::Compound_Channel_Count<ValueT>::value; i++ )
                 {
                     if( arg[i] < m_min[i] )
                     {
@@ -108,7 +108,7 @@ class EW_Min_Max_Accumulator : public Return_Fixed_Type<void>
  * Compute the standard deviation
 */
 template <typename ValueT>
-class EW_Std_Dev_Accumulator : public Return_Fixed_Type<void>
+class EW_Std_Dev_Accumulator : public math::Return_Fixed_Type<void>
 {
     public:
 
@@ -127,7 +127,7 @@ class EW_Std_Dev_Accumulator : public Return_Fixed_Type<void>
         void operator()( const ValueT& value )
         {
             m_num_samples += 1;
-            for ( size_t i = 0; i < Compound_Channel_Count<ValueT>::value; i++ )
+            for ( size_t i = 0; i < math::Compound_Channel_Count<ValueT>::value; i++ )
             {
                 m_sum[i] += value[i];
                 m_sum_2[i] += value[i]*value[i];
@@ -161,8 +161,8 @@ class EW_Std_Dev_Accumulator : public Return_Fixed_Type<void>
         typedef typename pix::Pixel_Channel_Type<ValueT>::type channel_type;
 
         // Get the sum of pixels for each channel
-        std::array<channel_type,Compound_Channel_Count<ValueT>::value> m_sum;
-        std::array<channel_type,Compound_Channel_Count<ValueT>::value> m_sum_2;
+        std::array<channel_type,math::Compound_Channel_Count<ValueT>::value> m_sum;
+        std::array<channel_type,math::Compound_Channel_Count<ValueT>::value> m_sum_2;
 
         /// Number of samples inserted
         double m_num_samples { 0 };
@@ -173,7 +173,7 @@ class EW_Std_Dev_Accumulator : public Return_Fixed_Type<void>
  * Elementwise Median Accumulator
 */
 template <typename ValueT>
-class EW_Median_Accumulator : public Return_Fixed_Type<void>
+class EW_Median_Accumulator : public math::Return_Fixed_Type<void>
 {
     public:
 
@@ -187,7 +187,7 @@ class EW_Median_Accumulator : public Return_Fixed_Type<void>
         */
         void operator()( const ValueT& value )
         {
-            for( int i = 0; i < Compound_Channel_Count<ValueT>::value; i++ )
+            for( int i = 0; i < math::Compound_Channel_Count<ValueT>::value; i++ )
             {
                 m_values[i].push_back( value[i] );
             }
@@ -207,7 +207,7 @@ class EW_Median_Accumulator : public Return_Fixed_Type<void>
             }
 
             ValueT result;
-            for( int i = 0; i < Compound_Channel_Count<ValueT>::value; i++ )
+            for( int i = 0; i < math::Compound_Channel_Count<ValueT>::value; i++ )
             {
                 result[i] = destructive_median( m_values[i] );
             }
@@ -217,7 +217,7 @@ class EW_Median_Accumulator : public Return_Fixed_Type<void>
     private:
 
         typedef std::array<std::vector<typename pix::Pixel_Channel_Type<ValueT>::type>,
-                           Compound_Channel_Count<ValueT>::value> storage_type;
+                           math::Compound_Channel_Count<ValueT>::value> storage_type;
 
         storage_type m_values;
 }; // End of EW_Median_Accumulator class
@@ -243,8 +243,8 @@ struct Pixel_Accumulator : public AccumulatorT
  * Get the minimum pixel value in the image
 */
 template <typename ImageT>
-typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
-                                      typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
+typename std::enable_if_t<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
+                                            typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
     min_pixel_value( const Image_Base<ImageT>& image )
 {
     typedef typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type accum_type;
@@ -257,8 +257,8 @@ typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename Imag
  * Get the minimum pixel value in the image (Masked types)
 */
 template <typename ImageT>
-typename std::enable_if_t<std::negation_v<typename Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value>,
-                                                   typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>
+typename std::enable_if_t<std::negation_v<typename math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value>,
+                                                                     typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>
     min_pixel_value( const Image_Base<ImageT>& image )
 {
     return min_channel_value( image );
@@ -268,7 +268,7 @@ typename std::enable_if_t<std::negation_v<typename Is_Compound<typename Unmasked
  * Get the maximum pixel value in the image
 */
 template <typename ImageT>
-typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
+typename std::enable_if_t<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
                           typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
     max_pixel_value( const Image_Base<ImageT>& image )
 {
@@ -283,8 +283,8 @@ typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename Imag
  * Get the maximum pixel in the image (masked)
 */
 template <typename ImageT>
-typename std::enable_if_t<std::negation_v<typename Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value>,
-                                                      typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>
+typename std::enable_if_t<std::negation_v<typename math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value>,
+                                                                     typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>
     max_pixel_value( const Image_Base<ImageT>& image )
 {
     return max_channel_value( image );
@@ -295,7 +295,7 @@ typename std::enable_if_t<std::negation_v<typename Is_Compound<typename Unmasked
 */
 template <typename ImageT>
 void min_max_pixel_values( const Image_Base<ImageT>& image,
-                           typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::value>::value, 
+                           typename std::enable_if_t<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::value>::value, 
                            typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::type &min,
                            typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type        &max )
 {
@@ -311,7 +311,7 @@ void min_max_pixel_values( const Image_Base<ImageT>& image,
 */
 template <typename ImageT>
 void min_max_pixel_values( const Image_Base<ImageT>& image,
-                           typename std::enable_if_t<std::negation_v<typename Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value>, 
+                           typename std::enable_if_t<std::negation_v<typename math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value>, 
                                                      typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type& min,
                            typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type        &max ) {
     min_max_channel_values( image, min, max );
@@ -322,12 +322,12 @@ void min_max_pixel_values( const Image_Base<ImageT>& image,
  */
 template <typename ImageT>
 typename pix::Pixel_Channel_Cast<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type,
-                                 typename Accumulator_Type<typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type>::type
+                                 typename math::Accumulator_Type<typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type>::type
     sum_of_pixel_values( const Image_Base<ImageT>& image )
 {
     typedef typename pix::Pixel_Channel_Cast<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type,
-                                                                          typename Accumulator_Type<typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type>::type accum_type;
-    Pixel_Accumulator<pix::math::Accumulator<accum_type> > accumulator;
+                                                                          typename math::Accumulator_Type<typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>::type>::type accum_type;
+    Pixel_Accumulator<math::Accumulator<accum_type> > accumulator;
     for_each_pixel( image, accumulator );
     return accumulator.value();
 }
@@ -345,7 +345,7 @@ typename pix::Pixel_Channel_Cast<typename Unmasked_Pixel_Type<typename ImageT::p
     typedef typename pix::Pixel_Channel_Cast<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type,double>::type accum_type;
 
     // Given that type, build the accumulator
-    Pixel_Accumulator<pix::math::Mean_Accumulator<accum_type> > accumulator;
+    Pixel_Accumulator<math::Mean_Accumulator<accum_type> > accumulator;
 
     auto callback = tmns::core::utility::Progress_Callback_Null();
     for_each_pixel( image, accumulator, callback );
@@ -356,8 +356,8 @@ typename pix::Pixel_Channel_Cast<typename Unmasked_Pixel_Type<typename ImageT::p
  * Get the standard deviation of the pixel values
 */
 template <typename ImageT>
-typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
-                                      typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
+typename std::enable_if_t<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
+                                            typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
     stddev_pixel_value( const Image_Base<ImageT>& image )
 {
     typedef typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type accum_type;
@@ -371,7 +371,8 @@ typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename Imag
  * Get the standard deviation of the pixel values
 */
 template <typename ImageT>
-typename std::enable_if_t< std::negation_v<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>>,double>
+typename std::enable_if_t< std::negation_v<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>>,
+                                                                                          double>
     stddev_pixel_value( const Image_Base<ImageT>& image )
 {
     return stddev_channel_value( image );
@@ -381,8 +382,8 @@ typename std::enable_if_t< std::negation_v<Is_Compound<typename Unmasked_Pixel_T
  * Get the median pixel value
  */
 template <typename ImageT>
-typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
-                                      typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
+typename std::enable_if_t<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>::value,
+                                            typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>
     median_pixel_value( const Image_Base<ImageT>& image )
 {
     typedef typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type accum_type;
@@ -395,8 +396,8 @@ typename std::enable_if_t<Is_Compound<typename Unmasked_Pixel_Type<typename Imag
  * Get the median pixel value
  */
 template <typename ImageT>
-typename std::enable_if_t<std::negation_v<Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>>,
-                                                    typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>
+typename std::enable_if_t<std::negation_v<math::Is_Compound<typename Unmasked_Pixel_Type<typename ImageT::pixel_type>::type>>,
+                                                            typename pix::Pixel_Channel_Type<typename ImageT::pixel_type>::type>
     median_pixel_value( const Image_Base<ImageT>& image )
 {
     return median_channel_value( image );

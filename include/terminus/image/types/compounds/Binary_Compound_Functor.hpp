@@ -46,10 +46,10 @@ class Binary_Compound_Functor
                   typename Argument2T>
         struct result<F(Argument1T,Argument2T)>
         {
-            typedef typename Compound_Channel_Type<Argument1T>::type               arg1_type;
-            typedef typename Compound_Channel_Type<Argument2T>::type               arg2_type;
-            typedef typename std::invoke_result_t<FunctorT, arg1_type, arg2_type>  result_type;
-            typedef typename Compound_Channel_Cast<Argument1T,result_type>::type   type;
+            typedef typename math::Compound_Channel_Type<Argument1T>::type               arg1_type;
+            typedef typename math::Compound_Channel_Type<Argument2T>::type               arg2_type;
+            typedef typename std::invoke_result_t<FunctorT, arg1_type, arg2_type>        result_type;
+            typedef typename math::Compound_Channel_Cast<Argument1T,result_type>::type   type;
         };
 
         /**
@@ -62,8 +62,8 @@ class Binary_Compound_Functor
                         const Argument2T& arg2 ) const
         {
             typedef typename result<Binary_Compound_Functor(Argument1T,Argument2T)>::type result_type;
-            return Helper<Is_Compound<result_type>::value,
-                          Compound_Channel_Count<result_type>::value,
+            return Helper<math::Is_Compound<result_type>::value,
+                          math::Compound_Channel_Count<result_type>::value,
                           result_type,
                           Argument1T,
                           Argument2T>::construct( m_func, arg1, arg2 );

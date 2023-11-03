@@ -43,7 +43,9 @@ message( STATUS "${COLOR_BOLD}Boost_LIBRARIES: ${COLOR_RESET}${Boost_LIBRARIES}"
 #-      GDAL        -#
 #--------------------#
 find_package( GDAL CONFIG REQUIRED )
-message( STATUS  "${COLOR_BOLD}GDAL_FOUND: ${COLOR_RESET} ${GDAL_FOUND}")
+message( STATUS  "${COLOR_BOLD}GDAL_FOUND:${COLOR_RESET}        ${GDAL_FOUND}")
+message( STATUS  "${COLOR_BOLD}GDAL_INCLUDE_DIR:${COLOR_RESET}  ${GDAL_INCLUDE_DIR}")
+message( STATUS  "${COLOR_BOLD}GDAL_INCLUDE_DIRS:${COLOR_RESET} ${GDAL_INCLUDE_DIRS}" )
 
 if( NOT GDAL_INCLUDE_DIRS )
     set( GDAL_INCLUDE_DIRS "/usr/local/include/gdal" )
@@ -52,7 +54,7 @@ endif()
 message( "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}" )
 
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-    set( GDAL_INCLUDE_DIRS "/usr/local/include" )
+    set( GDAL_INCLUDE_DIRS "/opt/homebrew/include" )
 else()
     set( GDAL_INCLUDE_DIRS "/usr/include/gdal" )
 endif()

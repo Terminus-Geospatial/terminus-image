@@ -135,8 +135,8 @@ ImageResult<void> compute_line_points_thin( const tmns::math::Point2i&          
  * Custom method based on computing normals of the line, in order to generate thickness.
 */
 template <typename PixelT>
-ImageResult<void> compute_line_points( const tmns::math::Point2i&                   p1,
-                                       const tmns::math::Point2i&                   p2,
+ImageResult<void> compute_line_points( const math::Point2i&                         p1,
+                                       const math::Point2i&                         p2,
                                        const PixelT&                                color,
                                        int                                          thickness,
                                        std::shared_ptr<blob::Uniform_Blob<PixelT>>& output )
@@ -202,14 +202,14 @@ ImageResult<void> compute_line_points( const tmns::math::Point2i&               
     auto p2_vec = p2_max - p2_min;
 
     // Iterate over each line pair
-    float length = std::max( 1.0, std::round( (p1_min - p1_max).magnitude() ) );
+    float length = std::max( 1.0, std::round( math::magnitude( p1_min - p1_max ) ) );
     log::trace( "length: ", length );
 
     for( int i = 0; i < length; i++ )
     {
         // Compute p1 and p2 interpolated points
-        auto p1_int = p1_min + ( p1_vec * ( (float)i / length ) );
-        auto p2_int = p2_min + ( p2_vec * ( (float)i / length ) );
+        math::Point2i p1_int = p1_min + ( p1_vec * ( (float)i / length ) );
+        math::Point2i p2_int = p2_min + ( p2_vec * ( (float)i / length ) );
 
         // Round to integer
         math::Point2i p1_render( { (int)p1_int.x(),

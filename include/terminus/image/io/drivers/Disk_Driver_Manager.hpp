@@ -7,11 +7,9 @@
 
 /// Terminus Libraries
 #include <terminus/core/error/ErrorCategory.hpp>
-
-/// Terminus Image Libraries
-#include "../Image_Resource_Disk.hpp"
-#include "gdal/Image_Resource_Disk_GDAL_Factory.hpp"
-#include "Driver_Factory_Base.hpp"
+#include <terminus/image/io/Image_Resource_Disk.hpp>
+#include <terminus/image/io/drivers/gdal/Image_Resource_Disk_GDAL_Factory.hpp>
+#include <terminus/image/io/drivers/Driver_Factory_Base.hpp>
 
 // C++ Libraries
 #include <deque>

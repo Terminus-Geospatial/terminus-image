@@ -7,15 +7,12 @@
 
 // Terminus Libraries
 #include <terminus/image/pixel/Pixel_RGBA.hpp>
-#include <terminus/image/types/Fundamental_Types.hpp>
+#include <terminus/math/types/Fundamental_Types.hpp>
 
 /******************************************/
 /*      Test the Is-Scalar Type-Trait     */
 /******************************************/
 TEST( Fundamental_Types, Is_Scalar )
 {
-    ASSERT_TRUE( tmns::image::Is_Scalar<float>::value );
-    ASSERT_TRUE( tmns::image::Is_Scalar<uint8_t>::value );
-
-    ASSERT_FALSE( tmns::image::Is_Scalar<tmns::image::PixelRGBA_u8>::value );
+    ASSERT_FALSE( tmns::math::Is_Scalar<tmns::image::PixelRGBA_u8>::value );
 }

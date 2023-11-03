@@ -106,7 +106,7 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
         explicit Image_Memory( const Read_Image_Resource_Base& resource )
         {
             int planes = 0;
-            if(! Is_Compound<PixelT>::value)
+            if(! math::Is_Compound<PixelT>::value)
             {
                 // The image has a fundamental pixel type
                 if( resource.planes()   > 1 &&
@@ -363,7 +363,7 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
 
         static std::string full_name()
         {
-            return class_name() + "<" + Compound_Name<pixel_type>::name() + ">";
+            return class_name() + "<" + math::Compound_Name<pixel_type>::name() + ">";
         }
 
     private:

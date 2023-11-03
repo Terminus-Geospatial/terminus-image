@@ -8,6 +8,10 @@
 // C++ Libraries
 #include <complex>
 
+// Terminus Libraries
+#include <terminus/math/types/Compound_Types.hpp>
+
+
 namespace tmns::image {
 
 /**
@@ -62,7 +66,7 @@ struct Channel_Range_Helper<std::complex<T>,false>
  * Class for computing the range of a channel
 */
 template <typename T>
-struct Channel_Range : public Channel_Range_Helper<typename Compound_Channel_Type<T>::type,
-                                                   std::is_integral<typename Compound_Channel_Type<T>::type>::value> {};
+struct Channel_Range : public Channel_Range_Helper<typename math::Compound_Channel_Type<T>::type,
+                                                   std::is_integral<typename math::Compound_Channel_Type<T>::type>::value> {};
 
 } // End of tmns::image namespace
