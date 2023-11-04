@@ -87,6 +87,7 @@ message( STATUS "terminus_core_INCLUDE_DIRS: ${terminus_core_INCLUDE_DIRS}" )
 include_directories( ${terminus_core_INCLUDE_DIRS} )
 
 find_package( terminus_log      REQUIRED )
+
 find_package( terminus_math     REQUIRED )
 message( STATUS "terminus_math_FOUND: ${terminus_math_FOUND}" )
 message( STATUS "terminus_math_INCLUDE_DIRS: ${terminus_math_INCLUDE_DIRS}" )

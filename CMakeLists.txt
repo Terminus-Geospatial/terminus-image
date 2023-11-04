@@ -74,6 +74,8 @@ target_link_libraries( ${PROJECT_NAME} PUBLIC
      terminus_outcome::terminus_outcome
 )
 
+install( TARGETS ${PROJECT_NAME} )
+
 terminus_lib_configure( ${PROJECT_NAME} )
 
 #  Enable code coverage
