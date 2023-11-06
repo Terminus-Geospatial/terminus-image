@@ -34,7 +34,6 @@ ImageResult<void> parse_toml_collection_file( const std::filesystem::path&      
         
         // Grab the image list
         auto images_node = tbl["collection"]["images"]["image_list"];
-        std::cout << "image node: " << images_node << std::endl;
 
         // increment each element with visit()
         images_node.as_array()->for_each([&](auto&& el)

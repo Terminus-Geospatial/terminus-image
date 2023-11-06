@@ -13,6 +13,7 @@ set( TEST ${PROJECT_NAME}_test )
 add_executable( ${TEST}
     main.cpp
     TEST_scratch.cpp
+    TEST_tomlplusplus.cpp
     feature/TEST_detect_interest_points.cpp
     feature/TEST_extract_descriptors.cpp
     feature/drivers/ocv/TEST_Detector_OCV_GFTT.cpp

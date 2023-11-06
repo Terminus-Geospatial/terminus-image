@@ -2,9 +2,10 @@
 #    Author:  Marvin Smith
 #    Date:    July 5, 2023
 #
+#    Purpose:  Build terminus-image API
 
 #  Set CMake Version
-cmake_minimum_required( VERSION 3.16 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.22 FATAL_ERROR )
 
 #  Configure Conan Search Paths
 include( "${CMAKE_BINARY_DIR}/conan_toolchain.cmake" )
@@ -26,16 +27,23 @@ set( CMAKE_CXX_STANDARD_REQUIRED ON )
 #  Give Vscode a fighting chance
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+#  Setup libdl for debug GCC builds
+if( CMAKE_BUILD_TYPE STREQUAL "debug" OR CMAKE_BUILD_TYPE STREQUAL "Debug" )
+    if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic -ldl" )
+    endif()
+endif()
+
+# Bring in CMake helpers for TERMINUS projects
+include( terminus_cmake )
+
 #-------------------------------------#
 #-     Add Manual CMake Scripts      -#
 #-------------------------------------#
 LIST( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
-# Bring in CMake helpers for TERMINUS projects
-include( terminus_cmake )
-
 #  Look for dependencies
-include("${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake")
+include( "${PROJECT_SOURCE_DIR}/cmake/scripts/Find_Dependencies.cmake" )
 
 #  Add Interfaces
 add_subdirectory( include/terminus )
@@ -64,6 +72,7 @@ target_link_libraries( ${PROJECT_NAME} PUBLIC
      Boost::headers
      Boost::log
      Boost::log_setup
+     Boost::stacktrace
      Boost::system
      GDAL::GDAL
      nlohmann_json::nlohmann_json

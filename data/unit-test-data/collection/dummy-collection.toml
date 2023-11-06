@@ -1,6 +1,89 @@
-#  Test for the ini-formatted file
+#    File:    valid_config_02.toml
+#    Author:  Marvin Smith
+#    Date:    11/3/2023
+#
+#    Purpose:  Sample config-file using NASA Apollo 15 metric images
+#              acquired from ASU.
 
-[collection.images]
+[collection]
 
-image_list = [ "/Users/marvinsmith/OneDrive/Imagery/PDS_Imagery/mro/hirise/edr/ESP/ORB_072100_072199/ESP_072111_2645/ESP_072111_2645_RED0_0.cal.cub",
-               "/Users/marvinsmith/OneDrive/Imagery/PDS_Imagery/mro/hirise/edr/ESP/ORB_072100_072199/ESP_072111_2645/ESP_072111_2645_RED0_1.cal.cub" ]
+    # Sensor intrinsic settings
+    [collection.intrinsic]
+
+    #  In OpenMVG, this is Pinhole_Intrinsic_Brown_T2
+    #  See https://stereopipeline.readthedocs.io/en/latest/sfm.html for awesome description
+    type = "BROWN_CONRADY"
+
+    #  Image size in pixels
+    image_width_pixels = 4048
+    image_height_pixels = 4048
+
+    focal_length_pitch = 76.080
+
+    #  Location of the principle point in pitch units
+    #  - Proof:  57.24816 mm / 0.028284 mm = 2024 pix (Centered)
+    principal_point_x_pitch = 57.246816
+    principal_point_y_pitch = 57.246816
+
+    #  Radial Distortion
+    k1 = -0.13361854e-5
+    k2 = 0.52261757e-09
+    k3 = -0.50728336e-13
+
+    #  Tangential Distortion
+    t1 = -0.54958195e-06
+    t2 = -0.46089420e-10
+
+    #  Tangential distortion angle (radians)
+    phi_radians = 2.9659070
+
+    pitch_units = "millimeter"
+    #  Conversion from millimeters to pixels (based on 4048 pixel width/height)
+    pitch = 0.028284
+
+    #  Image list
+    [collection.images]
+
+        [collection.images.1]
+        pathname = /Users/marvinsmith/OneDrive/Imagery/Apollo_15_Metric_Imagery/AS15-M-0414_MED.png
+
+        [collection.images.2]
+        pathname = /Users/marvinsmith/OneDrive/Imagery/Apollo_15_Metric_Imagery/AS15-M-1134_MED.png
+
+
+[interest-detector]
+
+    #  Detector Type [ORB,SHI_THOMASI,AKAZE]
+    type="ORB"
+
+    #  Tile Size (Pixels)
+    tile_size = [ 2000, 2000 ]
+
+    #  ORB Max Features (int, Default: 500)
+    orb_max_features = 1000
+
+    #  Scale Factor (float, Default: 1.2)
+    orb_scale_factor = 2.0
+
+    #  Number of levels for Pyramids (int, Default: 8)
+    orb_num_pyr_levels = 12
+
+    #  Edge-Detector Threshold (int, Default: 31)
+    orb_edge_threshold = 62
+
+    #  First Pyramid level (int, Default: 0)
+    orb_base_pyr_level = 1
+
+    #  WTA-K (Points per descriptor) (int, Default: 2)
+    orb_wta_k = 4
+
+    #  Score Type (string, Default: "HARRIS")
+    orb_score_type = "HELLO WORLD"
+
+    #  Patch Size (int, Default: 31)
+    orb_patch_size = 62
+
+    #  Fast Threshold (int, Default: 20)
+    orb_fast_threshold = 40
+
+    

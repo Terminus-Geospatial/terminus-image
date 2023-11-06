@@ -14,7 +14,6 @@
 #include "Collection_Resource_Base.hpp"
 
 // C++ Libraries
-#include <deque>
 #include <filesystem>
 #include <memory>
 #include <vector>
@@ -32,14 +31,14 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         typedef std::unique_ptr<Collection_Resource_File> ptr_t;
 
         /// Iterator Type
-        using iter_type  = typename std::deque<Image_Disk<PixelT>>::iterator;
-        using citer_type = typename std::deque<Image_Disk<PixelT>>::const_iterator;
+        using iter_type  = typename std::vector<Image_Disk<PixelT>>::iterator;
+        using citer_type = typename std::vector<Image_Disk<PixelT>>::const_iterator;
 
         /**
          * Constructor
          * @param images List of partially loaded images.
         */
-        Collection_Resource_File( std::deque<Image_Disk<PixelT>> images )
+        Collection_Resource_File( std::vector<Image_Disk<PixelT>> images )
           : m_images( std::move( images ) )
         {
         }
@@ -53,7 +52,7 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
 
             // Create list of disk-images
             auto disk_driver_manager = io::Disk_Driver_Manager::create_read_defaults();
-            std::deque<Image_Disk<PixelT>> disk_images;
+            std::vector<Image_Disk<PixelT>> disk_images;
             for( const auto& image_path : image_list )
             {
                 tmns::log::debug( "Loading image: ", image_path.native() );
@@ -105,10 +104,12 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
 
     private:
 
+        /// Global Camera Model
+
+
         /// List of loaded images
-        std::deque<Image_Disk<PixelT>> m_images;
+        std::vector<Image_Disk<PixelT>> m_images;
 
 }; // End of Collection_Resource_File class
-
 
 } // End of tmns::image::cx namespace
