@@ -32,17 +32,49 @@ ImageResult<void> parse_toml_collection_file( const std::filesystem::path&      
     {
         tbl = toml::parse_file( input_path.native() );
         
-        // Grab the image list
-        auto images_node = tbl["collection"]["images"]["image_list"];
-
-        // increment each element with visit()
-        images_node.as_array()->for_each([&](auto&& el)
+        // Check if the imagery node exists
+        auto images_node = tbl["collection"];
+        if( !!images_node["image_list"] )
         {
-            std::string element = el.as_string()->get();
+            // Grab the image list
+            auto list_node = tbl["image_list"];
+            if( !!list_node )
+            {
+                // increment each element with visit()
+                list_node.as_array()->for_each([&](auto&& el)
+                {
+                    std::string element = el.as_string()->get();
             
-            image_list.push_back( element );
-        });
+                    image_list.push_back( element );
+                });
+            }
+        }
 
+        if( !!images_node["images"] )
+        {
+            int image_id;
+            std::string pathname;
+
+            toml::table image_list_node = *images_node["images"].as_table();
+            image_list_node.for_each([&]( const toml::key& key, 
+                                          toml::table& image_node )
+            {
+                // Check if the key is a number
+                try
+                {
+                    // Get the key
+                    pathname = image_node["pathname"].as_string()->get();;
+                    
+                    std::cout << "image: " << key << ", path: " << pathname << std::endl;
+                    image_list.push_back( pathname );
+                    
+                }
+                catch ( std::exception& e )
+                {
+
+                }
+            });
+        }
     }
     catch (const toml::parse_error& err)
     {

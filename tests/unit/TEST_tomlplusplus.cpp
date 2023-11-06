@@ -28,7 +28,16 @@ TEST( thirdparty_tomlplusplus, test_01 )
     ASSERT_TRUE( std::filesystem::exists( collection_path ) );
 
     toml::table tbl;
-    tbl = toml::parse_file( collection_path.native() );
+    try
+    {
+        tbl = toml::parse_file( collection_path.native() );
+        std::cout << tbl << "\n";
+    }
+    catch (const toml::parse_error& err)
+    {
+        std::cerr << "Parsing failed:\n" << err << "\n";
+        FAIL();
+    }
         
     // Check if node exists
     ASSERT_TRUE( !!tbl["collection"] );

@@ -7,8 +7,8 @@
 
 [collection]
 
-    # Sensor intrinsic settings
-    [collection.intrinsic]
+# Sensor intrinsic settings
+[collection.intrinsic]
 
     #  In OpenMVG, this is Pinhole_Intrinsic_Brown_T2
     #  See https://stereopipeline.readthedocs.io/en/latest/sfm.html for awesome description
@@ -41,14 +41,14 @@
     #  Conversion from millimeters to pixels (based on 4048 pixel width/height)
     pitch = 0.028284
 
-    #  Image list
-    [collection.images]
+#  Image list
+[collection.images]
 
-        [collection.images.1]
-        pathname = /Users/marvinsmith/OneDrive/Imagery/Apollo_15_Metric_Imagery/AS15-M-0414_MED.png
+    [collection.images.1]
+    pathname = "/Users/marvinsmith/OneDrive/Imagery/Apollo_15_Metric_Imagery/AS15-M-0414_MED.png"
 
-        [collection.images.2]
-        pathname = /Users/marvinsmith/OneDrive/Imagery/Apollo_15_Metric_Imagery/AS15-M-1134_MED.png
+    [collection.images.2]
+    pathname = "/Users/marvinsmith/OneDrive/Imagery/Apollo_15_Metric_Imagery/AS15-M-1134_MED.png"
 
 
 [interest-detector]
