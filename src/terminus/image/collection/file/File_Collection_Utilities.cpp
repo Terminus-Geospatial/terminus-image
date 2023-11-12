@@ -11,13 +11,16 @@
 // Terminus Libraries
 #include <terminus/log/utility.hpp>
 
+#include "TOML_Utilities.hpp"
+
 namespace tmns::image::cx::file {
 
 /****************************************/
 /*          Parse and INI File          */
 /****************************************/
-ImageResult<void> parse_toml_collection_file( const std::filesystem::path&        input_path,
-                                              std::vector<std::filesystem::path>& image_list )
+ImageResult<void> parse_toml_collection_file( const std::filesystem::path&         input_path,
+                                              std::vector<std::filesystem::path>&  image_list,
+                                              geo::cam::Camera_Model_Base::ptr_t&  global_intrinsics )
 {
     // Check if the input file exists
     if( !std::filesystem::exists( input_path ) )
@@ -33,11 +36,11 @@ ImageResult<void> parse_toml_collection_file( const std::filesystem::path&      
         tbl = toml::parse_file( input_path.native() );
         
         // Check if the imagery node exists
-        auto images_node = tbl["collection"];
-        if( !!images_node["image_list"] )
+        auto collection_node = tbl["collection"];
+        if( !!collection_node["image_list"] )
         {
             // Grab the image list
-            auto list_node = tbl["image_list"];
+            auto list_node = collection_node["image_list"];
             if( !!list_node )
             {
                 // increment each element with visit()
@@ -50,12 +53,12 @@ ImageResult<void> parse_toml_collection_file( const std::filesystem::path&      
             }
         }
 
-        if( !!images_node["images"] )
+        if( !!collection_node["images"] )
         {
             int image_id;
             std::string pathname;
 
-            toml::table image_list_node = *images_node["images"].as_table();
+            toml::table image_list_node = *collection_node["images"].as_table();
             image_list_node.for_each([&]( const toml::key& key, 
                                           toml::table& image_node )
             {
@@ -65,7 +68,6 @@ ImageResult<void> parse_toml_collection_file( const std::filesystem::path&      
                     // Get the key
                     pathname = image_node["pathname"].as_string()->get();;
                     
-                    std::cout << "image: " << key << ", path: " << pathname << std::endl;
                     image_list.push_back( pathname );
                     
                 }
@@ -74,6 +76,17 @@ ImageResult<void> parse_toml_collection_file( const std::filesystem::path&      
 
                 }
             });
+        }
+
+        // Check for global intrinsics
+        if( !!collection_node["intrinsic"] )
+        {
+            auto tbl = *collection_node["intrinsic"].as_table();
+            auto intrinsic_res = load_intrinsics( tbl );
+            if( !intrinsic_res.has_error() )
+            {
+                global_intrinsics = intrinsic_res.value();
+            }
         }
     }
     catch (const toml::parse_error& err)

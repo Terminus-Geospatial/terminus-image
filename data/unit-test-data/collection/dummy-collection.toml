@@ -10,20 +10,35 @@
 # Sensor intrinsic settings
 [collection.intrinsic]
 
-    #  In OpenMVG, this is Pinhole_Intrinsic_Brown_T2
-    #  See https://stereopipeline.readthedocs.io/en/latest/sfm.html for awesome description
-    type = "BROWN_CONRADY"
+    #  Camera Type
+    camera_type = "PINHOLE"
 
-    #  Image size in pixels
-    image_width_pixels = 4048
-    image_height_pixels = 4048
-
-    focal_length_pitch = 76.080
+    #  Camera Origin
+    #  - You may not actually know this.  
+    camera_origin_valid = false
+    camera_origin_x = 0.0
+    camera_origin_y = 0.0
+    camera_origin_z = 0.0
 
     #  Location of the principle point in pitch units
     #  - Proof:  57.24816 mm / 0.028284 mm = 2024 pix (Centered)
     principal_point_x_pitch = 57.246816
     principal_point_y_pitch = 57.246816
+
+    focal_length_x_pitch = 76.080
+    focal_length_y_pitch = 76.080
+
+    #  Image size in pixels
+    #image_width_pixels = 4048
+    #image_height_pixels = 4048
+
+    camera_x_axis_direction = [ 1.0, 0.0, 0.0 ]
+    camera_y_axis_direction = [ 0.0, 1.0, 0.0 ]
+    camera_z_axis_direction = [ 0.0, 0.0, 1.0 ]
+
+    #  In OpenMVG, this is Pinhole_Intrinsic_Brown_T2
+    #  See https://stereopipeline.readthedocs.io/en/latest/sfm.html for awesome description
+    distortion_type = "BROWN_CONRADY"
 
     #  Radial Distortion
     k1 = -0.13361854e-5
@@ -37,7 +52,6 @@
     #  Tangential distortion angle (radians)
     phi_radians = 2.9659070
 
-    pitch_units = "millimeter"
     #  Conversion from millimeters to pixels (based on 4048 pixel width/height)
     pitch = 0.028284
 

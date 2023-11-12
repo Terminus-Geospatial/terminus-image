@@ -43,12 +43,19 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         {
         }
 
+        /**
+         * Load a collection resource from disk.
+        */
         static ImageResult<Collection_Resource_File::ptr_t> load_image_list( const std::filesystem::path image_file )
         {
+            // Other components of this file
+            geo::cam::A_Camera_Model_Base::ptr_t global_intrinsics;
+
             // Parse the INI file
             std::vector<std::filesystem::path> image_list;
             auto init_result = file::parse_toml_collection_file( image_file,
-                                                                 image_list );
+                                                                 image_list,
+                                                                 global_intrinsics );
 
             // Create list of disk-images
             auto disk_driver_manager = io::Disk_Driver_Manager::create_read_defaults();
@@ -102,10 +109,15 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
             return m_images.cend();
         }
 
+        /**
+         * Return the camera model instance
+        */
+        std::optional<geo::cam::A_Camera_Model_Base::ptr_t> global_intrinsics() const;
+
     private:
 
         /// Global Camera Model
-
+        std::optional<geo::cam::A_Camera_Model_Base::ptr_t> m_global_intrinsics;
 
         /// List of loaded images
         std::vector<Image_Disk<PixelT>> m_images;
