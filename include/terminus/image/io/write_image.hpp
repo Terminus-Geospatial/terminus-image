@@ -36,6 +36,7 @@ ImageResult<void> write_image( Write_Image_Resource_Base&  dst,
 {
     dst.write( src.buffer(),
                bbox );
+    return outcome::ok();
 }
 
 /**
@@ -45,9 +46,9 @@ template <class PixelT>
 ImageResult<void> write_image( Image_Resource_Base::ptr_t   dst,
                                const Image_Memory<PixelT>&  src )
 {
-    write_image( dst,
-                 src,
-                 math::Rect2i( 0, 0, src.cols(), src.rows() ) );
+    return write_image( dst,
+                        src,
+                        math::Rect2i( 0, 0, src.cols(), src.rows() ) );
 }
 
 /**

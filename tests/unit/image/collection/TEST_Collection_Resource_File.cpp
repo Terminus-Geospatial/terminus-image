@@ -38,4 +38,12 @@ TEST( cx_Collection_Resource_File, functional_test )
     {
         tmns::log::debug( image.pathname().native() );
     }
+
+    // Verify the intrinsics are valid
+    auto global_intrinsics = resource.value()->global_intrinsics();
+    ASSERT_TRUE( global_intrinsics );
+    ASSERT_NE( *global_intrinsics, nullptr );
+
+    // Grab the type
+    ASSERT_EQ( (*global_intrinsics)->type(), "Camera_Model_Pinhole" );
 }

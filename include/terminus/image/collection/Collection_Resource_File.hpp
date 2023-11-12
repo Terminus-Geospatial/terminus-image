@@ -49,7 +49,7 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         static ImageResult<Collection_Resource_File::ptr_t> load_image_list( const std::filesystem::path image_file )
         {
             // Other components of this file
-            geo::cam::A_Camera_Model_Base::ptr_t global_intrinsics;
+            geo::cam::Camera_Model_Base::ptr_t global_intrinsics;
 
             // Parse the INI file
             std::vector<std::filesystem::path> image_list;
@@ -79,7 +79,9 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
             }
 
             // Create output resource
-            auto output = std::make_unique<Collection_Resource_File>( disk_images );
+            auto output = std::make_unique<Collection_Resource_File>();
+            output->m_images = disk_images;
+            output->m_global_intrinsics = global_intrinsics;
 
             return output;
         }
@@ -112,12 +114,15 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         /**
          * Return the camera model instance
         */
-        std::optional<geo::cam::A_Camera_Model_Base::ptr_t> global_intrinsics() const;
+        std::optional<geo::cam::Camera_Model_Base::ptr_t> global_intrinsics() const
+        {
+            return m_global_intrinsics;
+        }
 
     private:
 
         /// Global Camera Model
-        std::optional<geo::cam::A_Camera_Model_Base::ptr_t> m_global_intrinsics;
+        std::optional<geo::cam::Camera_Model_Base::ptr_t> m_global_intrinsics;
 
         /// List of loaded images
         std::vector<Image_Disk<PixelT>> m_images;
