@@ -6,6 +6,7 @@
 #pragma once
 
 // Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
 #include <terminus/math/Point.hpp>
 
 // C++ Libraries

@@ -12,4 +12,7 @@ add_library( TERMINUS_GEOGRAPHY_CAMERA OBJECT
                 Camera_Model_Adjusted.cpp
                 Camera_Model_Base.cpp
                 Camera_Model_ISIS.cpp
-                Camera_Model_Factory.cpp )
+                Camera_Model_Factory.cpp
+                Distortion_Base.cpp
+                Distortion_Brown_Conrady.cpp
+                Distortion_Null.cpp )

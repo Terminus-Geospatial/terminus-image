@@ -38,8 +38,10 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
          * Constructor
          * @param images List of partially loaded images.
         */
-        Collection_Resource_File( std::vector<Image_Disk<PixelT>> images )
-          : m_images( std::move( images ) )
+        Collection_Resource_File( std::vector<Image_Disk<PixelT>>    images,
+                                  geo::cam::Camera_Model_Base::ptr_t global_intrinsics )
+          : m_images( std::move( images ) ),
+            m_global_intrinsics( global_intrinsics )
         {
         }
 
@@ -79,9 +81,8 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
             }
 
             // Create output resource
-            auto output = std::make_unique<Collection_Resource_File>();
-            output->m_images = disk_images;
-            output->m_global_intrinsics = global_intrinsics;
+            auto output = std::make_unique<Collection_Resource_File>( disk_images,
+                                                                      global_intrinsics );
 
             return output;
         }
@@ -116,13 +117,17 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         */
         std::optional<geo::cam::Camera_Model_Base::ptr_t> global_intrinsics() const
         {
+            if( !m_global_intrinsics )
+            {
+                return {};
+            }
             return m_global_intrinsics;
         }
 
     private:
 
         /// Global Camera Model
-        std::optional<geo::cam::Camera_Model_Base::ptr_t> m_global_intrinsics;
+        geo::cam::Camera_Model_Base::ptr_t m_global_intrinsics;
 
         /// List of loaded images
         std::vector<Image_Disk<PixelT>> m_images;

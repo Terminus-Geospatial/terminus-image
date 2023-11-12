@@ -25,6 +25,8 @@ class Camera_Model_Pinhole : public Camera_Model_Base
 {
     public:
 
+        using ptr_t = std::shared_ptr<Camera_Model_Pinhole>;
+
         Camera_Model_Pinhole();
 
         /**

@@ -65,6 +65,11 @@ class Distortion_Brown_Conrady : public Distortion_Base
         std::vector<double> distortion_parameters() const override;
 
         /**
+         * Set the list of distortion parameters
+        */
+        void set_distortion_parameters( const std::vector<double>& params ) override;
+        
+        /**
          * Number of distortion parameters
          */
         int num_dist_params() const override;
