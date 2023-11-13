@@ -39,7 +39,7 @@ ImageResult<geo::cam::Camera_Model_Base::ptr_t> load_intrinsics( toml::table vie
         try 
         {
             // @todo:  Implement the actual camera origin
-            std::optional<math::Point3d> camera_origin;
+            math::Point3d camera_origin;
             if( !!view["camera_origin_valid"] )
             {
 

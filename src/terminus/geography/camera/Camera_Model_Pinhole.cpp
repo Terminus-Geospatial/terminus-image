@@ -4,35 +4,37 @@
  * @date    11/9/2023
 */
 #include <terminus/geography/camera/Camera_Model_Pinhole.hpp>
+#include <terminus/math/matrix.hpp>
+#include <terminus/math/vector/Sub_Vector.hpp>
 
 namespace tmns::geo::cam {
 
 /************************************/
 /*          Constructor             */
 /************************************/
-Camera_Model_Pinhole::Camera_Model_Pinhole( const std::optional<math::Point3d>& camera_center,
-                                            const math::Point2d&                focal_length_pitch,
-                                            const math::Point2d&                principle_point_pitch,
-                                            const math::Vector3d&               x_axis_direction,
-                                            const math::Vector3d&               y_axis_direction,
-                                            const math::Vector3d&               z_axis_direction,
-                                            double                              pitch,
-                                            Distortion_Base::ptr_t              distortion )
+Camera_Model_Pinhole::Camera_Model_Pinhole( const math::Point3d&    camera_origin,
+                                            const math::Point2d&    focal_length_pitch,
+                                            const math::Point2d&    principle_point_pitch,
+                                            const math::Vector3d&   x_axis_direction,
+                                            const math::Vector3d&   y_axis_direction,
+                                            const math::Vector3d&   z_axis_direction,
+                                            double                  pitch,
+                                            Distortion_Base::ptr_t  distortion )
     : m_camera_origin( camera_origin ),
       m_focal_length_pitch( focal_length_pitch ),
       m_principle_point_pitch( principle_point_pitch ),
-      m_x_axis_direction( x_axis_direction ),
-      m_y_axis_direction( y_axis_direction ),
-      m_z_axis_direction( z_axis_direction ),
+      m_x_axis( x_axis_direction ),
+      m_y_axis( y_axis_direction ),
+      m_z_axis( z_axis_direction ),
       m_pitch( pitch )
 {
-    if( distortion_model )
+    if( distortion )
     {
-        m_distortion_model = m_distortion->copy();
+        m_distortion = m_distortion->copy();
     }
     else
     {
-        m_distortion = std::make_shared<Distortion_Null>();
+        m_distortion = std::make_unique<Distortion_Null>();
     }
 
     rebuild_camera_matrix();
@@ -56,7 +58,7 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel_no_check( const math::Point3d
     // Apply the lens distortion model
     // - Divide by pixel pitch to convert from metric units to pixels if the intrinsic
     //   values were not specified in pixel units (in that case m_pixel_pitch == 1.0)
-    math::Point2d final_pixel = m_distortion->distorted_coordinates( *this, pixel ) / m_pixel_pitch;
+    math::Point2d final_pixel = m_distortion->to_distorted( *this, pixel ) / m_pitch;
 
     return final_pixel;
 }
@@ -64,14 +66,14 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel_no_check( const math::Point3d
 /******************************************/
 /*       Convert 3d point to 2d pixel      */
 /******************************************/
-math::Point2d Camera_Model_Pinhole::point_to_pixel( const math::Point3d& point ) const
+ImageResult<math::Point2d> Camera_Model_Pinhole::point_to_pixel( const math::Point3d& point ) const
 {
     // Get the pixel using the no check version, then perform the check.
     math::Point2d final_pixel = point_to_pixel_no_check( point );
   
     if( !m_do_point_to_pixel_check )
     {
-        return final_pixel;
+        return outcome::ok<math::Point2d>( final_pixel );
     }
 
     // Go back from the pixel to the vector and see how much difference there is.
@@ -79,8 +81,8 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel( const math::Point3d& point )
     //   on this coordinate and it means we failed to project the point.
     // - Doing this slows things down but it is important to catch these failures.
     const double ERROR_THRESHOLD = 0.01;
-    math::Point3d pixel_vector = pixel_to_vector( final_pixel );
-    math::Point3d phys_vector  = math::normalize( point - this->camera_center() );
+    math::Point3d pixel_vector = pixel_to_vector( final_pixel ).value();
+    math::Point3d phys_vector  = math::normalize( point - this->camera_origin().value() );
     double  diff = ( pixel_vector - phys_vector ).magnitude();
 
     // Print an explicit error message, otherwise this is confusing when showing up.
@@ -88,15 +90,23 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel( const math::Point3d& point )
     {
         std::stringstream sout;
         sout << "Failed to project point_to_pixel() accurately. Diff: " << diff;
-        throw std::runtime_error( err.str() );
+        throw std::runtime_error( sout.str() );
     }
-    return final_pixel;
+    return outcome::ok<math::Point2d>( final_pixel );
+}
+
+/*******************************************************************************/
+/*      Option to turn off and on the point to pixel check (default is on).    */
+/*******************************************************************************/
+void Camera_Model_Pinhole::set_do_point_to_pixel_check( bool value )
+{
+    m_do_point_to_pixel_check = value;
 }
 
 /********************************************************************/
 /*    Convert 3d point to 2d pixel without distortion correction    */
 /********************************************************************/
-math::Point2d Camera_Model_Pinhole::point_to_pixel_no_distortion( const Point3d& point ) const
+math::Point2d Camera_Model_Pinhole::point_to_pixel_no_distortion( const math::Point3d& point ) const
 {
     // Multiply the pixel location by the 3x4 camera matrix.
     // - The pixel coordinate is de-homogenized by dividing by the denominator.
@@ -110,7 +120,21 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel_no_distortion( const Point3d&
 
     // Divide by pixel pitch to convert from metric units to pixels if the intrinsic
     //   values were not specified in pixel units (in that case m_pixel_pitch == 1.0)
-    return pixel / m_pixel_pitch;
+    return pixel / m_pitch;
+}
+
+/**************************************************/
+/*      Convert Pixel Coordinate to 3D Vector     */
+/**************************************************/
+ImageResult<math::Vector3d> Camera_Model_Pinhole::pixel_to_vector( const math::Point2d& pix ) const
+{
+    // Apply the inverse lens distortion model
+    math::Point2d undistorted_pix = m_distortion->to_undistorted( *this, pix * m_pitch );
+
+    // Compute the direction of the ray emanating from the camera center.
+    math::Vector3d p( { 0, 0, 1 } );
+    math::subvector( p, 0, 2 ) = undistorted_pix;
+    return outcome::ok<math::Vector3d>( math::normalize( m_inv_camera_transform * p ) );
 }
 
 /********************************************/
@@ -124,51 +148,55 @@ bool Camera_Model_Pinhole::projection_valid( const math::Point3d& point ) const
     return ( z > 0 );
 }
 
-/**************************************************/
-/*      Convert Pixel Coordinate to 3D Vector     */
-/**************************************************/
-ImageResult<math::Vector3d> Camera_Model_Pinhole::pixel_to_vector( const Point2d& pix ) const
+/********************************************/
+/*          Get the Principle Point         */
+/********************************************/
+math::Point2d Camera_Model_Pinhole::principle_point_pitch() const
 {
-    // Apply the inverse lens distortion model
-    math::Point2d undistorted_pix = m_distortion->undistorted_coordinates( *this, pix * m_pixel_pitch );
+    return m_principle_point_pitch;
+}
 
-    // Compute the direction of the ray emanating from the camera center.
-    math::vector3d p( { 0, 0, 1 } );
-    math::subvector( p, 0, 2 ) = undistorted_pix;
-    return math::normalize( m_inv_camera_transform * p);
+/********************************************/
+/*          Set the Principle Point         */
+/********************************************/
+void Camera_Model_Pinhole::set_principle_point_pitch( const math::Point2d& point,
+                                                      bool                 rebuild )
+{
+    m_principle_point_pitch = point;
+    if (rebuild) rebuild_camera_matrix();
 }
 
 /******************************************/
 /*    Get the Camera Center Coordinate    */
 /******************************************/
-ImageResult<math::vector3d> Camera_Model_Pinhole::camera_center( const math::Point2d& /*pix*/ ) const
+ImageResult<math::Point3d> Camera_Model_Pinhole::camera_origin( const math::Point2d& /*pix*/ ) const
 {
-    return m_camera_center;
+    return m_camera_origin;
 };
 
 /****************************************/
 /*    Set the camera center position    */
 /****************************************/
-void Camera_Model_Pinhole::set_camera_center( const math::Vector3d& position )
+void Camera_Model_Pinhole::set_camera_origin( const math::Point3d& position )
 {
-    m_camera_center = position; 
+    m_camera_origin = position; 
     rebuild_camera_matrix();
 }
 
 /**********************************/
 /*      Grab the camera pose      */
 /**********************************/
-ImageResult<Quaternion> Camera_Model_Pinhole::camera_pose( const Point2d& /*pix*/ ) const
+ImageResult<math::Quaternion> Camera_Model_Pinhole::camera_pose( const math::Point2d& /*pix*/ ) const
 {
-    return Quaternion( m_rotation );
+    return outcome::ok<math::Quaternion>( math::Quaternion::from_matrix( m_rotation ) );
 }
 
 /****************************/
 /*    Set the camera pose   */
 /****************************/
-void Camera_Model_Pinhole::set_camera_pose( const math::Quaternion& pose)
+void Camera_Model_Pinhole::set_camera_pose( const math::Quaternion& pose )
 {
-    m_rotation = pose.rotation_matrix(); 
+    m_rotation = pose.to_rotation_matrix(); 
     rebuild_camera_matrix();
 }
 
@@ -188,9 +216,9 @@ void Camera_Model_Pinhole::coordinate_frame( math::Vector3d& u_vec,
                                              math::Vector3d& v_vec,
                                              math::Vector3d& w_vec ) const
 {
-    u_vec = m_x_direction;
-    v_vec = m_y_direction;
-    w_vec = m_z_direction;
+    u_vec = m_x_axis;
+    v_vec = m_y_axis;
+    w_vec = m_z_axis;
 }
 
 /**************************************/
@@ -198,11 +226,11 @@ void Camera_Model_Pinhole::coordinate_frame( math::Vector3d& u_vec,
 /**************************************/
 void Camera_Model_Pinhole::set_coordinate_frame( const math::Vector3d& u_vec,
                                                  const math::Vector3d& v_vec,
-                                                 const math::Vector3d% w_vec )
+                                                 const math::Vector3d& w_vec )
 {
-    m_u_direction = u_vec;
-    m_v_direction = v_vec;
-    m_w_direction = w_vec;
+    m_x_axis = u_vec;
+    m_y_axis = v_vec;
+    m_z_axis = w_vec;
 
     rebuild_camera_matrix();
 }
@@ -210,25 +238,25 @@ void Camera_Model_Pinhole::set_coordinate_frame( const math::Vector3d& u_vec,
 /****************************************/
 /*      Get the X Coordinate Frame      */
 /****************************************/
-math::Vector3d Camera_Model_Pinhole::coordinate_frame_u_direction() const
+math::Vector3d Camera_Model_Pinhole::coordinate_frame_x_direction() const
 {
-    return m_u_direction;
+    return m_x_axis;
 }
 
 /****************************************/
 /*      Get the X Coordinate Frame      */
 /****************************************/
-math::Vector3d Camera_Model_Pinhole::coordinate_frame_v_direction() const
+math::Vector3d Camera_Model_Pinhole::coordinate_frame_y_direction() const
 {
-    return m_v_direction;
+    return m_y_axis;
 }
 
 /****************************************/
-/*      Get the X Coordinate Frame      */
+/*      Get the Z Coordinate Frame      */
 /****************************************/
-math::Vector3d Camera_Model_Pinhole::coordinate_frame_w_direction() const
+math::Vector3d Camera_Model_Pinhole::coordinate_frame_z_direction() const
 {
-    return m_w_direction;
+    return m_z_axis;
 }
 
 /******************************************/
@@ -236,13 +264,13 @@ math::Vector3d Camera_Model_Pinhole::coordinate_frame_w_direction() const
 /******************************************/
 Distortion_Base::ptr_t Camera_Model_Pinhole::distortion() const
 {
-    return m_distortion;
+    return m_distortion->copy();
 }
 
 /**************************************/
 /*      Set the distortion model      */
 /**************************************/
-void Camera_Model_Pinhole::set_lens_distortion( Distortion::ptr_t distortion )
+void Camera_Model_Pinhole::set_distortion( const Distortion_Base::ptr_t& distortion )
 {
     m_distortion = distortion->copy();
 }
@@ -263,14 +291,15 @@ void Camera_Model_Pinhole::intrinsic_parameters( math::Point2d& focal_length_pit
 void Camera_Model_Pinhole::set_intrinsic_parameters( const math::Point2d& focal_length_pitch,
                                                      const math::Point2d& principle_point_pitch )
 {
-  m_fu = f_u;  m_fv = f_v;  m_cu = c_u;  m_cv = c_v;
-  rebuild_camera_matrix();
+    m_focal_length_pitch    = focal_length_pitch;
+    m_principle_point_pitch = principle_point_pitch;
+    rebuild_camera_matrix();
 }
 
 /**********************************/
 /*      Get the Focal Length      */
 /**********************************/
-math::Vector2d Camera_Model_Pinhole::focal_length() const
+math::Point2d Camera_Model_Pinhole::focal_length_pitch() const
 {
     return m_focal_length_pitch;
 }
@@ -278,8 +307,8 @@ math::Vector2d Camera_Model_Pinhole::focal_length() const
 /**********************************/
 /*      Set the Focal Length      */
 /**********************************/
-void Camera_Model_Pinhole::set_focal_length( const math::Point2d& f,
-                                             bool                 rebuild )
+void Camera_Model_Pinhole::set_focal_length_pitch( const math::Point2d& f,
+                                                   bool                 rebuild )
 {
     m_focal_length_pitch = f;
     if (rebuild)
@@ -287,13 +316,22 @@ void Camera_Model_Pinhole::set_focal_length( const math::Point2d& f,
         rebuild_camera_matrix();
     }
 }
-Vector2 Camera_Model_Pinhole::point_offset() const { return Vector2(m_cu,m_cv); }
-void PinholeModel::set_point_offset(Vector2 const& c, bool rebuild ) {
-  m_cu = c[0]; m_cv = c[1];
-  if (rebuild) rebuild_camera_matrix();
+
+/************************************/
+/*          Get the Pitch           */
+/************************************/
+double Camera_Model_Pinhole::pitch() const
+{
+    return m_pitch;
 }
-double Camera_Model_Pinhole::pixel_pitch() const { return m_pixel_pitch; }
-void PinholeModel::set_pixel_pitch( double pitch ) { m_pixel_pitch = pitch; }
+
+/************************************/
+/*          Set the Pitch           */
+/************************************/
+void Camera_Model_Pinhole::set_pitch( double pitch )
+{
+    m_pitch = pitch;
+}
 
 /**********************************/
 /*      Set the Camera Matrix     */
@@ -395,42 +433,42 @@ ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
     // The vectors u,v, and w must be orthonormal.
 
     //  check for orthonormality of u,v,w
-    if( math::VectorNd::dot( m_u_direction, m_v_direction ) > 0.001 )
+    if( math::VectorNd::dot( m_x_axis, m_y_axis ) > 0.001 )
     {
         std::stringstream sout;
         sout << "UV is not orthonormal. Dot of u, v is not 0";
         return outcome::fail( core::error::ErrorCode::INVALID_INPUT,
                               sout.str() );
     }
-    if( math::VectorNd::dot( m_u_direction, m_w_direction ) > 0.001 )
+    if( math::VectorNd::dot( m_x_axis, m_z_axis ) > 0.001 )
     {
         std::stringstream sout;
         sout << "UW is not orthonormal. Dot of u, w is not 0";
         return outcome::fail( core::error::ErrorCode::INVALID_INPUT,
                               sout.str() );
     }
-    if( math::VectorNd::dot( m_v_direction, m_w_direction ) > 0.001 )
+    if( math::VectorNd::dot( m_y_axis, m_z_axis ) > 0.001 )
     {
         std::stringstream sout;
         sout << "VW is not orthonormal. Dot of v, w is not 0";
         return outcome::fail( core::error::ErrorCode::INVALID_INPUT,
                               sout.str() );
     }
-    if( std::fabs( m_u_direction.magnitude() - 1 ) > 0.001 )
+    if( std::fabs( m_x_axis.magnitude() - 1 ) > 0.001 )
     {
         std::stringstream sout;
         sout << "U is not unit-length";
         return outcome::fail( core::error::ErrorCode::INVALID_INPUT,
                               sout.str() );
     }
-    if( std::fabs( m_v_direction.magnitude() - 1 ) > 0.001 )
+    if( std::fabs( m_y_axis.magnitude() - 1 ) > 0.001 )
     {
         std::stringstream sout;
         sout << "V is not unit-length";
         return outcome::fail( core::error::ErrorCode::INVALID_INPUT,
                               sout.str() );
     }
-    if( std::fabs( m_w_direction.magnitude() - 1 ) < 0.001 )
+    if( std::fabs( m_z_axis.magnitude() - 1 ) < 0.001 )
     {
         std::stringstream sout;
         sout << "W is not unit-length";
@@ -440,9 +478,9 @@ ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
 
     math::Matrix_3x3 uvwRotation;
 
-    math::select_row( uvwRotation, 0 ) = m_u_direction;
-    math::select_row( uvwRotation, 1 ) = m_v_direction;
-    math::select_row( uvwRotation, 2 ) = m_w_direction;
+    math::select_row( uvwRotation, 0 ) = m_x_axis;
+    math::select_row( uvwRotation, 1 ) = m_y_axis;
+    math::select_row( uvwRotation, 2 ) = m_z_axis;
 
     math::Matrix_3x3 rotation_inverse = math::transpose( m_rotation );
     math::submatrix(m_extrinsics,0,0,3,3) = uvwRotation * rotation_inverse;
@@ -551,6 +589,14 @@ Camera_Model_Pinhole::ptr_t Camera_Model_Pinhole::strip_lens_distortion() const
                                                    coordinate_frame_w_direction(),
                                                    std::make_shared<Distortion_Null>(),
                                                    pixel_pitch() );
+}
+
+/****************************************/
+/*          Get tye type string         */
+/****************************************/
+std::string Camera_Model_Pinhole::type() const
+{
+    return "Camera_Model_Pinhole";
 }
 
 /*

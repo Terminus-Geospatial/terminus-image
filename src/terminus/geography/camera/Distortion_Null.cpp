@@ -11,8 +11,8 @@ namespace tmns::geo::cam {
 /********************************************************/
 /*          Convert to Distorted Coordinates            */
 /********************************************************/
-math::Point2d Distortion_Null::to_distorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                             const math::Point2d&                        pixel_coord ) const
+math::Point2d Distortion_Null::to_distorted( const Camera_Model_Pinhole& camera_model,
+                                             const math::Point2d&        pixel_coord ) const
 {
     return pixel_coord;
 }
@@ -20,8 +20,8 @@ math::Point2d Distortion_Null::to_distorted( const std::shared_ptr<Camera_Model_
 /**********************************************************/
 /*          Convert to Undistorted Coordinates            */
 /**********************************************************/
-math::Point2d Distortion_Null::to_undistorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                               const math::Point2d&                        pixel_coord ) const
+math::Point2d Distortion_Null::to_undistorted( const Camera_Model_Pinhole& camera_model,
+                                               const math::Point2d&        pixel_coord ) const
 {
     return pixel_coord;
 }
@@ -53,7 +53,7 @@ std::vector<double> Distortion_Null::distortion_parameters() const
 /************************************************************/
 /*          Get the number of distortion parameters         */
 /************************************************************/
-int Distortion_Null::num_dist_params() const
+size_t Distortion_Null::num_dist_params() const
 {
     return 0;
 }
@@ -73,6 +73,19 @@ ImageResult<void> Distortion_Null::scale( double scale )
 {
     // do nothing
     return outcome::ok();
+}
+
+/************************************/
+/*          Print String            */
+/************************************/
+std::string Distortion_Null::to_log_string( size_t offset ) const
+{
+    std::stringstream sout;
+    std::string gap( offset, ' ' );
+
+    sout << gap << " - " << name() << std::endl;
+
+    return sout.str();
 }
 
 } // End of tmns::geo::cam namespace

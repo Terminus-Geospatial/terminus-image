@@ -21,13 +21,13 @@ struct Distort_Optimize_Functor :  public math::optimize::Least_Squares_Model_Ba
     typedef math::Vector2d domain_type;
     typedef math::Matrix<double, 2, 2> jacobian_type;
 
-    Camera_Model_Pinhole::ptr_t  m_camera;
+    const Camera_Model_Pinhole&  m_camera;
     const Distortion_Base&       m_distortion;
     
     /**
      * Constructor
      */
-    Distort_Optimize_Functor( Camera_Model_Pinhole::ptr_t camera,
+    Distort_Optimize_Functor( const Camera_Model_Pinhole& camera,
                               const Distortion_Base&      distortion )
         : m_camera( camera ),
           m_distortion( distortion )
@@ -52,13 +52,13 @@ struct Undistort_Optimize_Functor : public math::optimize::Least_Squares_Model_B
     typedef math::Vector2d domain_type;
     typedef math::Matrix<double, 2, 2> jacobian_type;
 
-    Camera_Model_Pinhole::ptr_t  m_camera;
+    const Camera_Model_Pinhole&  m_camera;
     const Distortion_Base&       m_distortion;
 
     /**
      * Constructor
     */
-    Undistort_Optimize_Functor( Camera_Model_Pinhole::ptr_t camera,
+    Undistort_Optimize_Functor( const Camera_Model_Pinhole& camera,
                                 const Distortion_Base&      distortion )
         : m_camera( camera ),
           m_distortion( distortion )
@@ -77,8 +77,8 @@ struct Undistort_Optimize_Functor : public math::optimize::Least_Squares_Model_B
 /****************************************************************/
 /*          Convert from Undistorted to Distorted Coords        */
 /****************************************************************/
-math::Point2d Distortion_Base::to_distorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                             const math::Point2d&                        pixel_coord ) const
+math::Point2d Distortion_Base::to_distorted( const Camera_Model_Pinhole& camera_model,
+                                             const math::Point2d&        pixel_coord ) const
 {
     Distort_Optimize_Functor model( camera_model, *this );
     math::optimize::LM_STATUS_CODE status;
@@ -99,20 +99,20 @@ math::Point2d Distortion_Base::to_distorted( const std::shared_ptr<Camera_Model_
   
     // Check if it failed badly to converge. That it did not converge is not on its own
     // unreasonable, sometimes the inputs are bad. But then the user must know about it.
-    auto undist = this->to_undistorted( camera_model, solution );
+    auto undist = this->to_undistorted( camera_model, solution.value() );
     double err = (undist - pixel_coord).magnitude() / std::max( pixel_coord.magnitude(), 0.1 ); // don't make this way too strict
     double tol = 1e-10;
     if (err > tol)
         throw std::runtime_error( "LensDistortion: Did not converge." );
 
-  return solution;
+  return solution.value();
 }
 
 /****************************************************************/
 /*          Convert from Distorted to Undistorted Coords        */
 /****************************************************************/
-math::Point2d Distortion_Base::to_undistorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                               const math::Point2d&                        pixel_coord ) const
+math::Point2d Distortion_Base::to_undistorted( const Camera_Model_Pinhole& camera_model,
+                                               const math::Point2d&        pixel_coord ) const
 {
     Undistort_Optimize_Functor model( camera_model, *this );
     math::optimize::LM_STATUS_CODE status;
@@ -127,7 +127,7 @@ math::Point2d Distortion_Base::to_undistorted( const std::shared_ptr<Camera_Mode
                                                                1e-16,
                                                                100 );
 
-    auto dist = this->to_distorted( camera_model, solution );
+    auto dist = this->to_distorted( camera_model, solution.value() );
     double err = (dist - pixel_coord).magnitude() / std::max( pixel_coord.magnitude(), 0.1); // don't make this way too strict
     double tol = 1e-10;
     if (err > tol)
@@ -138,7 +138,7 @@ math::Point2d Distortion_Base::to_undistorted( const std::shared_ptr<Camera_Mode
     //double error = norm_2(model(solution) - v);
     //std::cout << "status = " << status << ", input = " << v 
     //          << ", pixel = " << solution << ", error = " << error << std::endl;
-    return solution;
+    return solution.value();
 }
 
 /********************************************/

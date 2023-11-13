@@ -25,14 +25,14 @@ class Distortion_Null : public Distortion_Base
         /**
          * Convert from Undistorted to Distorted
          */
-        math::Point2d to_distorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                    const math::Point2d&                        pixel_coord ) const override;
+        math::Point2d to_distorted( const Camera_Model_Pinhole& camera_model,
+                                    const math::Point2d&        pixel_coord ) const override;
 
         /**
          * Convert from Distorted to Undistorted
          */
-        math::Point2d to_undistorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                      const math::Point2d&                        pixel_coord ) const override;
+        math::Point2d to_undistorted( const Camera_Model_Pinhole& camera_model,
+                                      const math::Point2d&        pixel_coordd ) const override;
 
         /**
          * Check if method has fast distortion (true)
@@ -57,7 +57,7 @@ class Distortion_Null : public Distortion_Base
         /**
          * Number of distortion parameters
          */
-        int num_dist_params() const override;
+        size_t num_dist_params() const override;
 
         /**
          * Each derived model needs to have a string name.
@@ -68,6 +68,11 @@ class Distortion_Null : public Distortion_Base
          * Used to scale distortion with image size
          */
         ImageResult<void> scale( double scale ) override;
+
+        /**
+         * Print log-friendly string
+        */
+        std::string to_log_string( size_t offset ) const override;
 
 }; // End of Distortion_Null class
 

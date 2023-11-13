@@ -19,15 +19,12 @@ class Distortion_Brown_Conrady : public Distortion_Base
 {
     public:
 
+        static constexpr size_t NUM_DISTORTION_PARAMS { 8 };
+
         /**
          * Default Constructor
          */
-        Distortion_Brown_Conrady();
-
-        /**
-         * Parameters in a single array
-         */
-        Distortion_Brown_Conrady( const std::vector<double>& params );
+        Distortion_Brown_Conrady() = default;
 
         /**
          * Separated Parameters
@@ -38,22 +35,11 @@ class Distortion_Brown_Conrady : public Distortion_Base
                                   double                     tangential_distortion_angle_rad );
         
         /**
-         * Convert from Undistorted to Distorted pixel coordinates
-         */
-        math::Point2d to_distorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                    const math::Point2d&                        pixel_coord ) const override;
-
-        /**
          * Convert from Distorted to Undistorted pixel coordinates
          */
-        math::Point2d to_undistorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                      const math::Point2d&                        pixel_coord ) const override;
+        math::Point2d to_undistorted( const Camera_Model_Pinhole& camera_model,
+                                      const math::Point2d&        pixel_coord ) const override;
 
-        /**
-         * Return true if the to_distorted() implementation does not use a solver.
-         */
-        bool has_fast_distort() const override;
-    
         /**
          * Return true if the undistorted_coordinates() implementation does not use a solver.
          */
@@ -72,7 +58,7 @@ class Distortion_Brown_Conrady : public Distortion_Base
         /**
          * Number of distortion parameters
          */
-        int num_dist_params() const override;
+        size_t num_dist_params() const override;
 
         /**
          * Each derived model needs to have a string name.
@@ -83,6 +69,16 @@ class Distortion_Brown_Conrady : public Distortion_Base
          * Used to scale distortion with image size
          */
         ImageResult<void> scale( double scale ) override;
+
+        /**
+         * Print a log-friendly string
+         */
+        std::string to_log_string( size_t offset = 0 ) const override;
+
+        /**
+         * Clone the instance
+        */
+        Distortion_Base::ptr_t copy() const override;
 
     private:
 

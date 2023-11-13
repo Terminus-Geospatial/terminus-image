@@ -29,16 +29,16 @@ class Distortion_Base
         */
         virtual ~Distortion_Base() = default;
 
-        virtual math::Point2d to_distorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                            const math::Point2d&                        pixel_coord ) const;
+        virtual math::Point2d to_distorted( const Camera_Model_Pinhole& camera_model,
+                                            const math::Point2d&        pixel_coord ) const;
 
-        virtual math::Point2d to_undistorted( const std::shared_ptr<Camera_Model_Pinhole> camera_model,
-                                              const math::Point2d&                        pixel_coord ) const;
+        virtual math::Point2d to_undistorted( const Camera_Model_Pinhole& camera_model,
+                                              const math::Point2d&        pixel_coord ) const;
 
         /**
          * Return true if the to_distorted() implementation does not use a solver.
          */
-        virtual bool has_fast_distort  () const;
+        virtual bool has_fast_distort() const;
     
         /**
          * Return true if the undistorted_coordinates() implementation does not use a solver.
@@ -58,7 +58,7 @@ class Distortion_Base
         /**
          * Number of distortion parameters
          */
-        virtual int num_dist_params() const = 0;
+        virtual size_t num_dist_params() const = 0;
 
         /**
          * Each derived model needs to have a string name.
@@ -72,6 +72,16 @@ class Distortion_Base
     
         /// Used to scale distortion with image size
         std::vector<std::string> distortion_param_names() const { return m_distortion_param_names; }
+
+        /**
+         * Print as log-friendly string
+         */
+        virtual std::string to_log_string( size_t offset ) const = 0;
+
+        /**
+         * Make a clone of the instance
+        */
+        virtual Distortion_Base::ptr_t copy() const = 0;
 
     protected:
 
