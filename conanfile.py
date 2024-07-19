@@ -36,14 +36,14 @@ class ConanProject(ConanFile):
         self.tool_requires("terminus_cmake/1.0.1")
 
     def requirements(self):
-        self.requires("boost/1.82.0")
+        self.requires("boost/1.85.0")
         #self.requires("gdal/3.4.3")
-        self.requires("nlohmann_json/3.11.2")
-        self.requires("tomlplusplus/3.3.0")
-        self.requires("terminus_core/0.0.3")
-        self.requires("terminus_log/0.0.3")
-        self.requires("terminus_math/0.0.10")
-        self.requires("terminus_outcome/0.0.2")
+        self.requires("nlohmann_json/3.11.3")
+        self.requires("tomlplusplus/3.4.0")
+        self.requires("terminus_core/0.0.5")
+        self.requires("terminus_log/0.0.4")
+        self.requires("terminus_math/0.0.12")
+        self.requires("terminus_outcome/0.0.3")
 
     def _configure_cmake(self):
         cmake = CMake(self)
