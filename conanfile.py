@@ -32,7 +32,7 @@ class ConanProject(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     def build_requirements(self):
-        self.test_requires("gtest/1.13.0")
+        self.test_requires("gtest/1.14.0")
         self.tool_requires("terminus_cmake/1.0.1")
 
     def requirements(self):
