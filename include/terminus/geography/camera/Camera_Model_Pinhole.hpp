@@ -171,6 +171,8 @@ class Camera_Model_Pinhole : public Camera_Model_Base
 
         void set_pitch( double pitch );
 
+        math::Matrix<double,3,4> camera_matrix() const;
+        
         ImageResult<void> set_camera_matrix( const math::Matrix<double,3,4>& p );
 
         ImageResult<void> rebuild_camera_matrix();

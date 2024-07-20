@@ -33,7 +33,7 @@ class ConanProject(ConanFile):
 
     def build_requirements(self):
         self.test_requires("gtest/1.14.0")
-        self.tool_requires("terminus_cmake/1.0.1")
+        self.tool_requires("terminus_cmake/1.0.2")
 
     def requirements(self):
         self.requires("boost/1.85.0")

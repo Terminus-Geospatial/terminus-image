@@ -50,6 +50,14 @@ std::vector<double> Distortion_Null::distortion_parameters() const
     return std::vector<double>();
 }
 
+/****************************************************/
+/*          Set the Distortion Parameters           */
+/****************************************************/
+void Distortion_Null::set_distortion_parameters( const std::vector<double>& params )
+{
+    throw std::runtime_error("Not Implemented Yet");
+}
+
 /************************************************************/
 /*          Get the number of distortion parameters         */
 /************************************************************/

@@ -4,6 +4,10 @@
  * @date    11/9/2023
 */
 #include <terminus/geography/camera/Camera_Model_Pinhole.hpp>
+
+// Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
+#include <terminus/math/linalg/Operations.hpp>
 #include <terminus/math/matrix.hpp>
 #include <terminus/math/vector/Sub_Vector.hpp>
 
@@ -28,6 +32,7 @@ Camera_Model_Pinhole::Camera_Model_Pinhole( const math::Point3d&    camera_origi
       m_z_axis( z_axis_direction ),
       m_pitch( pitch )
 {
+    /*
     if( distortion )
     {
         m_distortion = m_distortion->copy();
@@ -36,6 +41,8 @@ Camera_Model_Pinhole::Camera_Model_Pinhole( const math::Point3d&    camera_origi
     {
         m_distortion = std::make_unique<Distortion_Null>();
     }
+    */
+   throw std::runtime_error("Not implemented yet");
 
     rebuild_camera_matrix();
 }
@@ -128,6 +135,7 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel_no_distortion( const math::Po
 /**************************************************/
 ImageResult<math::Vector3d> Camera_Model_Pinhole::pixel_to_vector( const math::Point2d& pix ) const
 {
+    /*
     // Apply the inverse lens distortion model
     math::Point2d undistorted_pix = m_distortion->to_undistorted( *this, pix * m_pitch );
 
@@ -135,6 +143,9 @@ ImageResult<math::Vector3d> Camera_Model_Pinhole::pixel_to_vector( const math::P
     math::Vector3d p( { 0, 0, 1 } );
     math::subvector( p, 0, 2 ) = undistorted_pix;
     return outcome::ok<math::Vector3d>( math::normalize( m_inv_camera_transform * p ) );
+    */
+    return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
+                         "Method not implemented yet" );
 }
 
 /********************************************/
@@ -338,11 +349,12 @@ void Camera_Model_Pinhole::set_pitch( double pitch )
 /**********************************/
 ImageResult<void> Camera_Model_Pinhole::set_camera_matrix( const math::Matrix<double,3,4>& p )
 {
+    /*
     // Solving for camera center
-    math::MatrixN<double> cam_nullsp = nullspace( p );
+    math::MatrixN<double> cam_nullsp = math::linalg::nullspace( p );
     auto cam_center = math::select_col( cam_nullsp, 0 );
     cam_center /= cam_center[3];
-    m_camera_center = math::subvector(cam_center,0,3);
+    m_camera_origin = math::subvector(cam_center,0,3);
 
     // Solving for intrinsics with RQ decomposition
     auto M = submatrix(p,0,0,3,3);
@@ -368,9 +380,9 @@ ImageResult<void> Camera_Model_Pinhole::set_camera_matrix( const math::Matrix<do
 
     // Pulling out intrinsic and last extrinsic
     math::Matrix<double,3,3> uvwRotation;
-    math::select_row( uvwRotation, 0 ) = m_u_direction;
-    math::select_row( uvwRotation, 1 ) = m_v_direction;
-    math::select_row( uvwRotation, 2 ) = m_w_direction;
+    math::select_row( uvwRotation, 0 ) = m_x_direction;
+    math::select_row( uvwRotation, 1 ) = m_y_direction;
+    math::select_row( uvwRotation, 2 ) = m_z_direction;
     math::m_rotation = math::inverse( uvwRotation * Q );
     m_fu = R(0,0);
     m_fv = R(1,1);
@@ -387,6 +399,9 @@ ImageResult<void> Camera_Model_Pinhole::set_camera_matrix( const math::Matrix<do
     
     // Rebuild
     return rebuild_camera_matrix();
+    */
+   return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
+                         "Method not implemented yet" );
 }
 
 /************************************/
@@ -402,6 +417,7 @@ math::Matrix<double,3,4> Camera_Model_Pinhole::camera_matrix() const
 /************************************************/
 ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
 {
+    /*
     /// The intrinsic portion of the camera matrix is stored as
     ///
     ///    [  fx   0   cx  ]
@@ -490,6 +506,9 @@ ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
 
     m_inv_camera_transform = math::inverse( uvwRotation * rotation_inverse )
                            * math::inverse( m_intrinsics );
+    */
+   return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
+                         "Method not implemented yet" );
 }
 
 /************************************************************************************/
@@ -497,6 +516,7 @@ ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
 /************************************************************************************/
 ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_4x4& transform )
 {
+    /*
     // Make sure homogenous
     if( transform(3, 3) != 1 )
     {
@@ -507,11 +527,11 @@ ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_4x4&
     }
 
     // Extract the 3x3 component
-    math::Matrix_3x3 = math::submatrix( transform, 0, 0, 3, 3 );
+    math::Matrix_3x3 R = math::submatrix( transform, 0, 0, 3, 3 );
     math::Vector3d T;
     for( size_t r = 0; r < 3; r++ )
     {
-        T[r] = math::transform( r, 3 );
+        T[r] = math::transpose( r, 3 );
     }
     
     double scale = std::pow( std::det(R), 1.0/3.0 );
@@ -522,6 +542,9 @@ ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_4x4&
     }
 
     this->apply_transform( R, T, scale );
+    */
+   return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
+                         "Method not implemented yet" );
 }
 
 /**********************************************************/
@@ -532,17 +555,21 @@ ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_3x3&
                                                          const math::Vector3d&   translation,
                                                          double                  scale )
 {
+    /*
     // Extract current parameters
-    math::Vector3d   position = this->camera_center();
-    math::Quaternion pose     = this->camera_pose();
+    math::Vector3d   position = this->camera_origin().value();
+    math::Quaternion pose     = this->camera_pose().value();
   
-    math::Quaternion rotation_quaternion(rotation);
+    auto rotation_quaternion = Quaternion::from_matrix( rotation ).value();
   
     // New position and rotation
     position = scale * rotation * position + translation;
     pose     = rotation_quaternion * pose;
-    this->set_camera_center( position );
+    this->set_camera_origin( position );
     this->set_camera_pose( pose );
+    */
+   return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
+                         "Method not implemented yet" );
 }
 
 /********************************************************************************/
@@ -552,27 +579,29 @@ ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_3x3&
 /********************************************************************************/
 ImageResult<Camera_Model_Pinhole::ptr_t> Camera_Model_Pinhole::scale_camera( double scale ) const
 {
+    /*
     if( scale == 0 )
     {
-        std::stringstream sout;
-        sout << "Camera_Model_Pinhole::scale_camera cannot have zero scale value!";
         return outcome::fail( core::error::ErrorCode::INVALID_INPUT,
-                              sout.str() );
+                              "Camera_Model_Pinhole::scale_camera cannot have zero scale value!" );
     }
-    auto focal  = focal_length();
-    auto offset = point_offset();
+    auto focal  = focal_length_pitch();
+    auto offset = principal_point_pitch();
     auto lens   = lens_distortion()->copy();
 
     auto new_camera = std::make_shared<Camera_Model_Pinhole>( camera_model.camera_center(),
                                                               focal,
                                                               offset,
-                                                              coordinate_frame_u_direction(),
-                                                              coordinate_frame_v_direction(),
-                                                              coordinate_frame_w_direction(),
+                                                              coordinate_frame_x_direction(),
+                                                              coordinate_frame_y_direction(),
+                                                              coordinate_frame_z_direction(),
                                                               camera_pose().rotation_matrix(),
                                                               lens,
                                                               pitch / scale )
     return outcome::ok<Camera_Model_Pinhole::ptr>( new_camera );
+    */
+   return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
+                         "Method not implemented yet" );
 }
 
 /********************************************/
@@ -580,15 +609,19 @@ ImageResult<Camera_Model_Pinhole::ptr_t> Camera_Model_Pinhole::scale_camera( dou
 /********************************************/
 Camera_Model_Pinhole::ptr_t Camera_Model_Pinhole::strip_lens_distortion() const
 {
+    /*
     return std::make_shared<Camera_Model_Pinhole>( camera_origin(),
                                                    camera_pose().rotation_matrix(),
-                                                   focal_length(),
-                                                   principle_point(),
-                                                   coordinate_frame_u_direction(),
-                                                   coordinate_frame_v_direction(),
-                                                   coordinate_frame_w_direction(),
+                                                   focal_length_pitch(),
+                                                   principle_point_pitch(),
+                                                   coordinate_frame_x_direction(),
+                                                   coordinate_frame_y_direction(),
+                                                   coordinate_frame_z_direction(),
                                                    std::make_shared<Distortion_Null>(),
                                                    pixel_pitch() );
+    */
+   throw std::runtime_error( "Method not implemented yet" );
+   return nullptr;
 }
 
 /****************************************/
@@ -597,6 +630,15 @@ Camera_Model_Pinhole::ptr_t Camera_Model_Pinhole::strip_lens_distortion() const
 std::string Camera_Model_Pinhole::type() const
 {
     return "Camera_Model_Pinhole";
+}
+
+/****************************************/
+/*          Convert to String           */
+/****************************************/
+std::string Camera_Model_Pinhole::to_string( size_t offset ) const
+{
+    throw std::runtime_error("Not Implemented Yet");
+    return "";
 }
 
 /*
