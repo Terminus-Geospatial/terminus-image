@@ -16,13 +16,13 @@ namespace tmns::feature::utility {
 /**
  * Convert image to expected format needed by the detector.
  */
-ImageResult<image::Image_Buffer> prepare_image_buffer( const image::Image_Buffer& input_buffer,
-                                                       bool                       cast_if_ctype_unsupported,
-                                                       image::Pixel_Format_Enum   output_pixel_type,
-                                                       image::Channel_Type_Enum   output_channel_type,
-                                                       const std::string&         detector_name,
-                                                       tmns::log::Logger&         logger,
-                                                       std::mutex&                logger_mtx )
+Result<image::Image_Buffer> prepare_image_buffer( const image::Image_Buffer& input_buffer,
+                                                  bool                       cast_if_ctype_unsupported,
+                                                  image::Pixel_Format_Enum   output_pixel_type,
+                                                  image::Channel_Type_Enum   output_channel_type,
+                                                  const std::string&         detector_name,
+                                                  tmns::log::Logger&         logger,
+                                                  std::mutex&                logger_mtx )
 {
     // From testing, we know that ORB only likes integer images
     if( !cast_if_ctype_unsupported && input_buffer.channel_type() != output_channel_type )

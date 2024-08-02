@@ -47,7 +47,7 @@ class Memory_Driver_Manager
         /**
          * Select a driver based on the file.
         */
-        ImageResult<Memory_Driver_Manager::ptr_t> pick_driver( const std::filesystem::path& pathname ) const;
+        Result<Memory_Driver_Manager::ptr_t> pick_driver( const std::filesystem::path& pathname ) const;
 
     private:
 

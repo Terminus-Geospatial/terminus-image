@@ -65,12 +65,12 @@ class Memory_Driver_Manager
         /**
          * Select a driver based on the file.
         */
-        ImageResult<DriverT> pick_read_driver( const std::filesystem::path& pathname ) const;
+        Result<DriverT> pick_read_driver( const std::filesystem::path& pathname ) const;
 
         /**
          * Select a driver based on the file.
         */
-        ImageResult<DriverT> pick_write_driver( const std::filesystem::path& pathname ) const;
+        Result<DriverT> pick_write_driver( const std::filesystem::path& pathname ) const;
 
     private:
 

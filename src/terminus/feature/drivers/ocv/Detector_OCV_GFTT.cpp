@@ -39,9 +39,9 @@ Detector_OCV_GFTT::Detector_OCV_GFTT( const Detector_Config_Base::ptr_t config )
 /**********************************/
 /*    Run tracker on image data   */
 /**********************************/
-ImageResult<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::Image_Buffer& buffer,
-                                                                   bool                       cast_if_ctype_unsupported,
-                                                                   int                        max_points_override )
+Result<Interest_Point_List> Detector_OCV_GFTT::process_image( const image::Image_Buffer& buffer,
+                                                              bool                       cast_if_ctype_unsupported,
+                                                              int                        max_points_override )
 {
     // From testing, we know that GFTT only likes integer images
     if( !cast_if_ctype_unsupported && buffer.channel_type() != image::Channel_Type_Enum::UINT8 )
@@ -164,7 +164,7 @@ std::string Detector_OCV_GFTT::class_name() const
 /************************************/
 /*      Generate New Instance       */
 /************************************/
-ImageResult<Detector_Base::ptr_t> Detector_Generator_OCV_GFTT::generate( Detector_Config_Base::ptr_t config )
+Result<Detector_Base::ptr_t> Detector_Generator_OCV_GFTT::generate( Detector_Config_Base::ptr_t config )
 {
     // Check if the detector config GFTT
     bool same = ( dynamic_cast<Detector_Config_OCV_GFTT*>( config.get() ) != nullptr );

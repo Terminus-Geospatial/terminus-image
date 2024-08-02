@@ -19,12 +19,12 @@ namespace tmns::image::ops::drawing {
  * Return a list of pixel coordinates representing the circle to draw
 */
 template <typename PixelT>
-ImageResult<void> compute_circle_points( const tmns::math::Point2i&                  center,
-                                         double                                      radius,
-                                         const PixelT&                               color,
-                                         int                                         thickness,
-                                         int                                         max_circle_segment_length,
-                                         std::shared_ptr<blob::Uniform_Blob<PixelT>> output )
+Result<void> compute_circle_points( const tmns::math::Point2i&                  center,
+                                    double                                      radius,
+                                    const PixelT&                               color,
+                                    int                                         thickness,
+                                    int                                         max_circle_segment_length,
+                                    std::shared_ptr<blob::Uniform_Blob<PixelT>> output )
 {
     tmns::log::trace( ADD_CURRENT_LOC(),
                       "Start of Method.\n  Center: ", 

@@ -31,9 +31,9 @@ namespace tmns::image::io {
  *          will be painful.
 */
 template <typename PixelT>
-ImageResult<Image_Disk<PixelT>> read_image_disk( const std::filesystem::path&      pathname,
-                                                 const Disk_Driver_Manager::ptr_t  driver_manager = Disk_Driver_Manager::create_read_defaults(),
-                                                 core::cache::Cache_Local::ptr_t   cache = std::make_shared<core::cache::Cache_Local>( 1000000000 ) )
+Result<Image_Disk<PixelT>> read_image_disk( const std::filesystem::path&      pathname,
+                                            const Disk_Driver_Manager::ptr_t  driver_manager = Disk_Driver_Manager::create_read_defaults(),
+                                            core::cache::Cache_Local::ptr_t   cache = std::make_shared<core::cache::Cache_Local>( 1000000000 ) )
 {
     // Create an image resource for the data
     auto driver_res = driver_manager->pick_read_driver( pathname );

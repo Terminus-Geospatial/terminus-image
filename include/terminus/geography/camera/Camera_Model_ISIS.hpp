@@ -36,19 +36,19 @@ class Camera_Model_ISIS : public Camera_Model_Base
          * in real (aka floating-point) representation.  This allows for sub-pixel accuracy.  To get an indexible conversion,
          * simply convert to an integer space noting if the "center" is the top-left or center. 
          */
-        ImageResult<math::Point2d> point_to_pixel( const math::Point3d& point ) const override;
+        Result<math::Point2d> point_to_pixel( const math::Point3d& point ) const override;
 
         /**
          * Returns a (normalized) pointing vector from the camera center through the position of the pixel 
          * 'pix' on the image plane.
          */
-        ImageResult<math::Vector3d> pixel_to_vector( const math::Point2d& pixel ) const override;
+        Result<math::Vector3d> pixel_to_vector( const math::Point2d& pixel ) const override;
 
 
         /**
          * Returns the position of the focal point of the camera
          */
-        ImageResult<math::Point3d> camera_origin( const math::Point2d& pixel ) const override;
+        Result<math::Point3d> camera_origin( const math::Point2d& pixel ) const override;
 
         /**
          * Camera Type
@@ -61,7 +61,7 @@ class Camera_Model_ISIS : public Camera_Model_Base
          * It represents the rotation from the camera frame to the world frame.  
          * - The input pixel will likely only be used for linescan cameras.
          */
-        ImageResult<math::Quaternion> camera_pose( const math::Point2d& pixel ) const override;
+        Result<math::Quaternion> camera_pose( const math::Point2d& pixel ) const override;
 
         
         /**
@@ -112,7 +112,7 @@ class Camera_Model_ISIS : public Camera_Model_Base
         /**
          * Generate Camera-Model from Metadata-Container-Base
         */
-        static ImageResult<Camera_Model_Base::ptr_t> create_from_metadata( const image::meta::Metadata_Container_Base::ptr_t container );
+        static Result<Camera_Model_Base::ptr_t> create_from_metadata( const image::meta::Metadata_Container_Base::ptr_t container );
 
 }; // End of Camera_Model_ISIS class
 

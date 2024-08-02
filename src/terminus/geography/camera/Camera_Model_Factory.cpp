@@ -13,7 +13,7 @@ namespace tmns::geo::cam {
 /********************************************/
 /*          Create from Metadata            */
 /********************************************/
-ImageResult<Camera_Model_Base::ptr_t>  Camera_Model_Factory::create_from_metadata( image::meta::Metadata_Container_Base::ptr_t container )
+Result<Camera_Model_Base::ptr_t>  Camera_Model_Factory::create_from_metadata( image::meta::Metadata_Container_Base::ptr_t container )
 {
     // Check the container isn't null
     if( container == nullptr )

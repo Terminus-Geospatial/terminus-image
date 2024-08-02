@@ -40,9 +40,9 @@ Detector_OCV_ORB::Detector_OCV_ORB( const Detector_Config_Base::ptr_t config )
 /**********************************/
 /*    Run tracker on image data   */
 /**********************************/
-ImageResult<Interest_Point_List> Detector_OCV_ORB::process_image( const image::Image_Buffer& buffer,
-                                                                  bool                       cast_if_ctype_unsupported,
-                                                                  int                        max_points_override = 0 )
+Result<Interest_Point_List> Detector_OCV_ORB::process_image( const image::Image_Buffer& buffer,
+                                                             bool                       cast_if_ctype_unsupported,
+                                                             int                        max_points_override = 0 )
 {
     // Process the image
     auto proc_res = utility::prepare_image_buffer( buffer,
@@ -127,9 +127,9 @@ ImageResult<Interest_Point_List> Detector_OCV_ORB::process_image( const image::I
 /****************************************/
 /*      Perform Feature Extraction      */
 /****************************************/
-ImageResult<void> Detector_OCV_ORB::perform_feature_extraction( const image::Image_Buffer&    image_buffer,
-                                                                std::vector<Interest_Point>&  interest_points,
-                                                                bool                          cast_if_ctype_unsupported )
+Result<void> Detector_OCV_ORB::perform_feature_extraction( const image::Image_Buffer&    image_buffer,
+                                                           std::vector<Interest_Point>&  interest_points,
+                                                           bool                          cast_if_ctype_unsupported )
 {
     // Process the image
     auto proc_res = utility::prepare_image_buffer( image_buffer,
@@ -255,7 +255,7 @@ std::string Detector_OCV_ORB::class_name() const
 /************************************/
 /*      Generate New Instance       */
 /************************************/
-ImageResult<Detector_Base::ptr_t> Detector_Generator_OCV_ORB::generate( Detector_Config_Base::ptr_t config )
+Result<Detector_Base::ptr_t> Detector_Generator_OCV_ORB::generate( Detector_Config_Base::ptr_t config )
 {
     // Check if the detector config ORB
     bool same = ( dynamic_cast<Detector_Config_OCV_ORB*>( config.get() ) != nullptr );

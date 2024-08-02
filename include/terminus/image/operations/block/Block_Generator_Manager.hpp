@@ -34,9 +34,9 @@ class Block_Generator_Manager
         /**
          * Create blocks for each region of the imagery
          */
-        ImageResult<void> initialize( core::cache::Cache_Local::ptr_t  cache,
-                                      const math::Size2i&              block_size,
-                                      std::shared_ptr<ImageT>          image )
+        Result<void> initialize( core::cache::Cache_Local::ptr_t  cache,
+                                 const math::Size2i&              block_size,
+                                 std::shared_ptr<ImageT>          image )
         {
             // Assign the base structures
             m_cache_ptr  = cache;

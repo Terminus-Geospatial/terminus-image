@@ -49,17 +49,17 @@ class Driver_Factory_Base
         /**
          * Build a new Read-Image-Resource object.
         */
-        virtual ImageResult<DriverT> create_read_driver( const std::filesystem::path& pathname ) const = 0;
+        virtual Result<DriverT> create_read_driver( const std::filesystem::path& pathname ) const = 0;
 
         /**
          * Create a new Write-Image-Resource object.
          *
          * @param desired_planes Split image into single image per plane. -1 to not set and use input image settings.
         */
-        virtual ImageResult<DriverT> create_write_driver( const std::filesystem::path&              pathname,
-                                                          const Image_Format&                       output_format,
-                                                          const std::map<std::string,std::string>&  write_options,
-                                                          const math::Size2i&                       block_size ) const = 0;
+        virtual Result<DriverT> create_write_driver( const std::filesystem::path&              pathname,
+                                                     const Image_Format&                       output_format,
+                                                     const std::map<std::string,std::string>&  write_options,
+                                                     const math::Size2i&                       block_size ) const = 0;
 
 }; // end of Driver_Factory_Base class
 

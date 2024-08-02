@@ -26,8 +26,8 @@ namespace tmns::image::io {
  * cropping the input image.
 */
 template <typename PixelT>
-ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource_Disk::ptr_t resource,
-                                                            const math::Rect2i&              bbox )
+Result<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource_Disk::ptr_t resource,
+                                                       const math::Rect2i&              bbox )
 {
     // Create output image
     Image_Memory<PixelT> output_image;
@@ -61,7 +61,7 @@ ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource
  * Note:  The primary method requires a bounding box, so the full image bounds will be used for this method.
 */
 template <typename PixelT>
-ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource_Disk::ptr_t resource )
+Result<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource_Disk::ptr_t resource )
 {
     return read_image_from_resource<PixelT>( resource,
                                              math::Rect2i( 0, 0,
@@ -74,9 +74,9 @@ ImageResult<Image_Memory<PixelT>> read_image_from_resource( const Image_Resource
  * This differs from previous methods as the image is provided as an input parameter and must stay constructed.
 */
 template <class PixelT>
-ImageResult<void> read_image( const Image_Memory<PixelT>&           dst,
-                              const Read_Image_Resource_Base::ptr_t src,
-                              const math::Rect2i&                   bbox )
+Result<void> read_image( const Image_Memory<PixelT>&           dst,
+                         const Read_Image_Resource_Base::ptr_t src,
+                         const math::Rect2i&                   bbox )
 {
     src->read( dst.buffer(), bbox );
     return outcome::ok();
@@ -86,9 +86,9 @@ ImageResult<void> read_image( const Image_Memory<PixelT>&           dst,
  * Load an image into a generic image type container
 */
 template <typename ImageT>
-ImageResult<void> read_image( const Image_Base<ImageT>&             dest,
-                              const Read_Image_Resource_Base::ptr_t src,
-                              const math::Rect2i&                   bbox )
+Result<void> read_image( const Image_Base<ImageT>&             dest,
+                         const Read_Image_Resource_Base::ptr_t src,
+                         const math::Rect2i&                   bbox )
 {
     Image_Memory<typename ImageT::pixel_type> intermediate;
     read_image( intermediate, src, bbox );
@@ -107,8 +107,8 @@ ImageResult<void> read_image( const Image_Base<ImageT>&             dest,
  * Note the image has to be returned as we are using
 */
 template <typename PixelT>
-ImageResult<Image_Memory<PixelT>> read_image( const std::filesystem::path&      pathname,
-                                              const Disk_Driver_Manager::ptr_t  driver_manager = Disk_Driver_Manager::create_read_defaults() )
+Result<Image_Memory<PixelT>> read_image( const std::filesystem::path&      pathname,
+                                         const Disk_Driver_Manager::ptr_t  driver_manager = Disk_Driver_Manager::create_read_defaults() )
 {
     tmns::log::info( "Loading image: ", pathname.string() );
 

@@ -10,7 +10,7 @@ namespace tmns::image::io::gdal {
 /****************************************/
 /*          Parse a JSON String         */
 /****************************************/
-ImageResult<meta::Metadata_Container_Base::ptr_t> ISIS_JSON_Parser::parse( const std::string& json_string )
+Result<meta::Metadata_Container_Base::ptr_t> ISIS_JSON_Parser::parse( const std::string& json_string )
 {
     auto container = std::make_shared<meta::Metadata_Container_Base>();
     const std::string base_key = "isis";

@@ -1,73 +1,51 @@
 /**
- * @file    Image_Resource_Disk_GDAL.cpp
+ * @file    Image_Resource_Disk_NITF.cpp
  * @author  Marvin Smith
- * @date    7/15/2023
+ * @date    7/19/2024
 */
-#include "Image_Resource_Disk_GDAL.hpp"
+#include <terminus/image/io/drivers/nitf/Image_Resource_Disk_NITF.hpp>
 
 // Terminus Libraries
-#include "../../../pixel/Pixel_Format_Enum.hpp"
-#include "GDAL_Disk_Image_Impl.hpp"
+#include <terminus/image/pixel/Pixel_Format_Enum.hpp>
 
-namespace tmns::image::io::gdal {
+namespace tmns::image::io::nitf {
 
 /********************************/
 /*          Constructor         */
 /********************************/
-Image_Resource_Disk_GDAL::Image_Resource_Disk_GDAL( const std::filesystem::path& pathname,
-                                                    ColorCodeLookupT             color_reference_lut )
-  : Image_Resource_Disk( pathname ),
-    m_color_reference_lut( color_reference_lut )
+Image_Resource_Disk_NITF::Image_Resource_Disk_NITF( const std::filesystem::path& pathname )
+  : Image_Resource_Disk( pathname )
 {
-    m_impl = std::make_shared<GDAL_Disk_Image_Impl>( pathname,
-                                                     color_reference_lut );
 }
 
 /********************************/
 /*          Constructor         */
 /********************************/
-Image_Resource_Disk_GDAL::Image_Resource_Disk_GDAL( const std::filesystem::path&             pathname,
+Image_Resource_Disk_NITF::Image_Resource_Disk_NITF( const std::filesystem::path&             pathname,
                                                     const Image_Format&                      output_format,
                                                     const std::map<std::string,std::string>& write_options,
-                                                    const math::Size2i&                      block_size,
-                                                    const ColorCodeLookupT&                  color_reference_lut )
-  : Image_Resource_Disk( pathname ),
-    m_color_reference_lut( color_reference_lut )
+                                                    const math::Size2i&                      block_size )
+  : Image_Resource_Disk( pathname )
 {
-    m_impl = std::make_shared<GDAL_Disk_Image_Impl>( pathname,
-                                                     output_format,
-                                                     write_options,
-                                                     block_size,
-                                                     color_reference_lut );
-}
-
-/********************************/
-/*          Destructor          */
-/********************************/
-Image_Resource_Disk_GDAL::~Image_Resource_Disk_GDAL()
-{
-    m_impl.reset();
 }
 
 /********************************************/
 /*          Get the resource name           */
 /********************************************/
-std::string Image_Resource_Disk_GDAL::resource_name() const
+std::string Image_Resource_Disk_NITF::resource_name() const
 {
-    return "GDAL";
+    return "NITF";
 }
 
 /****************************************************/
 /*          Create Resource and Open Image          */
 /****************************************************/
-Result<Image_Resource_Disk_GDAL::ParentPtrT>
-        Image_Resource_Disk_GDAL::create( const std::filesystem::path& pathname )
+Result<Image_Resource_Disk_NITF::ParentPtrT>
+        Image_Resource_Disk_NITF::create( const std::filesystem::path& pathname )
 {
-    auto driver = std::make_shared<Image_Resource_Disk_GDAL>( pathname );
+    auto driver = std::make_shared<Image_Resource_Disk_NITF>( pathname );
 
-    // Update Metadata
-    driver->metadata()->insert( driver->m_impl->metadata(),
-                                        true );
+    
 
     return outcome::ok<ParentPtrT>( driver );
 }
@@ -75,22 +53,18 @@ Result<Image_Resource_Disk_GDAL::ParentPtrT>
 /****************************************************/
 /*          Create Resource and Open Image          */
 /****************************************************/
-Result<Image_Resource_Disk_GDAL::ParentPtrT>
-        Image_Resource_Disk_GDAL::create(  const std::filesystem::path&             pathname,
+Result<Image_Resource_Disk_NITF::ParentPtrT>
+        Image_Resource_Disk_NITF::create(  const std::filesystem::path&             pathname,
                                            const Image_Format&                      output_format,
                                            const std::map<std::string,std::string>& write_options,
-                                           const math::Size2i&                      block_size,
-                                           const ColorCodeLookupT&                  color_reference_lut  )
+                                           const math::Size2i&                      block_size  )
 {
-    auto driver = std::make_shared<Image_Resource_Disk_GDAL>( pathname,
+    auto driver = std::make_shared<Image_Resource_Disk_NITF>( pathname,
                                                               output_format,
                                                               write_options,
-                                                              block_size,
-                                                              color_reference_lut );
+                                                              block_size );
     
-    // Update Metadata
-    driver->metadata()->insert( driver->m_impl->metadata(),
-                                        true );
+    
 
     return outcome::ok<ParentPtrT>( driver );
 }
@@ -98,7 +72,7 @@ Result<Image_Resource_Disk_GDAL::ParentPtrT>
 /************************************/
 /*          Open the dataset        */
 /************************************/
-Result<void> Image_Resource_Disk_GDAL::open( const std::filesystem::path& pathname )
+Result<void> Image_Resource_Disk_NITF::open( const std::filesystem::path& pathname )
 {
     return m_impl->open( pathname );
 }
@@ -106,7 +80,7 @@ Result<void> Image_Resource_Disk_GDAL::open( const std::filesystem::path& pathna
 /****************************************************/
 /*          Read the image buffer from disk         */
 /****************************************************/
-Result<void> Image_Resource_Disk_GDAL::read( const Image_Buffer& dest,
+Result<void> Image_Resource_Disk_NITF::read( const Image_Buffer& dest,
                                              const math::Rect2i& bbox ) const
 {
     auto result = m_impl->read( dest, bbox, m_rescale );
@@ -121,7 +95,7 @@ Result<void> Image_Resource_Disk_GDAL::read( const Image_Buffer& dest,
 /****************************************************/
 /*          Write the image buffer to disk          */
 /****************************************************/
-Result<void> Image_Resource_Disk_GDAL::write( const Image_Buffer& source_buffer,
+Result<void> Image_Resource_Disk_NITF::write( const Image_Buffer& source_buffer,
                                               const math::Rect2i& bbox )
 {
     return m_impl->write( source_buffer,
@@ -132,7 +106,7 @@ Result<void> Image_Resource_Disk_GDAL::write( const Image_Buffer& source_buffer,
 /****************************************/
 /*          Get the pixel data          */
 /****************************************/
-Image_Format  Image_Resource_Disk_GDAL::format() const
+Image_Format  Image_Resource_Disk_NITF::format() const
 {
     return m_impl->format();
 }
@@ -140,39 +114,38 @@ Image_Format  Image_Resource_Disk_GDAL::format() const
 /********************************************/
 /*      Check if Block Read Supported       */
 /********************************************/
-bool Image_Resource_Disk_GDAL::has_block_read() const
+bool Image_Resource_Disk_NITF::has_block_read() const
 {
-    return true;
 }
 
 /*********************************************/
 /*      Check if Block Write Supported       */
 /*********************************************/
-bool Image_Resource_Disk_GDAL::has_block_write() const
+bool Image_Resource_Disk_NITF::has_block_write() const
 {
-    return true;
+    return false;
 }
 
 /*********************************************/
 /*      Check if Nodata Read Supported       */
 /*********************************************/
-bool Image_Resource_Disk_GDAL::has_nodata_read() const
+bool Image_Resource_Disk_NITF::has_nodata_read() const
 {
-    return m_impl->has_nodata_read();
+    return false;
 }
 
 /**********************************************/
 /*      Check if Nodata Write Supported       */
 /**********************************************/
-bool Image_Resource_Disk_GDAL::has_nodata_write() const
+bool Image_Resource_Disk_NITF::has_nodata_write() const
 {
-    return true;
+    return false;
 }
 
 /***********************************************/
 /*          Get the block read size            */
 /***********************************************/
-math::Size2i  Image_Resource_Disk_GDAL::block_read_size() const
+math::Size2i  Image_Resource_Disk_NITF::block_read_size() const
 {
     return m_impl->block_read_size();
 }
@@ -180,7 +153,7 @@ math::Size2i  Image_Resource_Disk_GDAL::block_read_size() const
 /************************************************/
 /*          Get the block write size            */
 /************************************************/
-math::Size2i  Image_Resource_Disk_GDAL::block_write_size() const
+math::Size2i  Image_Resource_Disk_NITF::block_write_size() const
 {
     return m_impl->block_write_size();
 }
@@ -188,7 +161,7 @@ math::Size2i  Image_Resource_Disk_GDAL::block_write_size() const
 /************************************************/
 /*          Set the block write size            */
 /************************************************/
-void Image_Resource_Disk_GDAL::set_block_write_size( const math::Size2i& block_size )
+void Image_Resource_Disk_NITF::set_block_write_size( const math::Size2i& block_size )
 {
     m_impl->set_block_write_size( block_size );
 }
@@ -196,7 +169,7 @@ void Image_Resource_Disk_GDAL::set_block_write_size( const math::Size2i& block_s
 /****************************************/
 /*          Get Nodata Read Value       */
 /****************************************/
-double Image_Resource_Disk_GDAL::nodata_read() const
+double Image_Resource_Disk_NITF::nodata_read() const
 {
     return m_impl->nodata_read();
 }
@@ -204,7 +177,7 @@ double Image_Resource_Disk_GDAL::nodata_read() const
 /****************************************/
 /*      Set the nodata write value      */
 /****************************************/
-void Image_Resource_Disk_GDAL::set_nodata_write( double value )
+void Image_Resource_Disk_NITF::set_nodata_write( double value )
 {
     m_impl->set_nodata_write( value );
 }
@@ -212,7 +185,7 @@ void Image_Resource_Disk_GDAL::set_nodata_write( double value )
 /****************************/
 /*          Flush           */
 /****************************/
-void Image_Resource_Disk_GDAL::flush()
+void Image_Resource_Disk_NITF::flush()
 {
     m_impl->flush();
 }
@@ -220,25 +193,17 @@ void Image_Resource_Disk_GDAL::flush()
 /************************************************/
 /*          Print to log-friendly string        */
 /************************************************/
-std::string Image_Resource_Disk_GDAL::to_log_string( size_t offset ) const
+std::string Image_Resource_Disk_NITF::to_log_string( size_t offset ) const
 {
     std::string gap( offset, ' ' );
     std::stringstream sout;
-    sout << gap << " - Image_Resource_Disk_GDAL" << std::endl;
+    sout << gap << " - Image_Resource_Disk_NITF" << std::endl;
     sout << gap << "   - Impl Initialized: " << std::boolalpha << (m_impl != 0) << std::endl;
     if( m_impl )
     {
         sout << m_impl->To_Log_String( offset );
     }
     return sout.str();
-}
-
-/************************************************/
-/*          Check if GDAL Supports File         */
-/************************************************/
-bool Image_Resource_Disk_GDAL::gdal_has_support( const std::string& filename )
-{
-    return GDAL_Disk_Image_Impl::gdal_has_support( filename );
 }
 
 } // end of tmns::image::io::gdal namespace

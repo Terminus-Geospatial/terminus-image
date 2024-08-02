@@ -45,9 +45,9 @@ class Metadata_Container_Base
          * @param overwrite_match
          */
         template <typename ValueT>
-        ImageResult<void> insert( const std::string& key,
-                                  const ValueT&      value,
-                                  bool               overwrite_match = true )
+        Result<void> insert( const std::string& key,
+                             const ValueT&      value,
+                             bool               overwrite_match = true )
         {
             if( overwrite_match && m_tree.count( key ) > 0 )
             {
@@ -60,14 +60,14 @@ class Metadata_Container_Base
         /**
          * Merge with another container
          */
-        virtual ImageResult<void> insert( const Metadata_Container_Base::ptr_t container,
-                                          bool                                 overwrite_matches );
+        virtual Result<void> insert( const Metadata_Container_Base::ptr_t container,
+                                     bool                                 overwrite_matches );
 
         /**
          * Get the requested key
          */
         template <typename ValueT>
-        ImageResult<ValueT> get( const std::string& key_name ) const
+        Result<ValueT> get( const std::string& key_name ) const
         {
             if( m_tree.count( key_name ) <= 0 )
             {

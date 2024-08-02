@@ -54,7 +54,7 @@ GDAL_Disk_Image_Impl::GDAL_Disk_Image_Impl( const std::filesystem::path&        
 /************************************/
 /*          Open the Dataset        */
 /************************************/
-ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathname )
+Result<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathname )
 {
     // Lock the global GDAL Context
     std::unique_lock<std::mutex> lck( get_master_gdal_mutex() );
@@ -193,9 +193,9 @@ ImageResult<void> GDAL_Disk_Image_Impl::open( const std::filesystem::path& pathn
 /********************************************/
 /*          Read memory from disk           */
 /********************************************/
-ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&  dest,
-                                              const math::Rect2i&  bbox,
-                                              bool                 rescale ) const
+Result<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&  dest,
+                                         const math::Rect2i&  bbox,
+                                         bool                 rescale ) const
 {
     // Perform bounds checks
     if( !format().bbox().is_inside( bbox ) )
@@ -281,9 +281,9 @@ ImageResult<void> GDAL_Disk_Image_Impl::read( const Image_Buffer&  dest,
 /****************************************************/
 /*          Write the image buffer to disk          */
 /****************************************************/
-ImageResult<void> GDAL_Disk_Image_Impl::write( const Image_Buffer& source_buffer,
-                                               const math::Rect2i& bbox,
-                                               bool                rescale )
+Result<void> GDAL_Disk_Image_Impl::write( const Image_Buffer& source_buffer,
+                                          const math::Rect2i& bbox,
+                                          bool                rescale )
 {
     auto dest_format = format();
     dest_format.set_cols( bbox.width() );
@@ -375,7 +375,7 @@ Image_Format GDAL_Disk_Image_Impl::format() const
 /************************************************************/
 /*          Get the pointer to the underlying dataset       */
 /************************************************************/
-ImageResult<GDAL_Disk_Image_Impl::DatasetPtrT> GDAL_Disk_Image_Impl::get_dataset_ptr() const
+Result<GDAL_Disk_Image_Impl::DatasetPtrT> GDAL_Disk_Image_Impl::get_dataset_ptr() const
 {
     if( m_write_dataset )
     {
@@ -622,7 +622,7 @@ void GDAL_Disk_Image_Impl::initialize_write_resource_locked()
 /*****************************************************/
 /*           Check if nodata read was okay           */
 /*****************************************************/
-ImageResult<double> GDAL_Disk_Image_Impl::nodata_read_ok() const
+Result<double> GDAL_Disk_Image_Impl::nodata_read_ok() const
 {
     std::unique_lock<std::mutex> lck( get_master_gdal_mutex() );
 

@@ -43,6 +43,6 @@ bool is_integer_type( Channel_Type_Enum value );
  * Function to get the size of the channel in bytes.
  * Throws an error if value is unknown.
 */
-ImageResult<size_t> channel_size_bytes( Channel_Type_Enum val );
+Result<size_t> channel_size_bytes( Channel_Type_Enum val );
 
 } // end of tmns::image namespace

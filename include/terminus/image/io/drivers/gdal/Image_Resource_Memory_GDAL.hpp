@@ -19,7 +19,7 @@ class Read_Image_Resource_Memory_GDAL : public Read_Image_Resource_Memory_Base,
         /**
          * Read image from memory
         */
-        ImageResult<Image_Buffer> read( const math::Rect2i bbox ) const;
+        Result<Image_Buffer> read( const math::Rect2i bbox ) const;
 
 }; // End of Read_Image_Resource_Memory_GDAL class
 

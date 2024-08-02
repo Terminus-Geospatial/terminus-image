@@ -19,9 +19,9 @@ namespace tmns::image::utility {
 /********************************************/
 /*          Actually Visualize Image        */
 /********************************************/
-ImageResult<void> visualize( const std::string&  window_name,
-                             const Image_Buffer& buffer_data,
-                             int                 window_sleep )
+Result<void> visualize( const std::string&  window_name,
+                        const Image_Buffer& buffer_data,
+                        int                 window_sleep )
 {
     auto type_code = ocv::get_pixel_type_code( buffer_data.pixel_type(),
                                                buffer_data.channel_type() );

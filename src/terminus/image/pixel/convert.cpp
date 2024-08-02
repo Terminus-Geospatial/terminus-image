@@ -421,9 +421,9 @@ Channel_Unpremultiply_Map_Entry _unpremultiply_f64( &channel_unpremultiply_float
 /****************************************/
 /*          Convert Pixel Data          */
 /****************************************/
-ImageResult<void> convert( const Image_Buffer&  dst,
-                           const Image_Buffer&  src,
-                           bool                 rescale )
+Result<void> convert( const Image_Buffer&  dst,
+                      const Image_Buffer&  src,
+                      bool                 rescale )
 {
     // Check ranges and other good stuff
     if( dst.format().cols() != src.format().cols() ||

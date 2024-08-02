@@ -80,7 +80,7 @@ bool is_integer_type( Channel_Type_Enum val )
 /********************************************************/
 /*          Get the size of the channel in bytes        */
 /********************************************************/
-ImageResult<size_t> channel_size_bytes( Channel_Type_Enum val )
+Result<size_t> channel_size_bytes( Channel_Type_Enum val )
 {
     switch( val )
     {

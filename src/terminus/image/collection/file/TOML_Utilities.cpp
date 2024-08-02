@@ -17,7 +17,7 @@ namespace tmns::image::cx::file {
 /****************************************/
 /*      Load the Intrinsic Model        */
 /****************************************/
-ImageResult<geo::cam::Camera_Model_Base::ptr_t> load_intrinsics( toml::table view )
+Result<geo::cam::Camera_Model_Base::ptr_t> load_intrinsics( toml::table view )
 {
     geo::cam::Camera_Model_Base::ptr_t camera;
 

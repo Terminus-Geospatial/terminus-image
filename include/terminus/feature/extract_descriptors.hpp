@@ -16,10 +16,10 @@ namespace tmns::feature {
  * Extract descriptors from the image.
  */
 template <typename ImageT>
-ImageResult<void> extract_descriptors( const image::Image_Base<ImageT>&  image,
-                                       const Detector_Base::ptr_t        detector,
-                                       const core::Session_Context&      session_context,
-                                       std::vector<Interest_Point>&      interest_points )
+Result<void> extract_descriptors( const image::Image_Base<ImageT>&  image,
+                                  const Detector_Base::ptr_t        detector,
+                                  const core::Session_Context&      session_context,
+                                  std::vector<Interest_Point>&      interest_points )
 {
     if( !detector )
     {
@@ -40,10 +40,10 @@ ImageResult<void> extract_descriptors( const image::Image_Base<ImageT>&  image,
  * @param detector_factory
 */
 template <typename ImageT>
-ImageResult<void> extract_descriptors( image::Image_Base<ImageT>&    image,
-                                       Detector_Config_Base::ptr_t   detector_config,
-                                       const core::Session_Context&  session_context,
-                                       Detector_Factory::ptr_t       detector_factory = Detector_Factory::create_default_instance() )
+Result<void> extract_descriptors( image::Image_Base<ImageT>&    image,
+                                  Detector_Config_Base::ptr_t   detector_config,
+                                  const core::Session_Context&  session_context,
+                                  Detector_Factory::ptr_t       detector_factory = Detector_Factory::create_default_instance() )
 {
     tmns::log::trace( ADD_CURRENT_LOC(), "Start of method." );
 

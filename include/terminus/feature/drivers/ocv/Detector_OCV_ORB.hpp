@@ -43,16 +43,16 @@ class Detector_OCV_ORB : public Detector_OCV_Base
          * @param image Image to run detection on
          * @param cast_if_ctype_unsupported Cast to baseline channel type if input is not supported.
          */
-        ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image,
-                                                        bool                        cast_if_ctype_unsupported,
-                                                        int                         max_points_override ) override;
+        Result<Interest_Point_List> process_image( const image::Image_Buffer& image,
+                                                   bool                        cast_if_ctype_unsupported,
+                                                   int                         max_points_override ) override;
         
         /**
          * Process the image to extract feature descriptors
          */
-        ImageResult<void> perform_feature_extraction( const image::Image_Buffer&    image_data,
-                                                      std::vector<Interest_Point>&  interest_point,
-                                                      bool                          cast_if_ctype_unsupported ) override;
+        Result<void> perform_feature_extraction( const image::Image_Buffer&    image_data,
+                                                 std::vector<Interest_Point>&  interest_point,
+                                                 bool                          cast_if_ctype_unsupported ) override;
 
         /**
          * Get the class name
@@ -74,7 +74,7 @@ class Detector_Generator_OCV_ORB : public Detector_Generator_Base
         /**
          * Build a new instance of the feature detector
         */
-        ImageResult<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) override;
+        Result<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) override;
 
 }; // End of Detector_Generator_OCV_ORB
 

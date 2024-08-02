@@ -232,9 +232,9 @@ class Image_Memory : public Image_Base<Image_Memory<PixelT>>
         /**
          * Resize the image, allocating new memory if the size has changed.
         */
-        ImageResult<void> set_size( size_t cols,
-                                    size_t rows,
-                                    size_t planes = 1 )
+        Result<void> set_size( size_t cols,
+                               size_t rows,
+                               size_t planes = 1 )
         {
             // Check if already the correct size
             if( cols == m_cols && rows == m_rows && planes == m_planes )

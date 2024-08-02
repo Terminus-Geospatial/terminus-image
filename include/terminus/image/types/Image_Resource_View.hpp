@@ -63,7 +63,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         /**
          * Get the construction status
         */
-        ImageResult<void> get_constructor_status() const
+        Result<void> get_constructor_status() const
         {
             return m_constructor_status;
         }
@@ -150,7 +150,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
          * Determine the number of planes for the image based on the
          * resource and your desired destination pixel type.
         */
-        ImageResult<void> initialize()
+        Result<void> initialize()
         {
             // If the user has requested a multi-channel pixel type, but the
             // file is a multi-plane, scalar-pixel file, we force a single-plane interpretation.
@@ -183,7 +183,7 @@ class Image_Resource_View : public Image_Base<Image_Resource_View<PixelT>>
         int m_planes { 0 };
 
         /// Load Status (Created after constructor runs)
-        ImageResult<void> m_constructor_status { tmns::outcome::ok() };
+        Result<void> m_constructor_status { tmns::outcome::ok() };
 
 }; // End of Image_Resource_View Class
 

@@ -22,7 +22,7 @@ class Detector_Generator_Base
 
         typedef std::shared_ptr<Detector_Generator_Base> ptr_t;
 
-        virtual ImageResult<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) = 0;
+        virtual Result<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) = 0;
 
 }; // End of Detector_Generator_Base class
 

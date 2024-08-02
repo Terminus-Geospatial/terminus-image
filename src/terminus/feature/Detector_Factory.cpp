@@ -10,7 +10,7 @@ namespace tmns::feature {
 /********************************************************/
 /*              Create a new feature detector           */
 /********************************************************/
-ImageResult<Detector_Base::ptr_t> Detector_Factory::create_detector( Detector_Config_Base::ptr_t config ) const
+Result<Detector_Base::ptr_t> Detector_Factory::create_detector( Detector_Config_Base::ptr_t config ) const
 {
     // check null
     if( !config )
@@ -37,7 +37,7 @@ ImageResult<Detector_Base::ptr_t> Detector_Factory::create_detector( Detector_Co
 /********************************************************/
 /*              Create a new feature detector           */
 /********************************************************/
-ImageResult<Detector_Base::ptr_t> Detector_Factory::create_extractor( Detector_Config_Base::ptr_t config ) const
+Result<Detector_Base::ptr_t> Detector_Factory::create_extractor( Detector_Config_Base::ptr_t config ) const
 {
     // check null
     if( !config )

@@ -67,7 +67,7 @@ class Distortion_Null : public Distortion_Base
         /**
          * Used to scale distortion with image size
          */
-        ImageResult<void> scale( double scale ) override;
+        Result<void> scale( double scale ) override;
 
         /**
          * Print log-friendly string

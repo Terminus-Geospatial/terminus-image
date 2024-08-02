@@ -18,7 +18,7 @@ Camera_Model_ISIS::Camera_Model_ISIS( const std::filesystem::path& pathname )
 /****************************************/
 /*      Convert 3d point into pixel     */
 /****************************************/
-ImageResult<math::Point2d> Camera_Model_ISIS::point_to_pixel( const math::Point3d& point ) const
+Result<math::Point2d> Camera_Model_ISIS::point_to_pixel( const math::Point3d& point ) const
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
                           "Not Implemented Yet." );
@@ -27,7 +27,7 @@ ImageResult<math::Point2d> Camera_Model_ISIS::point_to_pixel( const math::Point3
 /************************************************/
 /*          Convert Pixel into 3D Point         */
 /************************************************/
-ImageResult<math::Vector3d> Camera_Model_ISIS::pixel_to_vector( const math::Point2d& pixel ) const
+Result<math::Vector3d> Camera_Model_ISIS::pixel_to_vector( const math::Point2d& pixel ) const
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
                           "Not Implemented Yet." );
@@ -36,7 +36,7 @@ ImageResult<math::Vector3d> Camera_Model_ISIS::pixel_to_vector( const math::Poin
 /********************************************/
 /*          Get the Camera Origin           */
 /********************************************/
-ImageResult<math::Point3d> Camera_Model_ISIS::camera_origin( const math::Point2d& pixel ) const
+Result<math::Point3d> Camera_Model_ISIS::camera_origin( const math::Point2d& pixel ) const
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
                           "Not Implemented Yet." );
@@ -53,7 +53,7 @@ std::string Camera_Model_ISIS::type() const
 /************************************/
 /*          Get Camera Pose         */
 /************************************/
-ImageResult<math::Quaternion> Camera_Model_ISIS::camera_pose( const math::Point2d& pixel ) const
+Result<math::Quaternion> Camera_Model_ISIS::camera_pose( const math::Point2d& pixel ) const
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED, 
                           "Not Implemented Yet." );
@@ -77,7 +77,7 @@ std::string Camera_Model_ISIS::to_string( size_t offset ) const
 /****************************************************************/
 /*          Create Camera Model from Metadata Container         */
 /****************************************************************/
-ImageResult<Camera_Model_Base::ptr_t>  Camera_Model_ISIS::create_from_metadata( const image::meta::Metadata_Container_Base::ptr_t container )
+Result<Camera_Model_Base::ptr_t>  Camera_Model_ISIS::create_from_metadata( const image::meta::Metadata_Container_Base::ptr_t container )
 {
     // find the pathname
     auto pathname = container->get<std::filesystem::path>( "pathname" );

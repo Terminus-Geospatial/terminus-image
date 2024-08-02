@@ -80,9 +80,9 @@ class Uniform_Blob : public Base_Blob<Uniform_Blob<PixelT>>
         /**
          * Get the color registered for the pixel location
         */
-        ImageResult<PixelT> get_pixel( size_t col,
-                                       size_t row,
-                                       size_t plane ) const
+        Result<PixelT> get_pixel( size_t col,
+                                  size_t row,
+                                  size_t plane ) const
         {
             if( !is_inside( col, row, plane ) )
             {

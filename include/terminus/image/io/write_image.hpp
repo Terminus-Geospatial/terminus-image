@@ -30,9 +30,9 @@ namespace tmns::image::io {
  * @param bbox
 */
 template <class PixelT>
-ImageResult<void> write_image( Write_Image_Resource_Base&  dst,
-                               const Image_Memory<PixelT>& src,
-                               const math::Rect2i&         bbox )
+Result<void> write_image( Write_Image_Resource_Base&  dst,
+                          const Image_Memory<PixelT>& src,
+                          const math::Rect2i&         bbox )
 {
     dst.write( src.buffer(),
                bbox );
@@ -43,8 +43,8 @@ ImageResult<void> write_image( Write_Image_Resource_Base&  dst,
  * Write the entire image to disk.
 */
 template <class PixelT>
-ImageResult<void> write_image( Image_Resource_Base::ptr_t   dst,
-                               const Image_Memory<PixelT>&  src )
+Result<void> write_image( Image_Resource_Base::ptr_t   dst,
+                          const Image_Memory<PixelT>&  src )
 {
     return write_image( dst,
                         src,
@@ -55,9 +55,9 @@ ImageResult<void> write_image( Image_Resource_Base::ptr_t   dst,
  * Write an image to disk
 */
 template <class ImageT>
-ImageResult<void> write_image( Image_Resource_Base::ptr_t dst,
-                               const Image_Base<ImageT>&  src,
-                               const math::Rect2i&        bbox )
+Result<void> write_image( Image_Resource_Base::ptr_t dst,
+                          const Image_Base<ImageT>&  src,
+                          const math::Rect2i&        bbox )
 {
     Image_Memory<typename ImageT::pixel_type> intermediate = src;
     return write_image( dst, intermediate, bbox );
@@ -70,8 +70,8 @@ ImageResult<void> write_image( Image_Resource_Base::ptr_t dst,
    * the image number.
    */
   template <class ElemT>
-  ImageResult<void> write_image( const std::filesystem::path&  filename,
-                                 const std::vector<ElemT>&     out_image_vector )
+  Result<void> write_image( const std::filesystem::path&  filename,
+                            const std::vector<ElemT>&     out_image_vector )
   {
 
     // If there's an asterisk, save one file per plane
@@ -103,9 +103,9 @@ ImageResult<void> write_image( Image_Resource_Base::ptr_t dst,
  * Write an image to disk
 */
 template <class ImageT>
-ImageResult<void> write_image( Image_Resource_Base::ptr_t         resource,
-                               const Image_Base<ImageT>&          image,
-                               core::utility::Progress_Callback&  progress_callback = core::utility::Progress_Callback::dummy_instance() )
+Result<void> write_image( Image_Resource_Base::ptr_t         resource,
+                          const Image_Base<ImageT>&          image,
+                          core::utility::Progress_Callback&  progress_callback = core::utility::Progress_Callback::dummy_instance() )
 {
     // Check empty resource
     if( image.impl().cols() == 0 ||
@@ -191,9 +191,9 @@ ImageResult<void> write_image( Image_Resource_Base::ptr_t         resource,
  * @brief Perform a block write uding a disk resource
 */
 template <class ImageT>
-ImageResult<void> write_image_block( Image_Resource_Base::ptr_t         resource,
-                                     const Image_Base<ImageT>&          image,
-                                     core::utility::Progress_Callback&  progress_callback = core::utility::Progress_Callback::dummy_instance() )
+Result<void> write_image_block( Image_Resource_Base::ptr_t         resource,
+                                const Image_Base<ImageT>&          image,
+                                core::utility::Progress_Callback&  progress_callback = core::utility::Progress_Callback::dummy_instance() )
 {
     if( image.impl().cols() == 0 ||
         image.impl().rows() == 0 ||
@@ -274,11 +274,11 @@ ImageResult<void> write_image_block( Image_Resource_Base::ptr_t         resource
  * of the image will be saved as a seperate file with the asterisk replaced with the plane number.
  */
 template <class ImageT>
-ImageResult<void> write_image( const std::filesystem::path&             pathname,
-                               const Image_Base<ImageT>&                out_image,
-                               const std::map<std::string,std::string>& write_options = std::map<std::string,std::string>(),
-                               const Disk_Driver_Manager::ptr_t         driver_manager = Disk_Driver_Manager::create_write_defaults(),
-                               core::utility::Progress_Callback&        progress_callback = core::utility::Progress_Callback::dummy_instance() )
+Result<void> write_image( const std::filesystem::path&             pathname,
+                          const Image_Base<ImageT>&                out_image,
+                          const std::map<std::string,std::string>& write_options = std::map<std::string,std::string>(),
+                          const Disk_Driver_Manager::ptr_t         driver_manager = Disk_Driver_Manager::create_write_defaults(),
+                          core::utility::Progress_Callback&        progress_callback = core::utility::Progress_Callback::dummy_instance() )
 {
     tmns::log::trace( ADD_CURRENT_LOC(), "Start of Method" );
     Image_Format out_image_format = out_image.format();

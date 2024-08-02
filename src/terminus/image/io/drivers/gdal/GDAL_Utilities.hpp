@@ -31,7 +31,7 @@ namespace tmns::image::io::gdal {
 /**
  * Initialize GDAL for use
 */
-ImageResult<void> Initialize_GDAL();
+Result<void> Initialize_GDAL();
 
 /**
  * Get a reference to the master GDAL lock
@@ -51,19 +51,19 @@ void GDAL_Deleter_Null_Okay( GDALDatasetH dataset );
 /**
  * Method to convert the GDAL Raster Codes into a composite pixeltype.
 */
-ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>>& reference_lut,
-                                                          const std::vector<int>&                                            channel_codes );
+Result<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>>& reference_lut,
+                                                     const std::vector<int>&                                            channel_codes );
 
 
 /**
  * Method to convert GDAL data-type object into a Terminus Channel-Type enum
 */
-ImageResult<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType gdal_type );
+Result<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType gdal_type );
 
 /**
  * Method to convert Terminus Channel-Types into GDAL Data-Types
 */
-ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum channel_type );
+Result<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum channel_type );
 
 /**
  * Get the GDAL driver for the specified filename.  Will determine if you can read and write,

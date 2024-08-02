@@ -73,7 +73,7 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel_no_check( const math::Point3d
 /******************************************/
 /*       Convert 3d point to 2d pixel      */
 /******************************************/
-ImageResult<math::Point2d> Camera_Model_Pinhole::point_to_pixel( const math::Point3d& point ) const
+Result<math::Point2d> Camera_Model_Pinhole::point_to_pixel( const math::Point3d& point ) const
 {
     // Get the pixel using the no check version, then perform the check.
     math::Point2d final_pixel = point_to_pixel_no_check( point );
@@ -133,7 +133,7 @@ math::Point2d Camera_Model_Pinhole::point_to_pixel_no_distortion( const math::Po
 /**************************************************/
 /*      Convert Pixel Coordinate to 3D Vector     */
 /**************************************************/
-ImageResult<math::Vector3d> Camera_Model_Pinhole::pixel_to_vector( const math::Point2d& pix ) const
+Result<math::Vector3d> Camera_Model_Pinhole::pixel_to_vector( const math::Point2d& pix ) const
 {
     /*
     // Apply the inverse lens distortion model
@@ -180,7 +180,7 @@ void Camera_Model_Pinhole::set_principle_point_pitch( const math::Point2d& point
 /******************************************/
 /*    Get the Camera Center Coordinate    */
 /******************************************/
-ImageResult<math::Point3d> Camera_Model_Pinhole::camera_origin( const math::Point2d& /*pix*/ ) const
+Result<math::Point3d> Camera_Model_Pinhole::camera_origin( const math::Point2d& /*pix*/ ) const
 {
     return m_camera_origin;
 };
@@ -197,7 +197,7 @@ void Camera_Model_Pinhole::set_camera_origin( const math::Point3d& position )
 /**********************************/
 /*      Grab the camera pose      */
 /**********************************/
-ImageResult<math::Quaternion> Camera_Model_Pinhole::camera_pose( const math::Point2d& /*pix*/ ) const
+Result<math::Quaternion> Camera_Model_Pinhole::camera_pose( const math::Point2d& /*pix*/ ) const
 {
     return outcome::ok<math::Quaternion>( math::Quaternion::from_matrix( m_rotation ) );
 }
@@ -347,7 +347,7 @@ void Camera_Model_Pinhole::set_pitch( double pitch )
 /**********************************/
 /*      Set the Camera Matrix     */
 /**********************************/
-ImageResult<void> Camera_Model_Pinhole::set_camera_matrix( const math::Matrix<double,3,4>& p )
+Result<void> Camera_Model_Pinhole::set_camera_matrix( const math::Matrix<double,3,4>& p )
 {
     /*
     // Solving for camera center
@@ -415,7 +415,7 @@ math::Matrix<double,3,4> Camera_Model_Pinhole::camera_matrix() const
 /************************************************/
 /*      Reconstruct the Camera Model Matrix     */
 /************************************************/
-ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
+Result<void> Camera_Model_Pinhole::rebuild_camera_matrix()
 {
     /*
     /// The intrinsic portion of the camera matrix is stored as
@@ -514,7 +514,7 @@ ImageResult<void> Camera_Model_Pinhole::rebuild_camera_matrix()
 /************************************************************************************/
 /*    Apply a given rotation + translation + scale transform to a pinhole camera    */
 /************************************************************************************/
-ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_4x4& transform )
+Result<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_4x4& transform )
 {
     /*
     // Make sure homogenous
@@ -551,9 +551,9 @@ ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_4x4&
 /*      Apply a given rotation + translation + scale      */
 /*      transform to a pinhole camera                     */
 /**********************************************************/
-ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_3x3& rotation,
-                                                         const math::Vector3d&   translation,
-                                                         double                  scale )
+Result<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_3x3& rotation,
+                                                    const math::Vector3d&   translation,
+                                                    double                  scale )
 {
     /*
     // Extract current parameters
@@ -577,7 +577,7 @@ ImageResult<void> Camera_Model_Pinhole::apply_transform( const math::Matrix_3x3&
 /*      for the new image size.  This is not applying a scale transform to      */
 /*      the camera, that is done in apply_transform().                          */
 /********************************************************************************/
-ImageResult<Camera_Model_Pinhole::ptr_t> Camera_Model_Pinhole::scale_camera( double scale ) const
+Result<Camera_Model_Pinhole::ptr_t> Camera_Model_Pinhole::scale_camera( double scale ) const
 {
     /*
     if( scale == 0 )

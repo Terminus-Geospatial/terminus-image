@@ -38,9 +38,9 @@ class Detector_OCV_GFTT : public Detector_OCV_Base
         /**
          * Process the image and detect keypoints
          */
-        ImageResult<Interest_Point_List> process_image( const image::Image_Buffer& image,
-                                                        bool                       cast_if_ctype_unsupported,
-                                                        int                        max_points_override ) override;
+        Result<Interest_Point_List> process_image( const image::Image_Buffer& image,
+                                                   bool                       cast_if_ctype_unsupported,
+                                                   int                        max_points_override ) override;
 
         /**
          * Get the class name
@@ -62,7 +62,7 @@ class Detector_Generator_OCV_GFTT : public Detector_Generator_Base
         /**
          * Build a new instance of the feature detector
         */
-        ImageResult<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) override;
+        Result<Detector_Base::ptr_t> generate( Detector_Config_Base::ptr_t config ) override;
 
 }; // End of Detector_Generator_OCV_GFTT
 

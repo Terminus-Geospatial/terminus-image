@@ -38,15 +38,15 @@ class Image_Resource_Memory_OpenCV_Factory : public Driver_Factory_Base
         /**
          * Create the OpenCV Image Memory-Reader Resource
         */
-        ImageResult<DriverT> create_read_driver( const std::filesystem::path& pathname ) const override;
+        Result<DriverT> create_read_driver( const std::filesystem::path& pathname ) const override;
 
         /**
          * Create the OpenCV Image Memory-Write Resource
         */
-        ImageResult<DriverT> create_write_driver( const std::filesystem::path&             pathname,
-                                                  const Image_Format&                      output_format,
-                                                  const std::map<std::string,std::string>& write_options,
-                                                  const math::Size2i&                      block_size ) const override;
+        Result<DriverT> create_write_driver( const std::filesystem::path&             pathname,
+                                             const Image_Format&                      output_format,
+                                             const std::map<std::string,std::string>& write_options,
+                                             const math::Size2i&                      block_size ) const override;
 
     private:
 

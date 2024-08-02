@@ -77,7 +77,7 @@ std::string Distortion_Null::name() const
 /************************************/
 /*          Scale the Model         */
 /************************************/
-ImageResult<void> Distortion_Null::scale( double scale )
+Result<void> Distortion_Null::scale( double scale )
 {
     // do nothing
     return outcome::ok();

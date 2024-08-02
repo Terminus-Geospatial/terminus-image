@@ -142,8 +142,8 @@ class Image_Format
         /**
          * Check if we can convert the two image format types.
         */
-        static ImageResult<void> can_convert( const Image_Format&  dest,
-                                              const Image_Format&  source );
+        static Result<void> can_convert( const Image_Format&  dest,
+                                         const Image_Format&  source );
 
     private:
 

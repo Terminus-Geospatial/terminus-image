@@ -76,8 +76,8 @@ class Read_Image_Resource_Base
         /**
          * Read the image data from disk
         */
-        virtual ImageResult<void> read( const Image_Buffer& dest,
-                                        const math::Rect2i& bbox ) const = 0;
+        virtual Result<void> read( const Image_Buffer& dest,
+                                   const math::Rect2i& bbox ) const = 0;
 
         /**
          * Check if the resource supports block reads.
@@ -120,8 +120,8 @@ class Write_Image_Resource_Base
         /// @brief  Destructor
         virtual ~Write_Image_Resource_Base() = default;
 
-        virtual ImageResult<void> write( const Image_Buffer& buf,
-                                         const math::Rect2i& bbox ) = 0;
+        virtual Result<void> write( const Image_Buffer& buf,
+                                    const math::Rect2i& bbox ) = 0;
 
 
         /**

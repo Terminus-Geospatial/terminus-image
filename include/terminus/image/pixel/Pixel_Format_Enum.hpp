@@ -54,6 +54,6 @@ std::string enum_to_string( Pixel_Format_Enum val );
 /**
  * Get the number of channels for the given pixel format enumeration.
 */
-ImageResult<int> num_channels( Pixel_Format_Enum value );
+Result<int> num_channels( Pixel_Format_Enum value );
 
 } // End of tmns::image namespace

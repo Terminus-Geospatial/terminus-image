@@ -44,12 +44,12 @@ class Detector_Factory
         /**
          * Create a feature detector instance.
          */
-        ImageResult<Detector_Base::ptr_t> create_detector( Detector_Config_Base::ptr_t config ) const;
+        Result<Detector_Base::ptr_t> create_detector( Detector_Config_Base::ptr_t config ) const;
 
         /**
          * Create a feature extractor instance.
          */
-        ImageResult<Detector_Base::ptr_t> create_extractor( Detector_Config_Base::ptr_t config ) const;
+        Result<Detector_Base::ptr_t> create_extractor( Detector_Config_Base::ptr_t config ) const;
 
     private:
 

@@ -65,7 +65,7 @@ static void CPL_STDCALL GDAL_Error_Handler( CPLErr      eErrClass,
 /************************************/
 /*          Initialize GDAL         */
 /************************************/
-ImageResult<void> Initialize_GDAL()
+Result<void> Initialize_GDAL()
 {
     CPLPushErrorHandler( GDAL_Error_Handler );
     // If we run out of handles, GDAL errors out. If you have more than 400
@@ -107,8 +107,8 @@ void GDAL_Deleter_Null_Okay( GDALDatasetH dataset )
 /**************************************************************/
 /*       Compare the set of color codes against the LUT       */
 /**************************************************************/
-ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>>& reference_lut,
-                                                          const std::vector<int>&                                            channel_codes )
+Result<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std::tuple<std::vector<int>,Pixel_Format_Enum>>& reference_lut,
+                                                     const std::vector<int>&                                            channel_codes )
 {
     size_t counter = 0;
     for( const auto& ref_tup : reference_lut )
@@ -126,7 +126,7 @@ ImageResult<Pixel_Format_Enum> gdal_driver_to_pixel_type( const std::vector<std:
 /****************************************************/
 /*      Convert Pixel format to Channel-Type        */
 /****************************************************/
-ImageResult<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType gdal_type )
+Result<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType gdal_type )
 {
     switch (gdal_type)
     {
@@ -147,7 +147,7 @@ ImageResult<Channel_Type_Enum> gdal_pixel_format_to_channel_type( GDALDataType g
 /****************************************************/
 /*      Convert Channel-Type to Pixel format        */
 /****************************************************/
-ImageResult<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum channel_type )
+Result<GDALDataType> channel_type_to_gdal_pixel_format( Channel_Type_Enum channel_type )
 {
     // @todo:  Add remaining data types to this method
     switch( channel_type )

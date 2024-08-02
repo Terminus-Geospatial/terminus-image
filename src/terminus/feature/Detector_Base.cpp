@@ -19,9 +19,9 @@ Detector_Base::Detector_Base( Detector_Config_Base::ptr_t config )
 /****************************************/
 /*      Perform Feature Extraction      */
 /****************************************/
-ImageResult<void> Detector_Base::perform_feature_extraction( const image::Image_Buffer&    image_data,
-                                                             std::vector<Interest_Point>&  interest_point,
-                                                             bool                          cast_if_ctype_unsupported )
+Result<void> Detector_Base::perform_feature_extraction( const image::Image_Buffer&    image_data,
+                                                        std::vector<Interest_Point>&  interest_point,
+                                                        bool                          cast_if_ctype_unsupported )
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED,
                           "Detector_Base class does not implement 'perform_feature_extraction()'",

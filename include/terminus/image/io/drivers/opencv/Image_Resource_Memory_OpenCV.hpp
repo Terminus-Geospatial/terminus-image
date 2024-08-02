@@ -26,9 +26,9 @@ class Image_Resource_Memory_OpenCV : public Image_Resource_Memory
         /**
          * Create a new resource and open the image
          *
-         * ImageResult will return failure if it's unable to open the image.
+         * Result will return failure if it's unable to open the image.
         */
-        static ImageResult<ParentPtrT> create( const std::filesystem::path& pathname );
+        static Result<ParentPtrT> create( const std::filesystem::path& pathname );
 
 }; // end of Read_Image_Resource_Memory_OpenCV Class
 

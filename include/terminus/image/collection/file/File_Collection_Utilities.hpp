@@ -18,8 +18,8 @@ namespace tmns::image::cx::file {
 /**
  * Parse the INI file and return the results.
 */
-ImageResult<void> parse_toml_collection_file( const std::filesystem::path&         input_path,
-                                              std::vector<std::filesystem::path>&  image_list,
-                                              geo::cam::Camera_Model_Base::ptr_t&  global_intrinsics );
+Result<void> parse_toml_collection_file( const std::filesystem::path&         input_path,
+                                         std::vector<std::filesystem::path>&  image_list,
+                                         geo::cam::Camera_Model_Base::ptr_t&  global_intrinsics );
 
 } // End of tmns::image::cx::file namespace

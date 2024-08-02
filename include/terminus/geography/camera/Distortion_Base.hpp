@@ -68,7 +68,7 @@ class Distortion_Base
         /**
          * Used to scale distortion with image size
          */
-        virtual ImageResult<void> scale( double scale ) = 0;
+        virtual Result<void> scale( double scale ) = 0;
     
         /// Used to scale distortion with image size
         std::vector<std::string> distortion_param_names() const { return m_distortion_param_names; }

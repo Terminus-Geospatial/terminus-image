@@ -65,37 +65,37 @@ class Image_Resource_Disk_GDAL : public Image_Resource_Disk
         /**
          * Create a new resource and open the image
          *
-         * ImageResult will return failure if it's unable to open the image.
+         * Result will return failure if it's unable to open the image.
         */
-        static ImageResult<ParentPtrT> create( const std::filesystem::path& pathname );
+        static Result<ParentPtrT> create( const std::filesystem::path& pathname );
 
         /**
          * Create a new resource and open the image
          *
-         * ImageResult will return failure if it's unable to open the image.
+         * Result will return failure if it's unable to open the image.
         */
-        static ImageResult<ParentPtrT> create( const std::filesystem::path&             pathname,
-                                               const Image_Format&                      output_format,
-                                               const std::map<std::string,std::string>& write_options,
-                                               const math::Size2i&                      block_size,
-                                               const ColorCodeLookupT&                  color_reference_lut  = Use_Default_Color_LUT());
+        static Result<ParentPtrT> create( const std::filesystem::path&             pathname,
+                                          const Image_Format&                      output_format,
+                                          const std::map<std::string,std::string>& write_options,
+                                          const math::Size2i&                      block_size,
+                                          const ColorCodeLookupT&                  color_reference_lut  = Use_Default_Color_LUT());
 
         /**
          * Open the dataset
         */
-        ImageResult<void> open( const std::filesystem::path& pathname );
+        Result<void> open( const std::filesystem::path& pathname );
 
         /**
          * Read the image data from disk
         */
-        ImageResult<void> read( const Image_Buffer& dest,
-                                const math::Rect2i& bbox ) const override;
+        Result<void> read( const Image_Buffer& dest,
+                           const math::Rect2i& bbox ) const override;
 
         /**
          * Write the resource to disk
         */
-        ImageResult<void> write( const Image_Buffer& dest,
-                                 const math::Rect2i& bbox ) override;
+        Result<void> write( const Image_Buffer& dest,
+                            const math::Rect2i& bbox ) override;
 
         /**
          * Get the image format object

@@ -68,7 +68,7 @@ class EW_Min_Max_Accumulator : public math::Return_Fixed_Type<void>
         /**
          * Get the minimum value
         */
-        ImageResult<ValueT> minimum() const
+        Result<ValueT> minimum() const
         {
             if( m_valid )
             {
@@ -84,7 +84,7 @@ class EW_Min_Max_Accumulator : public math::Return_Fixed_Type<void>
         /**
          * Get the maximum value
         */
-        ImageResult<ValueT> maximum() const
+        Result<ValueT> maximum() const
         {
             if( m_valid )
             {
@@ -137,7 +137,7 @@ class EW_Std_Dev_Accumulator : public math::Return_Fixed_Type<void>
         /**
          * Compute the standard deviation from the 2 summation values
         */
-        ImageResult<ValueT> value() const
+        Result<ValueT> value() const
         {
             if( m_num_samples <= 0 )
             {

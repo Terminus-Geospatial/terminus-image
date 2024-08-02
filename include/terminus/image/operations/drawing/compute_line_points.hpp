@@ -28,10 +28,10 @@ namespace tmns::image::ops::drawing {
  * @returns status of the operation.
 */
 template <typename PixelT>
-ImageResult<void> compute_line_points_thin( const tmns::math::Point2i&                   point1,
-                                            const tmns::math::Point2i&                   point2,
-                                            const PixelT&                                color,
-                                            std::shared_ptr<blob::Uniform_Blob<PixelT>>& output )
+Result<void> compute_line_points_thin( const tmns::math::Point2i&                   point1,
+                                       const tmns::math::Point2i&                   point2,
+                                       const PixelT&                                color,
+                                       std::shared_ptr<blob::Uniform_Blob<PixelT>>& output )
 {
     tmns::log::trace( ADD_CURRENT_LOC(),
                       "Start of Method.\n  P1: ", 
@@ -135,11 +135,11 @@ ImageResult<void> compute_line_points_thin( const tmns::math::Point2i&          
  * Custom method based on computing normals of the line, in order to generate thickness.
 */
 template <typename PixelT>
-ImageResult<void> compute_line_points( const math::Point2i&                         p1,
-                                       const math::Point2i&                         p2,
-                                       const PixelT&                                color,
-                                       int                                          thickness,
-                                       std::shared_ptr<blob::Uniform_Blob<PixelT>>& output )
+Result<void> compute_line_points( const math::Point2i&                         p1,
+                                  const math::Point2i&                         p2,
+                                  const PixelT&                                color,
+                                  int                                          thickness,
+                                  std::shared_ptr<blob::Uniform_Blob<PixelT>>& output )
 {
     tmns::log::trace( ADD_CURRENT_LOC(),
                       "Start of Method.\n  P1: ", 

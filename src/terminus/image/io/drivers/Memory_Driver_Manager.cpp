@@ -10,7 +10,7 @@ namespace tmns::image {
 /************************************************************************************/
 /*          Pick the appropriate driver in the list for processing the dataset      */
 /************************************************************************************/
-ImageResult<Read_Image_Resource_Memory::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
+Result<Read_Image_Resource_Memory::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
 {
     for( const auto& factory : m_read_driver_factories )
     {

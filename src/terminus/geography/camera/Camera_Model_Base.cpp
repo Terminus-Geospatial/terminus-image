@@ -10,7 +10,7 @@ namespace tmns::geo::cam {
 /********************************/
 /*          Get the pose        */
 /********************************/
-ImageResult<math::Quaternion> Camera_Model_Base::camera_pose( const math::Point2d& pixel ) const
+Result<math::Quaternion> Camera_Model_Base::camera_pose( const math::Point2d& pixel ) const
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED,
                           "Not implemented for camera-model-type: ", 

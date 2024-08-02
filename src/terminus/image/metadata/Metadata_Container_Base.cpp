@@ -21,8 +21,8 @@ size_t Metadata_Container_Base::number_child_nodes() const
 /****************************************/
 /*          Merge Containers            */
 /****************************************/
-ImageResult<void> Metadata_Container_Base::insert( const Metadata_Container_Base::ptr_t container,
-                                                   bool                                 overwrite_matches )
+Result<void> Metadata_Container_Base::insert( const Metadata_Container_Base::ptr_t container,
+                                              bool                                 overwrite_matches )
 {
     if( !container )
     {

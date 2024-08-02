@@ -59,21 +59,21 @@ class GDAL_Disk_Image_Impl
         /**
          * Open the dataset
         */
-        ImageResult<void> open( const std::filesystem::path& pathname );
+        Result<void> open( const std::filesystem::path& pathname );
 
         /**
          * Read the raster from disk
         */
-        ImageResult<void> read( const Image_Buffer&  dest,
-                                const math::Rect2i&  bbox,
-                                bool                 rescale ) const;
+        Result<void> read( const Image_Buffer&  dest,
+                           const math::Rect2i&  bbox,
+                           bool                 rescale ) const;
 
         /**
          * Write the resource to disk
         */
-        ImageResult<void> write( const Image_Buffer& dest,
-                                 const math::Rect2i& bbox,
-                                 bool                rescale );
+        Result<void> write( const Image_Buffer& dest,
+                            const math::Rect2i& bbox,
+                            bool                rescale );
 
         /**
          * Print to log-friendly string
@@ -88,7 +88,7 @@ class GDAL_Disk_Image_Impl
         /**
          * Get the GDALDataset point for whatever dataset is active.
         */
-        ImageResult<DatasetPtrT> get_dataset_ptr() const;
+        Result<DatasetPtrT> get_dataset_ptr() const;
 
         /**
          * Get the default block size
@@ -154,7 +154,7 @@ class GDAL_Disk_Image_Impl
         /**
          * Check the driver to see if the nodata read value was acceptable
         */
-        ImageResult<double> nodata_read_ok() const;
+        Result<double> nodata_read_ok() const;
 
         /**
          * Setup the GDAL structure for writing files

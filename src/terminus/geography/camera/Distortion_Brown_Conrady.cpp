@@ -113,7 +113,7 @@ std::string Distortion_Brown_Conrady::name() const
 /********************************************/
 /*          Scale Distortion Model          */
 /********************************************/
-ImageResult<void> Distortion_Brown_Conrady::scale( double scale )
+Result<void> Distortion_Brown_Conrady::scale( double scale )
 {
     return outcome::fail( core::error::ErrorCode::NOT_IMPLEMENTED,
                           "Not implemented for ", name() );

@@ -16,7 +16,7 @@ namespace tmns::image::utility::ocv {
 /****************************************/
 /*      Get an OpenCV Data Type Code    */
 /****************************************/
-ImageResult<int> get_data_type_code( Channel_Type_Enum  channel_type )
+Result<int> get_data_type_code( Channel_Type_Enum  channel_type )
 {
     switch( channel_type )
     {
@@ -51,8 +51,8 @@ ImageResult<int> get_data_type_code( Channel_Type_Enum  channel_type )
 /****************************************/
 /*      Get an OpenCV Pixel Type Code   */
 /****************************************/
-ImageResult<int> get_pixel_type_code( Pixel_Format_Enum  pixel_type,
-                                      Channel_Type_Enum  channel_type )
+Result<int> get_pixel_type_code( Pixel_Format_Enum  pixel_type,
+                                 Channel_Type_Enum  channel_type )
 {
     // Get the channel count
     auto ch_res = num_channels( pixel_type );

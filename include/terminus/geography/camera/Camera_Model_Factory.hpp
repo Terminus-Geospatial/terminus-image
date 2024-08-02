@@ -27,7 +27,7 @@ class Camera_Model_Factory
          * Construct a Camera-Model instance from an image metadata container
          * specification.
          */
-        static ImageResult<Camera_Model_Base::ptr_t> create_from_metadata( image::meta::Metadata_Container_Base::ptr_t container );
+        static Result<Camera_Model_Base::ptr_t> create_from_metadata( image::meta::Metadata_Container_Base::ptr_t container );
 
 
 }; // End of Camera_Model_Factory class

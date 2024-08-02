@@ -20,19 +20,19 @@ namespace tmns::image::utility {
 /**
  * Render the actual scene.
 */
-ImageResult<void> visualize( const std::string&  window_name,
-                             const Image_Buffer& buffer_data,
-                             int                 window_sleep = 0 );
+Result<void> visualize( const std::string&  window_name,
+                        const Image_Buffer& buffer_data,
+                        int                 window_sleep = 0 );
 
 /**
  * Simple test tool for viewing an image
 */
 template <typename PixelT>
-ImageResult<void> view_image( const std::string&          window_name,
-                              const Image_Memory<PixelT>& image,
-                              int                         window_sleep = 0,
-                              bool                        draw_interest_points = false,
-                              typename math::Compound_Channel_Cast<PixelT,uint8_t>::type  draw_color = Channel_Range<typename math::Compound_Channel_Type<typename math::Compound_Channel_Cast<PixelT,uint8_t>::type>::type>::max() )
+Result<void> view_image( const std::string&          window_name,
+                         const Image_Memory<PixelT>& image,
+                         int                         window_sleep = 0,
+                         bool                        draw_interest_points = false,
+                         typename math::Compound_Channel_Cast<PixelT,uint8_t>::type  draw_color = Channel_Range<typename math::Compound_Channel_Type<typename math::Compound_Channel_Cast<PixelT,uint8_t>::type>::type>::max() )
 {
     // We need all images to be uint8
     typedef typename math::Compound_Channel_Cast<PixelT,uint8_t>::type DestPixelT;
@@ -77,11 +77,11 @@ ImageResult<void> view_image( const std::string&          window_name,
  * View any image
 */
 template <typename ImageT>
-ImageResult<void> view_image( const std::string&  window_name,
-                              const ImageT&       image,
-                              int                 window_sleep = 0,
-                              bool                draw_interest_points = false,
-                              typename math::Compound_Channel_Cast<typename ImageT::pixel_type,
+Result<void> view_image( const std::string&  window_name,
+                         const ImageT&       image,
+                         int                 window_sleep = 0,
+                         bool                draw_interest_points = false,
+                         typename math::Compound_Channel_Cast<typename ImageT::pixel_type,
                                                                    uint8_t>::type  draw_color = Channel_Range<typename math::Compound_Channel_Type<typename math::Compound_Channel_Cast<typename ImageT::pixel_type,uint8_t>::type>::type>::max() )
 {
     tmns::log::info( ADD_CURRENT_LOC(), "Input Image Traits: ", image.format().to_string() );

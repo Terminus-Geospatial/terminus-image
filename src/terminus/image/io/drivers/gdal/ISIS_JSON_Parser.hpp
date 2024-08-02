@@ -23,7 +23,7 @@ class ISIS_JSON_Parser
         /**
          * Parse a JSON string and return a JSON structure capable of decomposing the relevant ISIS data.
          */
-        static ImageResult<meta::Metadata_Container_Base::ptr_t> parse( const std::string& json_string );
+        static Result<meta::Metadata_Container_Base::ptr_t> parse( const std::string& json_string );
 
         static void recursive_parse( meta::Metadata_Container_Base::ptr_t container,
                                      nlohmann::json&                      node,

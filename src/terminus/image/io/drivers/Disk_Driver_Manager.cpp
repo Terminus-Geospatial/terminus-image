@@ -13,7 +13,7 @@ namespace tmns::image::io {
 /************************************************************************************/
 /*          Pick the appropriate driver in the list for processing the dataset      */
 /************************************************************************************/
-ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
+Result<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( const std::filesystem::path& pathname ) const
 {
     for( const auto& factory : m_read_driver_factories )
     {
@@ -37,10 +37,10 @@ ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_read_driver( c
 /************************************************************************************/
 /*          Pick the appropriate driver in the list for processing the dataset      */
 /************************************************************************************/
-ImageResult<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_write_driver( const std::filesystem::path&             pathname,
-                                                                                const Image_Format&                      output_format,
-                                                                                const std::map<std::string,std::string>& write_options,
-                                                                                const math::Size2i&                      block_size ) const
+Result<Image_Resource_Disk::ptr_t> Disk_Driver_Manager::pick_write_driver( const std::filesystem::path&             pathname,
+                                                                           const Image_Format&                      output_format,
+                                                                           const std::map<std::string,std::string>& write_options,
+                                                                           const math::Size2i&                      block_size ) const
 {
     tmns::log::trace( ADD_CURRENT_LOC(), "Start of Method" );
     for( const auto& factory : m_write_driver_factories )

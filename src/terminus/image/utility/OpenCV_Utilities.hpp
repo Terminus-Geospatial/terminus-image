@@ -18,14 +18,14 @@ namespace tmns::image::utility::ocv {
 /**
  * Given the channel type, generate an OpenCV channel code (ex: CV_8U)
 */
-ImageResult<int> get_data_type_code( Channel_Type_Enum channel_type );
+Result<int> get_data_type_code( Channel_Type_Enum channel_type );
 
 /**
  * Given an pixel-type and channel-type, generate the pixel type
  * code required to create an OpenCV Mat.
 */
-ImageResult<int> get_pixel_type_code( Pixel_Format_Enum  pixel_type,
-                                      Channel_Type_Enum  channel_type );
+Result<int> get_pixel_type_code( Pixel_Format_Enum  pixel_type,
+                                 Channel_Type_Enum  channel_type );
 
 /**
  * Convert the OpenCV type code to a string

@@ -48,7 +48,7 @@ class Collection_Resource_File : public Collection_Resource_Base<Collection_Reso
         /**
          * Load a collection resource from disk.
         */
-        static ImageResult<Collection_Resource_File::ptr_t> load_image_list( const std::filesystem::path image_file )
+        static Result<Collection_Resource_File::ptr_t> load_image_list( const std::filesystem::path image_file )
         {
             // Other components of this file
             geo::cam::Camera_Model_Base::ptr_t global_intrinsics;

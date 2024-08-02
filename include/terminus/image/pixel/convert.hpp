@@ -30,8 +30,8 @@ void channel_convert_int_to_float( SrcT* src, DestT* dest )
  * @param src Source pixel data
  * @param rescale Flag if we need to scale imagery
 */
-ImageResult<void> convert( const Image_Buffer&  dst,
-                           const Image_Buffer&  src,
-                           bool                 rescale = false );
+Result<void> convert( const Image_Buffer&  dst,
+                      const Image_Buffer&  src,
+                      bool                 rescale = false );
 
 } // End of tmns::image namespace

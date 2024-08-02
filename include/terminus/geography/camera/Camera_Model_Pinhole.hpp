@@ -58,7 +58,7 @@ class Camera_Model_Pinhole : public Camera_Model_Base
          * in real (aka floating-point) representation.  This allows for sub-pixel accuracy.  To get an indexible conversion,
          * simply convert to an integer space noting if the "center" is the top-left or center. 
          */
-        ImageResult<math::Point2d> point_to_pixel( const math::Point3d& point ) const override;
+        Result<math::Point2d> point_to_pixel( const math::Point3d& point ) const override;
 
         /**
          * Set the flag to enable performing the point-to-pixel check
@@ -72,7 +72,7 @@ class Camera_Model_Pinhole : public Camera_Model_Base
          * Transform a coordinate from 2d pixel space into a (likely) unit-length vector in 3D space from the origin of the
          * sensor.  
          */
-        ImageResult<math::Vector3d> pixel_to_vector( const math::Point2d& pixel ) const override;
+        Result<math::Vector3d> pixel_to_vector( const math::Point2d& pixel ) const override;
 
         /**
          * Check if the projection is valid
@@ -93,7 +93,7 @@ class Camera_Model_Pinhole : public Camera_Model_Base
          * plane (e.g. for computing ray-ray intersection in a stereo vision algorithm).
          * - Generally the input pixel is only used for linescan cameras.
          */
-        ImageResult<math::Point3d> camera_origin( const math::Point2d& pixel = math::Point2d() ) const override;
+        Result<math::Point3d> camera_origin( const math::Point2d& pixel = math::Point2d() ) const override;
 
         /**
          * Set the camera origin
@@ -105,7 +105,7 @@ class Camera_Model_Pinhole : public Camera_Model_Base
          * 
          * - The pinhole camera position does not vary by pixel so the input pixel is ignored.
          */
-        ImageResult<math::Quaternion> camera_pose( const math::Point2d& pix = math::Vector2d() ) const override;
+        Result<math::Quaternion> camera_pose( const math::Point2d& pix = math::Vector2d() ) const override;
 
         /**
          * Set the Camera pose
@@ -173,17 +173,17 @@ class Camera_Model_Pinhole : public Camera_Model_Base
 
         math::Matrix<double,3,4> camera_matrix() const;
         
-        ImageResult<void> set_camera_matrix( const math::Matrix<double,3,4>& p );
+        Result<void> set_camera_matrix( const math::Matrix<double,3,4>& p );
 
-        ImageResult<void> rebuild_camera_matrix();
+        Result<void> rebuild_camera_matrix();
 
-        ImageResult<void> apply_transform( const math::Matrix_4x4& transform );
+        Result<void> apply_transform( const math::Matrix_4x4& transform );
 
-        ImageResult<void> apply_transform( const math::Matrix_3x3& rotation,
-                                           const math::Vector3d&   translation,
-                                           double                  scale );
+        Result<void> apply_transform( const math::Matrix_3x3& rotation,
+                                      const math::Vector3d&   translation,
+                                      double                  scale );
 
-        ImageResult<Camera_Model_Pinhole::ptr_t> scale_camera( double scale ) const;
+        Result<Camera_Model_Pinhole::ptr_t> scale_camera( double scale ) const;
 
         Camera_Model_Pinhole::ptr_t strip_lens_distortion() const;
 
